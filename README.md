@@ -1,6 +1,6 @@
-# 🎓 Plataforma de Cursos en Línea - TecnoSur Perú
+# 🎓 Plataforma de Cursos en Línea - tecsur Perú
 
-![Banner TecnoSur Perú](https://via.placeholder.com/1200x400/1E3A8A/FFFFFF?text=TecnoSur+Perú+%7C+Plataforma+Educativa)
+![Banner tecsur Perú](https://via.placeholder.com/1200x400/1E3A8A/FFFFFF?text=tecsur+Perú+%7C+Plataforma+Educativa)
 
 ## 📋 Descripción del Proyecto
 
