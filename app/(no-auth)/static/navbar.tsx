@@ -13,9 +13,9 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { CurrencySelector } from '@/components/ui/currency-selector';
-import { Input } from '@/components/ui/input';
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group';
 import { useSession } from 'next-auth/react';
+import { UserNav } from '@/components/dashboard/user-nav';
 
 
 // Types
@@ -95,27 +95,28 @@ export const Navbar = React.forwardRef<HTMLElement, Navbar02Props>(
 
     const { status } = useSession();
 
-
+    // Reemplaza tu useEffect actual con esto:
     useEffect(() => {
       const checkWidth = () => {
-        if (containerRef.current) {
-          const width = containerRef.current.offsetWidth;
-          setIsMobile(width < 1024); // 768px is md breakpoint
-        }
+        setIsMobile(window.innerWidth < 1024);
       };
 
-      checkWidth();
+      // Establecer valor inicial basado en user-agent o media query
+      if (typeof window !== 'undefined') {
+        checkWidth();
+        const mediaQuery = window.matchMedia('(max-width: 1023px)');
 
-      const resizeObserver = new ResizeObserver(checkWidth);
-      if (containerRef.current) {
-        resizeObserver.observe(containerRef.current);
+        const handleResize = () => {
+          setIsMobile(mediaQuery.matches);
+        };
+
+        mediaQuery.addEventListener('change', handleResize);
+
+        return () => {
+          mediaQuery.removeEventListener('change', handleResize);
+        };
       }
-
-      return () => {
-        resizeObserver.disconnect();
-      };
     }, []);
-
     // Combine refs
     const combinedRef = React.useCallback((node: HTMLElement | null) => {
       containerRef.current = node;
@@ -326,11 +327,8 @@ export const Navbar = React.forwardRef<HTMLElement, Navbar02Props>(
               <CurrencySelector />
               {
                 status == 'authenticated' ?
+                  <UserNav /> :
                   <Button asChild>
-                    <Link href='/dashboard'>
-                      Ir al panel
-                    </Link>
-                  </Button> : <Button asChild>
                     <Link href='/login'>
                       Acceder
                     </Link>

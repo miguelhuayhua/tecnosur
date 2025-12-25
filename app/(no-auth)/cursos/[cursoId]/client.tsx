@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Play, Clock, Star, Users, Award, Search, CheckCircle, Home, Book, TextAlignStart, Download, Share2, Shield, Calendar, GraduationCap, FileBadge, FileCodeCorner, BadgeCheck, ScanEye, ShieldCheck, Building, CreditCard, Info } from 'lucide-react';
+import { Play, Clock, Star, Users, Award, Search, CheckCircle, Home, Book, TextAlignStart, Download, Share2, Shield, Calendar, GraduationCap, FileBadge, FileCodeCorner, BadgeCheck, ScanEye, ShieldCheck, Building, CreditCard, Info, Check } from 'lucide-react';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Status, StatusIndicator, StatusLabel } from '@/components/ui/shadcn-io/status';
 
@@ -24,41 +24,37 @@ import { beneficiosCursos, clases, docente, edicionesCursos, objetivosCursos, pr
 import { Curso } from "@/lib/types";
 import { FaWhatsapp } from "react-icons/fa";
 import { CursoCard } from "@/app/(auth)/(componentes)/curso-card";
-
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const faqs = [
     {
-        question: "¿Qué es DataSchool Bolivia?",
-        answer: "DataSchool Bolivia es un centro especializado en la enseñanza de ciencia de datos, análisis y tecnologías relacionadas. Ofrecemos cursos prácticos y actualizados para formar profesionales en el área de datos."
+        question: "¿Qué es TecSur y qué tipos de cursos ofrecen?",
+        answer: "TecSur es una plataforma educativa en línea que ofrece cursos prácticos y especializados en diversas áreas como tecnología, negocios, diseño, marketing digital, habilidades blandas, idiomas y más. Todos nuestros cursos están diseñados por expertos en activo."
     },
     {
-        question: "¿Cómo me registro en la plataforma estudiantil?",
-        answer: "Puedes registrarte con tu correo electrónico institucional o personal. Solo necesitas completar el formulario de registro con tus datos básicos y confirmar tu cuenta mediante el enlace que te llegará por correo."
+        question: "¿Cómo me registro en la plataforma?",
+        answer: "Puedes crear una cuenta gratuita registrándote con tu cuenta de Google. Una vez registrado, podrás explorar nuestro catálogo completo de cursos y adquirir aquellos que sean de tu interés."
     },
     {
-        question: "¿Qué recursos tendré acceso como estudiante?",
-        answer: "Tendrás acceso ilimitado a: videos de clases, materiales descargables, ejercicios prácticos, proyectos reales, foros de discusión, sesiones de mentoría y certificados de finalización."
+        question: "¿Cómo funcionan los cursos? ¿Puedo estudiar a mi ritmo?",
+        answer: "Sí, todos nuestros cursos son 100% online y asíncronos. Compra un curso una vez y tendrás acceso permanente a: videos grabados, materiales descargables, ejercicios prácticos, y foros para consultas. Puedes avanzar según tu disponibilidad de tiempo."
     },
     {
-        question: "¿Los cursos tienen algún costo?",
-        answer: "Una vez registrado en la plataforma, tendrás acceso gratuito a todos los recursos de los cursos en los que estés matriculado. Algunos programas especializados pueden tener costos adicionales."
+        question: "¿Qué métodos de pago aceptan?",
+        answer: "Aceptamos pagos con tarjetas de crédito/débito, transferencias bancarias, y ofrecemos la opción de pagar en cuotas para mayor flexibilidad. Puedes dividir el costo del curso en varios pagos según tu conveniencia."
+    },
+    {
+        question: "¿Ofrecen certificados al finalizar?",
+        answer: "Sí, al completar satisfactoriamente un curso, recibirás un certificado digital de participación que podrás compartir en tus redes profesionales como LinkedIn. Estamos trabajando para ofrecer certificación oficial próximamente."
+    },
+    {
+        question: "¿Qué pasa si tengo dudas durante el curso?",
+        answer: "Cada curso cuenta con foros de discusión donde puedes hacer preguntas a los instructores y otros estudiantes. También ofrecemos sesiones de consulta en vivo según la programación de cada curso."
     },
     {
         question: "¿Puedo acceder desde cualquier dispositivo?",
-        answer: "Sí, nuestra plataforma es completamente responsive y puedes acceder desde tu computadora, tablet o smartphone con conexión a internet."
-    },
-    {
-        question: "¿Cómo obtengo mi certificado?",
-        answer: "Al completar satisfactoriamente un curso, recibirás automáticamente un certificado digital verificable que podrás descargar y compartir en tus redes profesionales."
-    },
-    {
-        question: "¿Qué soporte técnico ofrece la plataforma?",
-        answer: "Contamos con soporte técnico 24/7 para resolver problemas de acceso, además de foros de comunidad donde puedes hacer preguntas y recibir ayuda de instructores y otros estudiantes."
-    },
-    {
-        question: "¿Puedo avanzar a mi propio ritmo?",
-        answer: "Sí, todos nuestros cursos están diseñados para ser tomados de manera asíncrona, permitiéndote avanzar según tu disponibilidad de tiempo y ritmo de aprendizaje."
+        answer: "Sí, nuestra plataforma es completamente responsive. Puedes estudiar desde tu computadora, tablet o smartphone, solo necesitas conexión a internet para acceder a los contenidos."
     }
-]
+];
 interface CursoProps extends Curso {
     objetivos: objetivosCursos[];
     requisitos: requisitosCursos[];
@@ -107,12 +103,8 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
     const precioConvertido = precioDefault ? formatPrice(precioDefault.precio) : null;
     const precioOriginalConvertido = precioDefault?.precioOriginal ? formatPrice(precioDefault.precioOriginal) : null;
 
-    // Precios en dólares para comparación
-    const precioEnDolares = precioDefault?.precio;
-    const precioOriginalEnDolares = precioDefault?.precioOriginal;
-
     return (
-        <div className="space-y-6 bg-background pt-10 px-5">
+        <div className="space-y-6  pt-10  px-5">
             <div className="max-w-6xl mx-auto space-y-3">
                 <Breadcrumb>
                     <BreadcrumbList>
@@ -121,7 +113,7 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
-                            <BreadcrumbPage className='font-semibold text-xs'>
+                            <BreadcrumbPage className='font-semibold text-muted-foreground text-xs'>
                                 {curso.titulo}
                             </BreadcrumbPage>
                         </BreadcrumbItem>
@@ -197,7 +189,7 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                                 Comprar Curso
                             </Link>
                         </Button>
-                        <Button className="bg-green-500">
+                        <Button variant={'ghost'} className="bg-green-600 text-white">
                             <FaWhatsapp />
                             Más información
                         </Button>
@@ -205,7 +197,7 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
 
                     <div>
                         <small className='text-muted-foreground text-xs'>
-                            Obtén acceso al curso en vivo y al material dentro de nuestra plataforma
+                            Obtén acceso al curso  y al material dentro de nuestra plataforma
                         </small>
                     </div>
                 </div>
@@ -223,223 +215,211 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                     </div>
 
                     <div className="flex flex-wrap gap-2 divide-x text-sm">
-                        <div className="flex items-center gap-2 pr-2">
-                            <Award className="size-4" />
-                            <span>Certificado incluido</span>
+
+
+                        <div className="pr-2">
+                            <Status status={curso.enVivo ? 'online' : 'offline'}>
+                                <StatusIndicator />
+                                {curso.enVivo ? "Clase en vivo" : "Clases grabadas"}
+                            </Status>
                         </div>
-                        {
-                            curso.enVivo ? (
-                                <Status className="font-normal text-sm" status="online">
-                                    <StatusIndicator />
-                                    Clase en vivo
-                                </Status>
-                            ) : (
-                                <Badge variant='outline' >
-                                    Curso grabado
-                                </Badge>
-                            )
-                        }
+                        <div className="flex items-center text-xs gap-2 pr-2">
+                            <Calendar className='size-4' />
+                            {fechaInicio && fechaFin ?
+                                `Del ${format(new Date(fechaInicio), 'dd MMM', { locale: es })} al ${format(new Date(fechaFin), 'dd MMM yyyy', { locale: es })}` :
+                                'Fechas por definir'}
+                        </div>
+
+                        <div className="flex items-center text-xs gap-2">
+                            <Clock className='size-4' />
+                            {fechaInicio && fechaFin ?
+                                `Horario: ${format(new Date(fechaInicio), 'HH:mm')} - ${format(new Date(fechaFin), 'HH:mm')}` :
+                                'Horario por definir'}
+                        </div>
                     </div>
 
-                    <div className="flex items-center text-sm gap-2">
-                        <Calendar className='size-4' />
-                        {fechaInicio && fechaFin ?
-                            `Del ${format(new Date(fechaInicio), 'dd MMM', { locale: es })} al ${format(new Date(fechaFin), 'dd MMM yyyy', { locale: es })}` :
-                            'Fechas por definir'}
-                    </div>
 
-                    <div className="flex items-center text-sm gap-2">
-                        <Clock className='size-4' />
-                        {fechaInicio && fechaFin ?
-                            `Horario: ${format(new Date(fechaInicio), 'HH:mm')} - ${format(new Date(fechaFin), 'HH:mm')}` :
-                            'Horario por definir'}
-                    </div>
                 </div>
             </div>
 
-            <div className="grid max-w-6xl mx-auto grid-cols-1 md:grid-cols-3 mt-20 relative gap-y-10 px-5">
-                <div className='col-span-2 space-y-10 md:pr-8'>
-                    <h3 className="text-lg md:text-2xl font-bold flex items-center gap-2">
-                        <Book /> Contenido del curso
-                    </h3>
+            <div className="max-w-6xl mx-auto px-5">
+                <div className="flex flex-col lg:flex-row gap-8">
+                    {/* Columna principal (izquierda) */}
+                    <div className="lg:w-2/3 space-y-10 md:pr-8">
+                        <h3 className="text-lg md:text-2xl font-bold flex items-center gap-2">
+                            <Book /> Contenido del curso
+                        </h3>
 
-                    {clasesFiltradas.length > 0 ? (
-                        <Accordion type="multiple">
-                            {clasesFiltradas.map((clase: any) => (
-                                <AccordionItem key={clase.id} value={clase.id}>
-                                    <AccordionTrigger>
-                                        {clase.titulo}
-                                    </AccordionTrigger>
-                                    <AccordionContent className="flex flex-col gap-4 text-balance">
-                                        <div className="flex items-center gap-3">
-                                            <p>{clase.descripcion}</p>
-                                        </div>
-                                        <div className="text-sm text-gray-500">
-                                            {clase.duracion ? `${clase.duracion}m` : '--'}
-                                        </div>
-                                    </AccordionContent>
-                                </AccordionItem>
-                            ))}
-                        </Accordion>
-                    ) : (
+                        {clasesFiltradas.length > 0 ? (
+                            <Accordion type="multiple">
+                                {clasesFiltradas.map((clase: any) => (
+                                    <AccordionItem key={clase.id} value={clase.id}>
+                                        <AccordionTrigger>
+                                            {clase.titulo}
+                                        </AccordionTrigger>
+                                        <AccordionContent className="flex flex-col gap-4 text-balance">
+                                            <div className="flex items-center gap-3">
+                                                <p>{clase.descripcion}</p>
+                                            </div>
+                                            <div className="text-sm text-gray-500">
+                                                {clase.duracion ? `${clase.duracion}m` : '--'}
+                                            </div>
+                                        </AccordionContent>
+                                    </AccordionItem>
+                                ))}
+                            </Accordion>
+                        ) : (
+                            <p className="text-muted-foreground">
+                                Aún no se cuenta con un temario establecido
+                            </p>
+                        )}
+
+                        <h3 className="text-lg md:text-2xl font-bold flex items-center gap-2">
+                            <TextAlignStart /> Sobre el curso
+                        </h3>
                         <p className="text-muted-foreground">
-                            Aún no se cuenta con un temario establecido
+                            {curso.descripcion || 'No cuenta con una descripción'}
                         </p>
-                    )}
 
-                    <h3 className="text-lg md:text-2xl font-bold flex items-center gap-2">
-                        <TextAlignStart /> Sobre el curso
-                    </h3>
-                    <p className="text-muted-foreground">
-                        {curso.descripcion || 'No cuenta con una descripción'}
-                    </p>
+                        <h3 className="text-lg md:text-2xl font-bold flex items-center gap-2">
+                            <Building /> Aprende con Tecsur
+                        </h3>
+                        <Card className="border-t-3 max-w-sm border-t-primary">
+                            <CardHeader>
+                                <CardTitle className="text-center">
+                                    Obtén todo el paquete completo con la compra de tu curso
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <Button className="w-full" asChild>
+                                    <Link href={`/cursos/${curso.id}/checkout`}>
+                                        Comprar Curso
+                                    </Link>
+                                </Button>
+                            </CardContent>
+                            <CardFooter>
+                                {beneficios.length > 0 ? (
+                                    <ul className="space-y-2 w-full">
+                                        {beneficios.map((beneficio: any) => (
+                                            <li key={beneficio.id} className="flex items-center text-sm text-muted-foreground gap-2">
+                                                <CheckCircle className="size-4" />
+                                                {beneficio.descripcion}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p className="text-sm w-full text-center font-bold text-muted-foreground">
+                                        No cuenta con beneficios aún.
+                                    </p>
+                                )}
+                            </CardFooter>
+                        </Card>
+                    </div>
 
-                    <h3 className="text-lg md:text-2xl font-bold flex items-center gap-2">
-                        <Building /> Aprende con Data School Bolivia
-                    </h3>
-                    <Card className="border-t-3 max-w-sm mx-auto border-t-primary">
-                        <CardHeader>
-                            <CardTitle className="text-center">
-                                Obtén todo el paquete completo con la compra de tu curso
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <Button className="w-full" asChild>
-                                <Link href={`/cursos/${curso.id}/checkout`}>
-                                    Comprar Curso
-                                </Link>
-                            </Button>
-                        </CardContent>
-                        <CardFooter>
-                            {beneficios.length > 0 ? (
-                                <ul className="space-y-2 w-full">
-                                    {beneficios.map((beneficio: any) => (
-                                        <li key={beneficio.id} className="flex items-center text-sm text-muted-foreground gap-2">
-                                            <CheckCircle className="size-4" />
-                                            {beneficio.descripcion}
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p className="text-sm w-full text-center font-bold text-muted-foreground">
-                                    No cuenta con beneficios aún.
-                                </p>
-                            )}
-                        </CardFooter>
-                    </Card>
-                </div>
+                    {/* Barra lateral sticky (derecha) */}
+                    <div className="lg:w-1/3">
+                        <div className="space-y-5 sticky top-20">
+                            <Separator className="block md:hidden" />
 
-                {/* Barra lateral con información adicional */}
-                <div className='space-y-5 sticky top-20'>
-                    <Separator className="block md:hidden" />
+                            <div className="hidden lg:block">
+                                <div className='flex justify-between items-start pb-4 gap-6'>
+                                    <div className="flex-1">
+                                        <div className="flex items-center justify-between gap-3">
+                                            {precioDefault?.esDescuento && (
+                                                <div className="flex flex-col gap-1">
+                                                    <Badge variant="outline" className="text-xs font-normal text-muted-foreground">
+                                                        Precio regular
+                                                    </Badge>
+                                                    <div className="flex items-baseline gap-2">
+                                                        <span className="text-sm font-medium text-muted-foreground">
+                                                            {selectedCurrency.code}
+                                                        </span>
+                                                        <span className="text-2xl line-through text-muted-foreground decoration-2">
+                                                            {precioOriginalConvertido?.value || '0'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            )}
 
-                    <div className="hidden md:block">
-                        <div className='flex justify-between items-start pb-4 gap-6'>
-                            <div className="flex-1">
-                                <div className="flex items-center justify-between gap-3">
-                                    {precioDefault?.esDescuento && (
-                                        <div className="flex flex-col gap-1">
-                                            <Badge variant="outline" className="text-xs font-normal text-muted-foreground">
-                                                Precio regular
-                                            </Badge>
-                                            <div className="flex items-baseline gap-2">
-                                                <span className="text-sm font-medium text-muted-foreground">
-                                                    {selectedCurrency.code}
-                                                </span>
-                                                <span className="text-2xl line-through text-muted-foreground decoration-2">
-                                                    {precioOriginalConvertido?.value || '0'}
-                                                </span>
+                                            <div className={`flex flex-col ${precioDefault?.esDescuento ? 'gap-2' : 'gap-1'}`}>
+                                                {!precioDefault?.esDescuento && (
+                                                    <span className="text-sm font-medium text-muted-foreground">Precio actual</span>
+                                                )}
+                                                <div className="flex items-baseline rounded px-2 justify-center bg-primary text-primary-foreground gap-2">
+                                                    <span className={`font-medium ${precioDefault?.esDescuento ? 'text-lg' : 'text-sm'}`}>
+                                                        {selectedCurrency.code}
+                                                    </span>
+                                                    <span className={`font-bold ${precioDefault?.esDescuento ? 'text-3xl' : 'text-3xl'}`}>
+                                                        {precioConvertido?.value || '0'}
+                                                    </span>
+                                                </div>
+                                                {precioDefault?.esDescuento && (
+                                                    <Badge variant={'outline'}>
+                                                        {precioDefault?.porcentajeDescuento}% de descuento
+                                                    </Badge>
+                                                )}
                                             </div>
                                         </div>
-                                    )}
 
-                                    <div className={`flex flex-col ${precioDefault?.esDescuento ? 'gap-2' : 'gap-1'}`}>
-                                        {!precioDefault?.esDescuento && (
-                                            <span className="text-sm font-medium text-muted-foreground">Precio actual</span>
-                                        )}
-                                        <div className="flex items-baseline rounded px-2 justify-center bg-primary text-primary-foreground gap-2">
-                                            <span className={`font-medium ${precioDefault?.esDescuento ? 'text-lg' : 'text-sm'}`}>
-                                                {selectedCurrency.code}
-                                            </span>
-                                            <span className={`font-bold ${precioDefault?.esDescuento ? 'text-3xl' : 'text-3xl'}`}>
-                                                {precioConvertido?.value || '0'}
-                                            </span>
-                                        </div>
-                                        {precioDefault?.esDescuento && (
-                                            <Badge variant={'outline'}>
-                                                {precioDefault?.porcentajeDescuento}% de descuento
-                                            </Badge>
-                                        )}
+
                                     </div>
                                 </div>
+                                <Separator />
 
-                                {(selectedCurrency.code !== 'USD' && precioEnDolares) && (
-                                    <div className="mt-3 p-3 bg-muted/50 rounded-lg border">
-                                        <div className="text-xs text-muted-foreground mb-1">Equivalente en dólares:</div>
-                                        <div className="flex items-baseline gap-2">
-                                            <span className="text-sm font-medium text-muted-foreground">USD</span>
-                                            <span className="text-xl font-bold text-foreground">
-                                                {precioEnDolares}
-                                            </span>
-                                            {precioDefault?.esDescuento && precioOriginalEnDolares && (
-                                                <span className="text-xl line-through text-muted-foreground ml-2">
-                                                    {precioOriginalEnDolares}
-                                                </span>
-                                            )}
-                                        </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <h3 >Requisitos</h3>
+                                <ul className="space-y-1">
+                                    {requisitos.length > 0 ? (
+                                        requisitos.map((requisito: any) => (
+                                            <li key={requisito.id} className="text-muted-foreground flex items-center text-sm">
+                                                <span className="mr-2">•</span> {requisito.descripcion}
+                                            </li>
+                                        ))
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground">
+                                            No cuenta aún con requisitos
+                                        </p>
+                                    )}
+                                </ul>
+                            </div>
+                            <Separator />
+
+                            <h3>
+                                Profesor del curso
+                            </h3>
+                            <div className="flex items-center gap-2">
+                                <Avatar >
+                                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                    <AvatarFallback>CN</AvatarFallback>
+
+                                </Avatar>
+                                <div className="flex flex-col">
+                                    <p className="text-sm font-medium">
+                                        {edicionPrincipal.docente.nombre_completo}
+                                    </p>
+                                    <div className="space-x-2">
+                                        <small className="text-muted-foreground">
+                                            {edicionPrincipal.docente.especialidad}
+                                        </small>
+                                        <Badge variant={'outline'}>
+                                            {edicionPrincipal.docente.experiencia} años experiencia <Check />
+                                        </Badge>
                                     </div>
-                                )}
+                                </div>
                             </div>
                         </div>
-                        <Separator />
-                    </div>
-
-                    <div className="space-y-2">
-                        <h3 className="font-semibold">Requisitos</h3>
-                        <ul className="space-y-1">
-                            {requisitos.length > 0 ? (
-                                requisitos.map((requisito: any) => (
-                                    <li key={requisito.id} className="text-muted-foreground flex items-center text-sm">
-                                        <span className="mr-2">•</span> {requisito.descripcion}
-                                    </li>
-                                ))
-                            ) : (
-                                <p className="text-sm text-muted-foreground">
-                                    No cuenta aún con requisitos
-                                </p>
-                            )}
-                        </ul>
-                    </div>
-
-                    <Separator />
-
-                    <div className="text-sm text-muted-foreground space-y-2">
-                        <p className="flex items-center gap-4">
-                            <FileBadge className="size-4" />
-                            Incluye certificado
-                        </p>
-                        <p className="flex items-center gap-4">
-                            <GraduationCap className="size-4" />
-                            Modalidad online
-                        </p>
-                        <p className="flex items-center gap-4">
-                            <FileCodeCorner className="size-4" />
-                            Incluye materiales
-                        </p>
                     </div>
                 </div>
             </div>
 
-
-
-
-
             {/* Cursos Recomendados */}
-            <div className="space-y-10 border-t py-10 px-5">
+            <div className="space-y-10 border-t p-10 ">
                 <h3 className="text-3xl font-bold text-center tracking-tight">
                     Cursos recomendados
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-x-6 mx-auto">
                     {cursosRecomendados && cursosRecomendados.length > 0 ? (
                         cursosRecomendados.map((cursoRec: any) => <CursoCard key={cursoRec.id} curso={cursoRec} />)
                     ) : (
@@ -450,7 +430,7 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                 </div>
             </div>
             {/* FAQ Section */}
-            <div className="px-5">
+            <div className="px-5 -mt-10">
                 <div className="max-w-4xl mx-auto">
                     <div className="text-center space-y-4 mb-12">
                         <h2 className="text-3xl font-bold tracking-tight">
@@ -461,7 +441,7 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                         </p>
                     </div>
 
-                    <Accordion type="single" collapsible className="w-full">
+                    <Accordion type="single" collapsible className="w-full mb-10">
                         {faqs.map((faq, index) => (
                             <AccordionItem key={index} value={`item-${index}`}>
                                 <AccordionTrigger className="text-left">

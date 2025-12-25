@@ -5,15 +5,11 @@ import { signIn, useSession } from 'next-auth/react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
-  CheckCircle2,
   Calendar,
   User,
   Mail,
   Lock,
-  ArrowLeft,
   Monitor,
-  CheckSquare,
-  LogIn,
   Clock,
   DollarSign
 } from 'lucide-react';
@@ -25,6 +21,10 @@ import { useRouter } from 'next/navigation';
 import { usePriceFormatter } from '@/hooks/use-price-formatter';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { AvatarFallback, AvatarImage, Avatar } from '@/components/ui/avatar';
+import { ButtonGroup } from '@/components/ui/button-group';
+import { Separator } from '@/components/ui/separator';
+
 
 // Tipos basados en el esquema de Prisma
 type CategoriaCurso = {
@@ -96,13 +96,10 @@ interface CheckoutClientProps {
 
 export default function CheckoutClient({ curso, session: serverSession }: CheckoutClientProps) {
   const [error, setError] = useState<string | null>(null);
-  const { data: clientSession, status } = useSession();
+  const { data: user, status } = useSession();
   const { formatPrice, selectedCurrency } = usePriceFormatter();
   const router = useRouter();
   const [loader, setLoader] = useState(false);
-
-  // Usar session del cliente si está disponible, sino del servidor
-  const session = clientSession || serverSession;
 
   // Obtener la primera edición (ya viene filtrada del servidor)
   const edicion = curso.ediciones[0];
@@ -114,8 +111,9 @@ export default function CheckoutClient({ curso, session: serverSession }: Checko
   const precioActual = precioDescuento || precioDefault;
 
   // Formatear precios
-  const precioLocal = precioActual ? formatPrice(precioActual.precio) : null;
   const precioUSD = precioActual?.precio || 0;
+  const precioConvertido = precioDefault ? formatPrice(precioDefault.precio) : null;
+  const precioOriginalConvertido = precioDefault?.precioOriginal ? formatPrice(precioDefault.precioOriginal) : null;
 
   const createOrder = async (): Promise<string> => {
     if (!edicion) {
@@ -134,7 +132,7 @@ export default function CheckoutClient({ curso, session: serverSession }: Checko
           monto: precioUSD,
           moneda: 'USD',
           descripcion: `${curso.titulo} - ${edicion.codigo}`,
-          usuarioEmail: session?.user?.email,
+          usuarioEmail: user?.user?.email,
           monedaLocal: selectedCurrency.code
         }),
       });
@@ -166,7 +164,7 @@ export default function CheckoutClient({ curso, session: serverSession }: Checko
           orderID: data.orderID,
           cursoId: curso.id,
           edicionId: edicion.id,
-          usuarioEmail: session?.user?.email,
+          usuarioEmail: user?.user?.email,
           monedaLocal: selectedCurrency.code
         }),
       });
@@ -211,13 +209,7 @@ export default function CheckoutClient({ curso, session: serverSession }: Checko
     setError(`Error de PayPal: ${err.message || 'Error desconocido'}`);
   };
 
-  const formatDate = (date: Date) => {
-    return format(date, "dd 'de' MMMM 'de' yyyy", { locale: es });
-  };
 
-  const formatTime = (date: Date) => {
-    return format(date, 'HH:mm');
-  };
 
   if (status === 'loading') {
     return (
@@ -239,24 +231,9 @@ export default function CheckoutClient({ curso, session: serverSession }: Checko
     );
   }
 
-  if (!edicion) {
-    return (
-      <div className="min-h-screen bg-background py-8">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-2xl font-bold mb-4">Edición no disponible</h1>
-          <p className="text-muted-foreground mb-6">
-            No hay ediciones activas para este curso en este momento.
-          </p>
-          <Link href={`/cursos/${curso.id}`}>
-            <Button>Volver al curso</Button>
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-background py-8">
+    <div className="min-h-screen px-2 sm:px-10 md:px-40 lg:px-0 bg-background py-8">
       {loader && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm">
 
@@ -267,21 +244,12 @@ export default function CheckoutClient({ curso, session: serverSession }: Checko
         </div>
       )}
 
-      <div className="max-w-6xl mx-auto px-4">
-        {/* Navegación */}
-        <div className="mb-8">
-          <Link
-            href={`/cursos/${curso.id}`}
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="size-4" />
-            Volver al curso
-          </Link>
-        </div>
+      <div className="max-w-5xl mx-auto">
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 ">
           {/* Información del curso */}
-          <div className="space-y-8">
+          <div className="space-y-8 col-span-2">
             {/* Cabecera */}
             <div className="space-y-4">
               <div className="flex flex-wrap gap-2">
@@ -295,123 +263,115 @@ export default function CheckoutClient({ curso, session: serverSession }: Checko
                   </Badge>
                 ))}
                 {edicion.vigente && (
-                  <Badge className="bg-green-100 text-green-800 border-green-200">
+                  <Badge variant='outline' className="text-green-600">
                     Edición Vigente
                   </Badge>
                 )}
               </div>
-
-              <h1 className="text-3xl font-bold tracking-tight">{curso.titulo}</h1>
-
-              <p className="text-muted-foreground leading-relaxed">
-                {curso.descripcion}
-              </p>
-
-              {curso.urlMiniatura && (
-                <div className="relative h-64 w-full overflow-hidden rounded-lg">
-                  <Image
-                    src={curso.urlMiniatura}
-                    alt={curso.titulo}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Información del usuario */}
-            <Card>
-              <CardContent >
-                <h3 className="font-semibold flex items-center gap-2 mb-4">
-                  <User className="size-5" />
-                  {session ? 'Tus datos' : 'Inicio de sesión'}
-                </h3>
-
-                {session ? (
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Nombre:</span>
-                      <span className="font-medium">{session.user?.name || 'No especificado'}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Email:</span>
-                      <span className="font-medium">{session.user?.email}</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground pt-2 border-t">
-                      Usaremos estos datos para tu acceso a la plataforma
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <LogIn className="size-5 text-primary mt-0.5" />
-                      <div>
-                        <p className="font-medium">¿Ya tienes cuenta?</p>
-                        <p className="text-sm text-muted-foreground">
-                          Inicia sesión si ya has comprado con nosotros antes
-                        </p>
-                      </div>
-                    </div>
-                    <Link href="/auth/signin" className="block">
-                      <Button className="w-full">Iniciar sesión</Button>
-                    </Link>
-                    <p className="text-sm text-muted-foreground">
-                      Si es tu primera compra, te crearemos una cuenta automáticamente.
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Información de la edición */}
-            <div className="space-y-4">
-              <h3 className="font-semibold flex items-center gap-2">
-                <Calendar className="size-5" />
-                Edición {edicion.codigo}
-              </h3>
-
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="space-y-1">
-                  <p className="text-muted-foreground">Fecha de inicio</p>
-                  <p className="font-medium">{formatDate(edicion.fechaInicio)}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatTime(edicion.fechaInicio)}
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-muted-foreground">Fecha de fin</p>
-                  <p className="font-medium">{formatDate(edicion.fechaFin)}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatTime(edicion.fechaFin)}
-                  </p>
+              <div className='flex items-center gap-2'>
+                <Avatar  >
+                  <AvatarImage src={curso.urlMiniatura || ''} />
+                  <AvatarFallback />
+                </Avatar>
+                <div>
+                  <h1 className="text-2xl font-bold tracking-tight">{curso.titulo}</h1>
+                  <Badge>
+                    Edición {edicion.codigo}
+                  </Badge>
                 </div>
               </div>
+              <p className="text-muted-foreground text-sm">
+                {curso.descripcionCorta}
+              </p>
+              <p className='text-xs text-muted-foreground flex items-center gap-2'>
+                <Calendar className="size-4" />
+                Del {format(edicion.fechaInicio, "dd/MMM/yyyy", { locale: es })} al  {format(edicion.fechaFin, "dd/MMM/yyyy", { locale: es })}
+              </p>
+              <p className='text-xs text-muted-foreground flex items-center gap-2'>
+                <Clock className="size-4" />
+                {format(edicion.fechaInicio, "HH:mm")} -  {format(edicion.fechaFin, "HH:mm")}
+              </p>
             </div>
+            {user ? (
+              <div className='space-y-2'>
+                <h3 className='font-medium'>
+                  Usuario para la compra
+                </h3>
+                <div className="flex gap-2 items-center">
+                  <Avatar  >
+                    <AvatarImage src={user.user?.image || ''} alt="Avatar" />
+
+                    <AvatarFallback  >
+                      {user.user?.name?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className='flex flex-col'>
+                    <p className='text-sm font-medium'>
+                      {user.user?.name}
+                    </p>
+                    <span className='text-xs text-muted-foreground'>
+                      {user.user?.email}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex items-start gap-3">
+                  <div>
+                    <p className="font-medium">Accede sin problemas</p>
+                    <p className="text-sm text-muted-foreground">
+                      Inicia sesión si ya tienes una cuenta
+                    </p>
+                  </div>
+                </div>
+                <ButtonGroup className='w-full'>
+                  <Button className="flex-1" asChild>
+                    <Link href="/login" className="block">
+                      Iniciar sesión
+                    </Link>
+                  </Button>
+                  <Button className='flex-1' variant={'outline'}>
+                    <Link href={`/registrarse`}>
+                      Regístrate
+                    </Link>
+                  </Button>
+                </ButtonGroup>
+                <p className="text-xs text-muted-foreground">
+                  Si eres nuevo y tu compra usa cualquier método de pago, nosotros crearemos tu cuenta. <span className='text-blue-600'>
+                    Usa Paypal para hacerlo en segundos.
+                  </span>
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Puedes crear tu usuario antes comprar un curso. <span className='text-green-600'>
+                    Esos datos serán usados para registrar tu compra.
+                  </span>
+                </p>
+              </div>
+            )}
+
+
 
             {/* Beneficios */}
             {curso.beneficios && curso.beneficios.length > 0 && (
-              <Card>
-                <CardContent >
-                  <h3 className="font-semibold flex items-center gap-2 mb-4">
-                    <CheckSquare className="size-5" />
-                    Lo que obtendrás
-                  </h3>
-                  <div className="space-y-3">
-                    {curso.beneficios.map((beneficio) => (
-                      <div key={beneficio.id} className="flex items-start gap-3">
-                        <CheckCircle2 className="size-4 text-primary mt-1 flex-shrink-0" />
-                        <span className="text-sm">{beneficio.descripcion}</span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+
+              <div className='space-y-2'>
+                <h3 className='font-medium'>
+                  Lo que obtendrás
+                </h3>
+                <ul className="list-disc ml-5">
+                  {curso.beneficios.map((beneficio) => (
+                    <li key={beneficio.id} >
+                      <span className="text-xs">{beneficio.descripcion}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
 
             {/* Proceso de acceso */}
             <div className="space-y-4">
-              <h3 className="font-semibold">Tu proceso de acceso</h3>
+              <h3 className="font-medium">Tu proceso de acceso</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2 text-center">
                   <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -419,7 +379,7 @@ export default function CheckoutClient({ curso, session: serverSession }: Checko
                   </div>
                   <p className="text-sm font-medium">Pago confirmado</p>
                   <p className="text-xs text-muted-foreground">
-                    Recibirás confirmación inmediata
+                    Cualquier método de pago, será confirmado.
                   </p>
                 </div>
                 <div className="space-y-2 text-center">
@@ -428,7 +388,7 @@ export default function CheckoutClient({ curso, session: serverSession }: Checko
                   </div>
                   <p className="text-sm font-medium">Credenciales</p>
                   <p className="text-xs text-muted-foreground">
-                    Envío automático por email
+                    Se te creará un perfil de usuario
                   </p>
                 </div>
                 <div className="space-y-2 text-center">
@@ -437,7 +397,7 @@ export default function CheckoutClient({ curso, session: serverSession }: Checko
                   </div>
                   <p className="text-sm font-medium">Acceso inmediato</p>
                   <p className="text-xs text-muted-foreground">
-                    Ingresa a la plataforma
+                    Tu curso aparecerá en tu panel de estudiante.
                   </p>
                 </div>
               </div>
@@ -445,80 +405,105 @@ export default function CheckoutClient({ curso, session: serverSession }: Checko
           </div>
 
           {/* Panel de pago */}
-          <div className="lg:sticky lg:top-8">
-            <Card >
+          <div className="lg:relative col-span-3 lg:col-span-1 max-w-2xl mx-auto lg:top-8">
+            <Card  >
               <CardContent >
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {/* Resumen */}
-                  <div>
-                    <h3 className="font-semibold text-lg mb-4">Resumen del pedido</h3>
+                  <div className='flex justify-between'>
+                    <h3 className="font-medium text-sm">Detalles de compra</h3>
+                    {precioDefault?.esDescuento && (
 
-                    <div className="space-y-3">
-                      {/* Precio */}
-                      <div className="flex justify-between items-center">
-                        <span className="text-muted-foreground">Inversión</span>
-                        <div className="text-right">
-                          <div className="font-semibold text-xl">
-                            {precioLocal?.code} {precioLocal?.value}
-                          </div>
-                          {selectedCurrency.code !== 'USD' && (
-                            <div className="text-xs text-muted-foreground mt-1">
-                              ≈ USD {precioUSD.toFixed(2)}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Descuento */}
-                      {precioDescuento?.porcentajeDescuento && (
-                        <div className="flex justify-between items-center text-sm">
-                          <span className="text-muted-foreground">Descuento</span>
-                          <span className="text-green-600 font-semibold">
-                            -{precioDescuento.porcentajeDescuento}%
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Total */}
-                      <div className="border-t pt-4">
-                        <div className="flex justify-between items-center">
-                          <span className="font-semibold">Total a pagar</span>
-                          <div className="text-right">
-                            <div className="font-bold text-2xl text-primary">
-                              {precioLocal?.code} {precioLocal?.value}
-                            </div>
-                            {selectedCurrency.code !== 'USD' && (
-                              <div className="text-xs text-muted-foreground mt-1">
-                                Se cobrará en USD
+                      <Badge variant={'outline'}>
+                        {precioDefault.porcentajeDescuento}% de descuento
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="space-y-3">
+                    {/* Precio */}
+                    {
+                      precioDefault?.esDescuento ? (
+                        <>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-muted-foreground">Valor original</span>
+                            <div className="flex gap-2 items-center">
+                              <div className="font-semibold text-md">
+                                {precioOriginalConvertido?.value} {precioOriginalConvertido?.code}
                               </div>
-                            )}
+
+                            </div>
+
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-muted-foreground">Descuento</span>
+                            <span className="text-red-600 font-semibold">
+                              -{+(precioOriginalConvertido?.value!) - (+precioConvertido?.value!)} {precioConvertido?.code}
+                            </span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-muted-foreground">Valor original</span>
+                            <div className="flex gap-2 items-center">
+                              <div className="font-semibold text-md">
+                                {precioOriginalConvertido?.value} {precioOriginalConvertido?.code}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-muted-foreground">Descuento</span>
+                            <span className="text-red-600 font-semibold">
+                              - 0 ${precioOriginalConvertido?.code}
+                            </span>
+                          </div>
+                        </>
+                      )
+                    }
+                    <Separator />
+                    {
+                      precioDefault?.esDescuento ? (<div className="flex justify-between items-center ">
+                        <span className="text-sm font-medium">Total</span>
+                        <div className="flex gap-2 items-center">
+                          <div className="font-semibold text-md">
+                            {precioConvertido?.value} {precioConvertido?.code}
                           </div>
                         </div>
                       </div>
-                    </div>
+                      ) :
+                        <div className="flex justify-between items-center ">
+                          <span className="text-sm font-medium">Total</span>
+                          <div className="flex gap-2 items-center">
+                            <div className="font-semibold text-md">
+                              {precioOriginalConvertido?.value} {precioOriginalConvertido?.code}
+                            </div>
+                          </div>
+                        </div>
+                    }
                   </div>
 
                   {/* Información de conversión */}
                   {selectedCurrency.code !== 'USD' && (
-                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-lg p-2">
                       <div className="flex items-center gap-2 text-blue-700 dark:text-blue-300">
-                        <Clock className="size-4" />
-                        <span className="text-sm font-medium">Conversión automática</span>
+                        <DollarSign className="size-4" />
+                        <span className="text-sm font-medium">Conversión de referencia</span>
                       </div>
                       <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
-                        El pago se procesa en USD ({precioUSD.toFixed(2)}).
-                        Tu banco realizará la conversión a tu moneda local.
+                        El curso tiene un valor original de USD <b>{precioUSD.toFixed(2)}</b>.
+                        <br />
+                        El valor a tu moneda local sirve de referencia en el caso de usarlo como pago.
                       </p>
                     </div>
                   )}
 
                   {/* PayPal */}
                   <div className="space-y-4">
-                    <Button className='w-full rounded-sm h-14 text-xl ' size={'lg'} >
+                    <Button className='w-full rounded-[.3em] ' >
                       Pago Asistido
                     </Button>
-                    <Button className='w-full rounded-sm h-14 text-xl bg-[#9519a3]' size={'lg'} >
-                      <Image src={'/logo-yape.png'} width={100} height={100} className='w-20' alt='logo yape' />
+                    <Button className='w-full rounded-[.3em]  bg-[#9519a3]'  >
+                      <Image src={'/logo-yape.png'} width={100} height={100} className='w-12' alt='logo yape' />
                       Pagar con Yape
                     </Button>
                     <PayPalButtons
@@ -526,18 +511,15 @@ export default function CheckoutClient({ curso, session: serverSession }: Checko
                         layout: 'vertical',
                         color: 'blue',
                         label: 'paypal',
+                        height: 35
                       }}
-                      
+
                       createOrder={createOrder}
                       onApprove={onApprove}
                       onError={onError}
                       disabled={!edicion || !precioActual}
                     />
 
-                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                      <Lock className="size-4" />
-                      <span>Pago 100% seguro con PayPal</span>
-                    </div>
 
                     <p className="text-xs text-center text-muted-foreground">
                       Al completar la compra, aceptas nuestros{' '}
@@ -547,12 +529,6 @@ export default function CheckoutClient({ curso, session: serverSession }: Checko
                     </p>
                   </div>
 
-                  {/* Mensaje de error */}
-                  {error && (
-                    <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                      <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
-                    </div>
-                  )}
                 </div>
               </CardContent>
             </Card>
