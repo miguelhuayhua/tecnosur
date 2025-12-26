@@ -12633,7 +12633,7 @@ export namespace Prisma {
     comentario: string | null
     creadoEn: Date
     actualizadoEn: Date
-    usuariosEstudiantesId: string | null
+    usuariosEstudiantesId: string
     _count: ReviewsCursosCountAggregateOutputType | null
     _avg: ReviewsCursosAvgAggregateOutputType | null
     _sum: ReviewsCursosSumAggregateOutputType | null
@@ -12664,7 +12664,7 @@ export namespace Prisma {
     actualizadoEn?: boolean
     usuariosEstudiantesId?: boolean
     curso?: boolean | cursosDefaultArgs<ExtArgs>
-    usuario?: boolean | reviewsCursos$usuarioArgs<ExtArgs>
+    usuario?: boolean | usuariosEstudiantesDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["reviewsCursos"]>
 
   export type reviewsCursosSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -12676,7 +12676,7 @@ export namespace Prisma {
     actualizadoEn?: boolean
     usuariosEstudiantesId?: boolean
     curso?: boolean | cursosDefaultArgs<ExtArgs>
-    usuario?: boolean | reviewsCursos$usuarioArgs<ExtArgs>
+    usuario?: boolean | usuariosEstudiantesDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["reviewsCursos"]>
 
   export type reviewsCursosSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -12688,7 +12688,7 @@ export namespace Prisma {
     actualizadoEn?: boolean
     usuariosEstudiantesId?: boolean
     curso?: boolean | cursosDefaultArgs<ExtArgs>
-    usuario?: boolean | reviewsCursos$usuarioArgs<ExtArgs>
+    usuario?: boolean | usuariosEstudiantesDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["reviewsCursos"]>
 
   export type reviewsCursosSelectScalar = {
@@ -12704,22 +12704,22 @@ export namespace Prisma {
   export type reviewsCursosOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cursoId" | "rating" | "comentario" | "creadoEn" | "actualizadoEn" | "usuariosEstudiantesId", ExtArgs["result"]["reviewsCursos"]>
   export type reviewsCursosInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     curso?: boolean | cursosDefaultArgs<ExtArgs>
-    usuario?: boolean | reviewsCursos$usuarioArgs<ExtArgs>
+    usuario?: boolean | usuariosEstudiantesDefaultArgs<ExtArgs>
   }
   export type reviewsCursosIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     curso?: boolean | cursosDefaultArgs<ExtArgs>
-    usuario?: boolean | reviewsCursos$usuarioArgs<ExtArgs>
+    usuario?: boolean | usuariosEstudiantesDefaultArgs<ExtArgs>
   }
   export type reviewsCursosIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     curso?: boolean | cursosDefaultArgs<ExtArgs>
-    usuario?: boolean | reviewsCursos$usuarioArgs<ExtArgs>
+    usuario?: boolean | usuariosEstudiantesDefaultArgs<ExtArgs>
   }
 
   export type $reviewsCursosPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "reviewsCursos"
     objects: {
       curso: Prisma.$cursosPayload<ExtArgs>
-      usuario: Prisma.$usuariosEstudiantesPayload<ExtArgs> | null
+      usuario: Prisma.$usuariosEstudiantesPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -12728,7 +12728,7 @@ export namespace Prisma {
       comentario: string | null
       creadoEn: Date
       actualizadoEn: Date
-      usuariosEstudiantesId: string | null
+      usuariosEstudiantesId: string
     }, ExtArgs["result"]["reviewsCursos"]>
     composites: {}
   }
@@ -13124,7 +13124,7 @@ export namespace Prisma {
   export interface Prisma__reviewsCursosClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     curso<T extends cursosDefaultArgs<ExtArgs> = {}>(args?: Subset<T, cursosDefaultArgs<ExtArgs>>): Prisma__cursosClient<$Result.GetResult<Prisma.$cursosPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    usuario<T extends reviewsCursos$usuarioArgs<ExtArgs> = {}>(args?: Subset<T, reviewsCursos$usuarioArgs<ExtArgs>>): Prisma__usuariosEstudiantesClient<$Result.GetResult<Prisma.$usuariosEstudiantesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    usuario<T extends usuariosEstudiantesDefaultArgs<ExtArgs> = {}>(args?: Subset<T, usuariosEstudiantesDefaultArgs<ExtArgs>>): Prisma__usuariosEstudiantesClient<$Result.GetResult<Prisma.$usuariosEstudiantesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -13554,25 +13554,6 @@ export namespace Prisma {
      * Limit how many reviewsCursos to delete.
      */
     limit?: number
-  }
-
-  /**
-   * reviewsCursos.usuario
-   */
-  export type reviewsCursos$usuarioArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the usuariosEstudiantes
-     */
-    select?: usuariosEstudiantesSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the usuariosEstudiantes
-     */
-    omit?: usuariosEstudiantesOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: usuariosEstudiantesInclude<ExtArgs> | null
-    where?: usuariosEstudiantesWhereInput
   }
 
   /**
@@ -29740,9 +29721,9 @@ export namespace Prisma {
     comentario?: StringNullableFilter<"reviewsCursos"> | string | null
     creadoEn?: DateTimeFilter<"reviewsCursos"> | Date | string
     actualizadoEn?: DateTimeFilter<"reviewsCursos"> | Date | string
-    usuariosEstudiantesId?: StringNullableFilter<"reviewsCursos"> | string | null
+    usuariosEstudiantesId?: StringFilter<"reviewsCursos"> | string
     curso?: XOR<CursosScalarRelationFilter, cursosWhereInput>
-    usuario?: XOR<UsuariosEstudiantesNullableScalarRelationFilter, usuariosEstudiantesWhereInput> | null
+    usuario?: XOR<UsuariosEstudiantesScalarRelationFilter, usuariosEstudiantesWhereInput>
   }
 
   export type reviewsCursosOrderByWithRelationInput = {
@@ -29752,25 +29733,25 @@ export namespace Prisma {
     comentario?: SortOrderInput | SortOrder
     creadoEn?: SortOrder
     actualizadoEn?: SortOrder
-    usuariosEstudiantesId?: SortOrderInput | SortOrder
+    usuariosEstudiantesId?: SortOrder
     curso?: cursosOrderByWithRelationInput
     usuario?: usuariosEstudiantesOrderByWithRelationInput
   }
 
   export type reviewsCursosWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    cursoId?: string
     AND?: reviewsCursosWhereInput | reviewsCursosWhereInput[]
     OR?: reviewsCursosWhereInput[]
     NOT?: reviewsCursosWhereInput | reviewsCursosWhereInput[]
+    cursoId?: StringFilter<"reviewsCursos"> | string
     rating?: IntFilter<"reviewsCursos"> | number
     comentario?: StringNullableFilter<"reviewsCursos"> | string | null
     creadoEn?: DateTimeFilter<"reviewsCursos"> | Date | string
     actualizadoEn?: DateTimeFilter<"reviewsCursos"> | Date | string
-    usuariosEstudiantesId?: StringNullableFilter<"reviewsCursos"> | string | null
+    usuariosEstudiantesId?: StringFilter<"reviewsCursos"> | string
     curso?: XOR<CursosScalarRelationFilter, cursosWhereInput>
-    usuario?: XOR<UsuariosEstudiantesNullableScalarRelationFilter, usuariosEstudiantesWhereInput> | null
-  }, "id" | "cursoId">
+    usuario?: XOR<UsuariosEstudiantesScalarRelationFilter, usuariosEstudiantesWhereInput>
+  }, "id">
 
   export type reviewsCursosOrderByWithAggregationInput = {
     id?: SortOrder
@@ -29779,7 +29760,7 @@ export namespace Prisma {
     comentario?: SortOrderInput | SortOrder
     creadoEn?: SortOrder
     actualizadoEn?: SortOrder
-    usuariosEstudiantesId?: SortOrderInput | SortOrder
+    usuariosEstudiantesId?: SortOrder
     _count?: reviewsCursosCountOrderByAggregateInput
     _avg?: reviewsCursosAvgOrderByAggregateInput
     _max?: reviewsCursosMaxOrderByAggregateInput
@@ -29797,7 +29778,7 @@ export namespace Prisma {
     comentario?: StringNullableWithAggregatesFilter<"reviewsCursos"> | string | null
     creadoEn?: DateTimeWithAggregatesFilter<"reviewsCursos"> | Date | string
     actualizadoEn?: DateTimeWithAggregatesFilter<"reviewsCursos"> | Date | string
-    usuariosEstudiantesId?: StringNullableWithAggregatesFilter<"reviewsCursos"> | string | null
+    usuariosEstudiantesId?: StringWithAggregatesFilter<"reviewsCursos"> | string
   }
 
   export type edicionesCursosWhereInput = {
@@ -31448,7 +31429,7 @@ export namespace Prisma {
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     curso: cursosCreateNestedOneWithoutReviewsInput
-    usuario?: usuariosEstudiantesCreateNestedOneWithoutReviewsInput
+    usuario: usuariosEstudiantesCreateNestedOneWithoutReviewsInput
   }
 
   export type reviewsCursosUncheckedCreateInput = {
@@ -31458,7 +31439,7 @@ export namespace Prisma {
     comentario?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
-    usuariosEstudiantesId?: string | null
+    usuariosEstudiantesId: string
   }
 
   export type reviewsCursosUpdateInput = {
@@ -31468,7 +31449,7 @@ export namespace Prisma {
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     curso?: cursosUpdateOneRequiredWithoutReviewsNestedInput
-    usuario?: usuariosEstudiantesUpdateOneWithoutReviewsNestedInput
+    usuario?: usuariosEstudiantesUpdateOneRequiredWithoutReviewsNestedInput
   }
 
   export type reviewsCursosUncheckedUpdateInput = {
@@ -31478,7 +31459,7 @@ export namespace Prisma {
     comentario?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
-    usuariosEstudiantesId?: NullableStringFieldUpdateOperationsInput | string | null
+    usuariosEstudiantesId?: StringFieldUpdateOperationsInput | string
   }
 
   export type reviewsCursosCreateManyInput = {
@@ -31488,7 +31469,7 @@ export namespace Prisma {
     comentario?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
-    usuariosEstudiantesId?: string | null
+    usuariosEstudiantesId: string
   }
 
   export type reviewsCursosUpdateManyMutationInput = {
@@ -31506,7 +31487,7 @@ export namespace Prisma {
     comentario?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
-    usuariosEstudiantesId?: NullableStringFieldUpdateOperationsInput | string | null
+    usuariosEstudiantesId?: StringFieldUpdateOperationsInput | string
   }
 
   export type edicionesCursosCreateInput = {
@@ -33220,6 +33201,11 @@ export namespace Prisma {
     cursoId?: SortOrder
   }
 
+  export type UsuariosEstudiantesScalarRelationFilter = {
+    is?: usuariosEstudiantesWhereInput
+    isNot?: usuariosEstudiantesWhereInput
+  }
+
   export type reviewsCursosCountOrderByAggregateInput = {
     id?: SortOrder
     cursoId?: SortOrder
@@ -34813,12 +34799,10 @@ export namespace Prisma {
     update?: XOR<XOR<cursosUpdateToOneWithWhereWithoutReviewsInput, cursosUpdateWithoutReviewsInput>, cursosUncheckedUpdateWithoutReviewsInput>
   }
 
-  export type usuariosEstudiantesUpdateOneWithoutReviewsNestedInput = {
+  export type usuariosEstudiantesUpdateOneRequiredWithoutReviewsNestedInput = {
     create?: XOR<usuariosEstudiantesCreateWithoutReviewsInput, usuariosEstudiantesUncheckedCreateWithoutReviewsInput>
     connectOrCreate?: usuariosEstudiantesCreateOrConnectWithoutReviewsInput
     upsert?: usuariosEstudiantesUpsertWithoutReviewsInput
-    disconnect?: usuariosEstudiantesWhereInput | boolean
-    delete?: usuariosEstudiantesWhereInput | boolean
     connect?: usuariosEstudiantesWhereUniqueInput
     update?: XOR<XOR<usuariosEstudiantesUpdateToOneWithWhereWithoutReviewsInput, usuariosEstudiantesUpdateWithoutReviewsInput>, usuariosEstudiantesUncheckedUpdateWithoutReviewsInput>
   }
@@ -36150,7 +36134,7 @@ export namespace Prisma {
     comentario?: StringNullableFilter<"reviewsCursos"> | string | null
     creadoEn?: DateTimeFilter<"reviewsCursos"> | Date | string
     actualizadoEn?: DateTimeFilter<"reviewsCursos"> | Date | string
-    usuariosEstudiantesId?: StringNullableFilter<"reviewsCursos"> | string | null
+    usuariosEstudiantesId?: StringFilter<"reviewsCursos"> | string
   }
 
   export type comprasUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -36916,7 +36900,7 @@ export namespace Prisma {
     comentario?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
-    usuario?: usuariosEstudiantesCreateNestedOneWithoutReviewsInput
+    usuario: usuariosEstudiantesCreateNestedOneWithoutReviewsInput
   }
 
   export type reviewsCursosUncheckedCreateWithoutCursoInput = {
@@ -36925,7 +36909,7 @@ export namespace Prisma {
     comentario?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
-    usuariosEstudiantesId?: string | null
+    usuariosEstudiantesId: string
   }
 
   export type reviewsCursosCreateOrConnectWithoutCursoInput = {
@@ -39978,7 +39962,7 @@ export namespace Prisma {
     comentario?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
-    usuariosEstudiantesId?: string | null
+    usuariosEstudiantesId: string
   }
 
   export type edicionesCursosUpdateWithoutCursoInput = {
@@ -40125,7 +40109,7 @@ export namespace Prisma {
     comentario?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
-    usuario?: usuariosEstudiantesUpdateOneWithoutReviewsNestedInput
+    usuario?: usuariosEstudiantesUpdateOneRequiredWithoutReviewsNestedInput
   }
 
   export type reviewsCursosUncheckedUpdateWithoutCursoInput = {
@@ -40134,7 +40118,7 @@ export namespace Prisma {
     comentario?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
-    usuariosEstudiantesId?: NullableStringFieldUpdateOperationsInput | string | null
+    usuariosEstudiantesId?: StringFieldUpdateOperationsInput | string
   }
 
   export type reviewsCursosUncheckedUpdateManyWithoutCursoInput = {
@@ -40143,7 +40127,7 @@ export namespace Prisma {
     comentario?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
-    usuariosEstudiantesId?: NullableStringFieldUpdateOperationsInput | string | null
+    usuariosEstudiantesId?: StringFieldUpdateOperationsInput | string
   }
 
   export type comprasCreateManyEdicionInput = {

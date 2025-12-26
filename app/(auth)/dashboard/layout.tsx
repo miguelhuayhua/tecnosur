@@ -1,12 +1,18 @@
 import AdminPanelLayout from "@/components/dashboard/admin-panel-layout";
 
-export default function DemoLayout({
-  children
+// app/dashboard/layout.tsx
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+export default function DashboardLayout({
+  children, modal
 }: {
   children: React.ReactNode;
-}) {
-  return (
+  modal: React.ReactNode;
 
-    <AdminPanelLayout>{children}</AdminPanelLayout>
-  )
+}) {
+  return <AdminPanelLayout>{children}
+
+    {modal}
+  </AdminPanelLayout>;
 }

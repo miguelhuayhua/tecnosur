@@ -52,7 +52,6 @@ export function CursosGrid({ inscripciones }: { inscripciones: Inscripcion[] }) 
       {/* Grid de cursos */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {filteredInscripciones.map((inscripcion) => {
-          const totalClases = inscripcion.edicion.clases?.length || 0
           const curso = inscripcion.edicion.curso;
           const edicion = inscripcion.edicion;
           return (
@@ -114,7 +113,7 @@ export function CursosGrid({ inscripciones }: { inscripciones: Inscripcion[] }) 
                   </div>
                   <Status status={curso.enVivo ? 'online' : 'offline'}>
                     <StatusIndicator />
-                    {curso.enVivo ? "En vivo" : "Grabada"}
+                    {curso.enVivo ? "En vivo" : "Grabado"}
                   </Status>
                 </div>
 
@@ -127,7 +126,7 @@ export function CursosGrid({ inscripciones }: { inscripciones: Inscripcion[] }) 
                       <ArrowRight />
                     </Link>
                   </Button>
-                  <Button asChild className="bg-yellow-500" variant={'default'} size="sm">
+                  <Button asChild className="bg-yellow-500 border border-yellow-500 text-white" variant={'ghost'} size="sm">
                     <Link href={`/dashboard/cursos/${edicion.id}/calificar`}>
                       <Star />
                     </Link>

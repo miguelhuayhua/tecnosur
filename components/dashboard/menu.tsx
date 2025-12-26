@@ -79,18 +79,7 @@ export function Menu({ isOpen }: MenuProps) {
                   {groupLabel}
                 </p>
               ) : (!isOpen && groupLabel) ? (
-                <TooltipProvider>
-                  <Tooltip delayDuration={100}>
-                    <TooltipTrigger className="w-full">
-                      <div className="w-full flex justify-center items-center py-2">
-                        <Ellipsis className="h-5 w-5 text-muted-foreground" />
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent side="right">
-                      <p>{groupLabel}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                null
               ) : (
                 <div className="py-2" />
               )}
@@ -112,7 +101,7 @@ export function Menu({ isOpen }: MenuProps) {
                               className={cn(
                                 "w-full justify-start  h-10 mb-1 transition-colors",
                                 isActive
-                                  ? "bg-primary/10 border-r-2 border-r-primary "
+                                  ? "bg-primary/5 border-r-2 border-r-primary "
                                   : "hover:bg-accent/50 text-muted-foreground"
                               )}
                               asChild

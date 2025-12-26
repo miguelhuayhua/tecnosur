@@ -28,7 +28,12 @@ async function getCalendarioEstudiante(correo: string) {
             include: {
                 inscripciones: {
                     where: {
-                        estado: true
+                        estado: true,
+                        edicion: {
+                            curso: {
+                                enVivo: true
+                            }
+                        }
                     },
                     include: {
                         edicion: {

@@ -26,6 +26,7 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { estudiantes, reviewsCursos, usuariosEstudiantes } from '@/prisma/generated';
 import ReviewComponent from './review';
+import { ButtonGroup } from '@/components/ui/button-group';
 
 interface Review extends reviewsCursos {
     usuario: usuariosEstudiantes & { estudiante: estudiantes }
@@ -57,7 +58,7 @@ export function OpinionesCurso({ curso, edicionPrincipal }: OpinionesCursoProps)
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const router = useRouter();
-    
+
     // Verificar si el usuario ya opinó
     const userAlreadyReviewed = curso.reviews.some(
         review => review.usuario.id === session?.user?.id
@@ -114,7 +115,7 @@ export function OpinionesCurso({ curso, edicionPrincipal }: OpinionesCursoProps)
             });
 
             const data = await response.json();
-            
+
             if (!response.ok || !data.success) {
                 throw new Error(data.error || data.message || 'Error al enviar');
             }
@@ -129,7 +130,7 @@ export function OpinionesCurso({ curso, edicionPrincipal }: OpinionesCursoProps)
             setSelectedRating(5);
             setShowOpinion(false);
             setShowConfirmDialog(false);
-            
+
             // Recargar la página para mostrar la nueva opinión
             setTimeout(() => {
                 router.refresh();
@@ -137,7 +138,7 @@ export function OpinionesCurso({ curso, edicionPrincipal }: OpinionesCursoProps)
 
         } catch (error: any) {
             console.error('Error:', error);
-            
+
             if (error.message.includes('Ya opinaste')) {
                 toast.error('Error', {
                     description: 'Ya has opinado este curso. Solo puedes opinar una vez.',
@@ -174,7 +175,7 @@ export function OpinionesCurso({ curso, edicionPrincipal }: OpinionesCursoProps)
                             {showOpinion ? 'Cancelar' : 'Dejar mi opinión'}
                         </Button>
                     )}
-                    
+
                     {session && userAlreadyReviewed && (
                         <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                             <MessageCircleCode className="h-3.5 w-3.5 mr-1.5" />
@@ -234,7 +235,7 @@ export function OpinionesCurso({ curso, edicionPrincipal }: OpinionesCursoProps)
                                 </div>
                             </InputGroupAddon>
                         </InputGroup>
-                        
+
                         {/* Mensaje informativo */}
                         <div className="text-sm text-muted-foreground bg-blue-50 p-3 rounded-md border border-blue-100">
                             <p className="font-medium text-blue-800 mb-1">Importante:</p>
@@ -272,9 +273,9 @@ export function OpinionesCurso({ curso, edicionPrincipal }: OpinionesCursoProps)
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
                     {curso.reviews.length > 0 ? (
                         curso.reviews.map((review) => (
-                            <ReviewComponent 
-                                key={review.id} 
-                                review={review} 
+                            <ReviewComponent
+                                key={review.id}
+                                review={review}
                                 userId={session ? session.user.id : ''}
                             />
                         ))
@@ -286,45 +287,47 @@ export function OpinionesCurso({ curso, edicionPrincipal }: OpinionesCursoProps)
                 </div>
             </section>
 
-            {/* Diálogo de confirmación */}
             <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
                 <AlertDialogContent>
+
                     <AlertDialogHeader>
-                        <AlertDialogTitle>¿Confirmar opinión?</AlertDialogTitle>
+                        <AlertDialogTitle className="text-center">¿Confirmar opinión?</AlertDialogTitle>
                         <AlertDialogDescription className="space-y-3">
-                            <p>Estás a punto de publicar tu opinión sobre este curso.</p>
-                            <div className="bg-yellow-50 p-3 rounded-md border border-yellow-200">
-                                <p className="font-medium text-yellow-800 mb-1">⚠️ Importante:</p>
-                                <ul className="list-disc ml-4 text-sm text-yellow-700 space-y-1">
-                                    <li>Solo puedes opinar <strong>una vez</strong> por curso</li>
-                                    <li><strong>No podrás editar ni eliminar</strong> tu opinión después de publicarla</li>
-                                    <li>Tu calificación: <strong>{selectedRating} estrellas</strong></li>
-                                </ul>
+                            <ul className="list-disc  text-muted-foreground ml-4 text-sm space-y-1">
+                                <li>Solo puedes opinar <strong>una vez</strong> por curso</li>
+                                <li><strong>No podrás editar ni eliminar</strong> tu opinión después de publicarla</li>
+
+                            </ul>
+                            <div className="flex justify-center">
+                                {Array.from({ length: selectedRating }).map((i, index) => (<Star className="size-5 fill-yellow-500 text-yellow-500" key={index} />))}
                             </div>
-                            <p className="text-sm pt-2">¿Estás seguro de que quieres continuar?</p>
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel 
-                            disabled={isSubmitting}
-                            onClick={() => setShowConfirmDialog(false)}
-                        >
-                            Cancelar
-                        </AlertDialogCancel>
-                        <AlertDialogAction 
-                            onClick={confirmSubmit}
-                            disabled={isSubmitting}
-                            className="bg-primary hover:bg-primary/90"
-                        >
-                            {isSubmitting ? (
-                                <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Publicando...
-                                </>
-                            ) : (
-                                'Sí, publicar mi opinión'
-                            )}
-                        </AlertDialogAction>
+                        <ButtonGroup className="w-full">
+                            <AlertDialogCancel
+                                disabled={isSubmitting}
+                                onClick={() => setShowConfirmDialog(false)}
+                                className="flex-1"
+                            >
+                                Cancelar
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                                onClick={confirmSubmit}
+                                disabled={isSubmitting}
+                                className="flex-1"
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <Loader2 className=" animate-spin" />
+                                        Publicando...
+                                    </>
+                                ) : (
+                                    'Sí, publicar mi opinión'
+                                )}
+                            </AlertDialogAction>
+
+                        </ButtonGroup>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>

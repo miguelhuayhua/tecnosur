@@ -1,7 +1,6 @@
 "use client";
 import { Menu } from "@/components/dashboard/menu";
 import { SidebarToggle } from "@/components/dashboard/sidebar-toggle";
-import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/hooks/use-sidebar";
 import { useStore } from "@/hooks/use-store";
 import { cn } from "@/lib/utils";

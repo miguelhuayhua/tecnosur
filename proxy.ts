@@ -11,6 +11,8 @@ export default withAuth(
         if (!token.registrado && !pathname.startsWith('/formulario')) {
             return NextResponse.redirect(new URL('/formulario', request.url));
         }
+
+        return NextResponse.next();
     }
 )
 export const config = {

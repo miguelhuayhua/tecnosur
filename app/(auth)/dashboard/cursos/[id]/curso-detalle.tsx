@@ -17,7 +17,8 @@ import {
   Eye,
   FileBadge,
   Calendar1,
-  ExternalLink
+  ExternalLink,
+  Star
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
@@ -28,6 +29,7 @@ import { ButtonGroup } from "@/components/ui/button-group"
 import { FaWhatsapp } from "react-icons/fa"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { YouTubePlayer } from "@/components/ui/youtube-video-player"
+import { Status, StatusIndicator } from "@/components/ui/shadcn-io/status"
 
 interface EdicionCurso extends edicionesCursos {
 
@@ -77,7 +79,7 @@ export default function CursoEstudianteDetalle({ edicion }: { edicion: EdicionCu
       <div className="mx-auto max-w-6xl space-y-6">
         {/* Header del curso */}
         <div >
-          <div className="flex flex-col md:flex-row gap-8">
+          <div className="flex flex-col items-center md:flex-row gap-8">
             {/* Imagen del curso */}
             {edicion.curso.urlMiniatura && (
               <div className="relative w-full md:w-96 h-56 rounded-lg overflow-hidden">
@@ -108,21 +110,30 @@ export default function CursoEstudianteDetalle({ edicion }: { edicion: EdicionCu
 
               {/* Fechas y horarios */}
               <div className="space-y-3 text-xs text-muted-foreground">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    <span> Del {formatFecha(edicion.fechaInicio)} al {formatFecha(edicion.fechaFin)}</span>
-                  </div>
+                {
+                  edicion.curso.enVivo &&
+                  <>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+                        <span> Del {formatFecha(edicion.fechaInicio)} al {formatFecha(edicion.fechaFin)}</span>
+                      </div>
 
-                </div>
-                <div className="flex items-center gap-2">
-                  <Calendar1 className="h-4 w-4" />
-                  <span>Clases los {getDiasClase()}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  <span>{format(edicion.fechaInicio, 'HH:mm')} - {format(edicion.fechaFin, 'HH:mm')}</span>
-                </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Calendar1 className="h-4 w-4" />
+                      <span>Clases los {getDiasClase()}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4" />
+                      <span>{format(edicion.fechaInicio, 'HH:mm')} - {format(edicion.fechaFin, 'HH:mm')}</span>
+                    </div>
+                  </>
+                }
+                <Status status={edicion.curso.enVivo ? "online" : "offline"}>
+                  <StatusIndicator />
+                  {edicion.curso.enVivo ? "Curso en vivo" : "Curso grabado"}
+                </Status>
               </div>
             </div>
           </div>
@@ -148,6 +159,13 @@ export default function CursoEstudianteDetalle({ edicion }: { edicion: EdicionCu
             <Link href={`/dashboard/cursos/${id}/calificaciones`}>
               <Award />
               Ver calificaciones
+            </Link>
+          </Button>
+
+          <Button variant="outline" asChild >
+            <Link href={`/dashboard/cursos/${id}/calificar`}>
+              <Star />
+              Calificar
             </Link>
           </Button>
 

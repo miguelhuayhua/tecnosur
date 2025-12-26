@@ -969,7 +969,7 @@ function StepperTrigger(props: ButtonProps) {
       {...triggerProps}
       ref={composedRef}
       className={cn(
-        "inline-flex items-center justify-center gap-3 rounded-md text-left outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "inline-flex items-center justify-center gap-1 rounded-md text-left flex-col outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
         "not-has-data-[slot=description]:rounded-full not-has-data-[slot=title]:rounded-full",
         className,
       )}
@@ -1103,7 +1103,7 @@ function StepperTitle(props: StepperTitleProps) {
       dir={context.dir}
       {...titleProps}
       ref={ref}
-      className={cn("font-medium text-sm", className)}
+      className={cn("font-semibold text-center text-sm", className)}
     />
   );
 }
@@ -1129,7 +1129,7 @@ function StepperDescription(props: StepperDescriptionProps) {
       dir={context.dir}
       {...descriptionProps}
       ref={ref}
-      className={cn("text-muted-foreground font-medium text-sm", className)}
+      className={cn("text-muted-foreground  text-xs text-center", className)}
     />
   );
 }

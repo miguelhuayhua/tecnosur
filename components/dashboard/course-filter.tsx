@@ -22,11 +22,11 @@ export function CourseFilter({ cursos }: CourseFilterProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Toggle variant="outline" className="cursor-pointer w-full">
-          <Filter className="h-4 w-4" />
-          <span className="ml-2">Cursos</span>
+          <Filter />
+          <span >Cursos</span>
         </Toggle>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[200px] max-h-[300px] overflow-y-auto">
+      <DropdownMenuContent align="end" className="w-xs max-h-[300px] overflow-y-auto">
         {cursos.length > 0 ? cursos.map((curso, index) => (
           <DropdownMenuItem
             key={index}
@@ -48,7 +48,7 @@ export function CourseFilter({ cursos }: CourseFilterProps) {
           </DropdownMenuItem>
         )) : <DropdownMenuItem disabled>
           <span>
-            No tienes cursos
+            No tienes cursos en vivo
           </span>
         </DropdownMenuItem>}
         <Separator className="my-2" />

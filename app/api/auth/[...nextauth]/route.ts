@@ -110,6 +110,8 @@ const handler = NextAuth({
 
             // ✅ Cuando se actualiza la sesión manualmente
             if (trigger === "update" && session) {
+                console.log('actualizando')
+                console.log('sesion', session)
                 token.name = session.name;
                 token.email = session.email;
                 // Nota: user.registrado no está disponible en update

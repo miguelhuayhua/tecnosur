@@ -15,8 +15,28 @@ async function getInformacion(correo: string) {
 
     return estudiante;
 }
+async function getEdicion(id: string) {
+    const edicion = await prisma.edicionesCursos.findFirst({
+        where: {
+            id
+        },
+        select: {
+            codigo: true,
+            curso: {
+                select: {
+                    titulo: true
+                }
+            }
+        }
+    });
 
-export default async function TodosLosExamenesPage() {
+    return edicion;
+}
+interface Props {
+    searchParams: Promise<{ callbackUrl?: string, edicionId?: string }>
+}
+export default async function FormularioPage({ searchParams }: Props) {
+    const sParams = await searchParams;
     const session = await getServerSession();
 
     if (!session) {
@@ -24,9 +44,10 @@ export default async function TodosLosExamenesPage() {
     }
 
     const estudiante = await getInformacion(session.user.email!)
-    if (!estudiante) return notFound();
-
+    if (!estudiante || !estudiante.usuario) return notFound();
+    const edicionData = sParams.edicionId ? await getEdicion(sParams.edicionId) : undefined;
+    const edicion = edicionData ?? undefined;
     return (
-        <Formulario estudiante={estudiante as any} />
+        <Formulario estudiante={estudiante as typeof estudiante & { usuario: { correo: string; usuario: string } }} edicion={edicion} />
     );
 }

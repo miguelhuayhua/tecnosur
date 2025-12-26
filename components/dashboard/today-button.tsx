@@ -21,7 +21,7 @@ export function TodayButton() {
 			whileTap="tap"
 		>
 			<motion.span
-				className="w-full bg-primary py-1 rounded-t text-xs font-semibold text-primary-foreground"
+				className="w-full bg-primary py-1 rounded-t-md text-xs font-semibold text-primary-foreground"
 				initial={{ y: -10, opacity: 0 }}
 				animate={{ y: 0, opacity: 1 }}
 			>

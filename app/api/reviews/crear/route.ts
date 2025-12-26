@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const { cursoId, rating, comentario } = await req.json()
-
+console.log(token)
     // Validar campos requeridos
     if (!cursoId || !rating || !comentario) {
       return Response.json({
@@ -32,12 +32,16 @@ export async function POST(req: NextRequest) {
       }, { status: 400 })
     }
 
-    const usuarioId = token.id as string
-
+    const correo = token.email;
+    if (!correo) {
+      return Response.json({
+        error: "Debes iniciar sesión primero"
+      }, { status: 400 })
+    }
     // Verificar que el usuario ha comprado el curso
     const compraExistente = await prisma.compras.findFirst({
       where: {
-        usuariosEstudiantesId: usuarioId,
+        usuario: { correo },
         edicion: {
           cursoId: cursoId
         }
@@ -54,7 +58,9 @@ export async function POST(req: NextRequest) {
     const reviewExistente = await prisma.reviewsCursos.findFirst({
       where: {
         cursoId: cursoId,
-        usuariosEstudiantesId: usuarioId
+        usuario: {
+          correo
+        }
       }
     })
 
@@ -65,14 +71,17 @@ export async function POST(req: NextRequest) {
       }, { status: 400 })
     }
 
-    // Crear review
-    const nuevaReview = await prisma.reviewsCursos.create({
+    await prisma.reviewsCursos.create({
       data: {
-        cursoId,
         rating,
         comentario,
-        usuariosEstudiantesId: usuarioId
-      }
+        curso: {
+          connect: { id: cursoId }
+        },
+        usuario: {
+          connect: { correo }
+        }
+      },
     })
 
     return Response.json({

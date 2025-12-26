@@ -101,7 +101,7 @@ export const CursoGeneral: React.FC<{ curso: Curso } & React.HtmlHTMLAttributes<
                 </Badge>
               </div>
             </CardContent>
-            <CardFooter className='border-t-0'>
+            <CardFooter className='border-t-0 px-4'>
               {/* Precios - Solo mostrar si existen */}
               {tienePrecios && precioDefault ? (
                 <div className="w-full ">

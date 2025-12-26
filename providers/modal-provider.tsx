@@ -12,6 +12,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Loader2, CheckCircle, XCircle, AlertTriangle, Info } from 'lucide-react';
+import { Loader } from '@/components/ui/loader';
 
 // Tipos para los diferentes estados y tipos de mensaje
 type MessageType = 'success' | 'error' | 'warning' | 'info';
@@ -27,7 +28,7 @@ interface ModalParams {
         no: string;
     };
     hasBack?: boolean;
-    callback?: Function;
+    callback: (data: { success: boolean, message: string, data: any }) => void,
     messageType?: MessageType;
     confirmButtonVariant?: ButtonVariant;
     showIcon?: boolean;
@@ -69,7 +70,7 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
             titulo: '',
             ButtonText: { yes: 'Aceptar', no: 'Cancelar' },
             hasBack: false,
-            callback: () => { },
+            callback: (data: { success: boolean, message: string, data: any }) => { },
             messageType: 'info',
             confirmButtonVariant: 'default',
             showIcon: true
@@ -91,7 +92,7 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
 
     const handleConfirm = async () => {
         const { data, url, callback, messageType = 'info' } = action.params;
-
+        setIsLoading(true);
         // Usar sonner.promise para mostrar carga y resultado
         const promise = toast.promise(
             async () => {
@@ -107,20 +108,19 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
 
                 if (!response.ok) {
                     // Lanzar error con mensaje específico
-                    const errorMessage = responseData.message || 
-                                       responseData.error || 
-                                       `Error ${response.status}: ${response.statusText}`;
+                    const errorMessage = responseData.message ||
+                        responseData.error ||
+                        `Error ${response.status}: ${response.statusText}`;
                     throw new Error(errorMessage);
                 }
 
                 return responseData;
             },
             {
-                loading: 'Procesando solicitud...',
                 success: (responseData) => {
                     // Cerrar el modal después del éxito
                     setOpen(false);
-                    
+
                     // Ejecutar callback si existe
                     if (callback) {
                         callback(responseData);
@@ -139,9 +139,12 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
                 error: (error) => {
                     // Cerrar el modal también en caso de error
                     setOpen(false);
-                    
+
                     // Retornar mensaje de error
                     return error.message || "Ha ocurrido un error inesperado";
+                },
+                finally: () => {
+                    setIsLoading(false)
                 }
             }
         );
@@ -170,6 +173,15 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
 
     return (
         <ModalContext.Provider value={{ openModal }}>
+            {
+                isLoading && (
+                    <div className='fixed z-100 bg-background/50 backdrop-blur-md flex items-center justify-center  h-screen w-screen'>
+                        <Loader variant="dual-ring">
+                            <span className="text-foreground font-semibold">Procesando solicitud...</span>
+                        </Loader>
+                    </div>
+                )
+            }
             {children}
 
             <AlertDialog open={open} onOpenChange={setOpen}>
@@ -177,9 +189,9 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
                     <AlertDialogHeader>
                         <div className="flex items-center justify-center gap-3">
                             {action.params.showIcon && (
-                                <MessageIcon 
-                                    type={action.params.messageType!} 
-                                    customIcon={action.params.customIcon} 
+                                <MessageIcon
+                                    type={action.params.messageType!}
+                                    customIcon={action.params.customIcon}
                                 />
                             )}
                             <AlertDialogTitle className="text-lg text-center font-semibold">
@@ -189,8 +201,8 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
 
                         <AlertDialogDescription className="text-center pt-3 pb-2">
                             <div className={`space-y-2 ${typeof action.params.content === 'string'
-                                    ? ' leading-relaxed'
-                                    : ''
+                                ? ' leading-relaxed'
+                                : ''
                                 }`}>
                                 {action.params.content}
                             </div>
@@ -214,18 +226,6 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
-
-            {/* Toaster para notificaciones */}
-            <Toaster
-                position="top-right"
-                toastOptions={{
-                    style: {
-                        background: 'var(--background)',
-                        color: 'var(--foreground)',
-                        border: '1px solid var(--border)',
-                    },
-                }}
-            />
         </ModalContext.Provider>
     );
 };

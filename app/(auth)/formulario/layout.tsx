@@ -7,8 +7,8 @@ export default function FormularioLayout({
     children: React.ReactNode;
 }) {
     return (
-        <ModalProvider>
-            {children}
-        </ModalProvider>
+            <ModalProvider>
+                {children}
+            </ModalProvider>
     )
 }

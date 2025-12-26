@@ -182,17 +182,16 @@ model categoriasCursos {
 
 // ============ REVIEWS DE CURSOS ============
 model reviewsCursos {
-  id                    String               @id @default(uuid())
+  id                    String              @id @default(uuid())
   cursoId               String
   rating                Int
   comentario            String?
-  creadoEn              DateTime             @default(now())
-  actualizadoEn         DateTime             @updatedAt
-  curso                 cursos               @relation(fields: [cursoId], references: [id], onDelete: Cascade)
-  usuario               usuariosEstudiantes? @relation(fields: [usuariosEstudiantesId], references: [id])
-  usuariosEstudiantesId String?
+  creadoEn              DateTime            @default(now())
+  actualizadoEn         DateTime            @updatedAt
+  curso                 cursos              @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+  usuario               usuariosEstudiantes @relation(fields: [usuariosEstudiantesId], references: [id])
+  usuariosEstudiantesId String
 
-  @@unique([cursoId])
   @@index([cursoId])
   @@index([rating])
   @@index([creadoEn])
