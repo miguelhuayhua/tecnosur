@@ -72,7 +72,7 @@ export function EditarPerfilForm({ usuario }: EditarPerfilFormProps) {
             url: `/api/usuarios/actualizar-perfil`,
             data: {
                 ...updateData,
-                usuarioId: usuario.id_,
+                usuarioId: usuario.id,
             },
             callback: () => {
                 setOpen(false)

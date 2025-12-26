@@ -17,6 +17,7 @@ import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '
 import { useSession } from 'next-auth/react';
 import { UserNav } from '@/components/dashboard/user-nav';
 import { useTheme } from 'next-themes';
+import InputSearch from './input-search';
 
 
 // Types
@@ -301,15 +302,7 @@ export const Navbar = React.forwardRef<HTMLElement, Navbar02Props>(
                 <Link href={'/'}>
                   <span className="mr-0 lg:mr-8 font-bold text-xl">TecSur</span>
                 </Link>
-                <InputGroup className='rounded-full hidden lg:flex'>
-                  <InputGroupInput placeholder='¿Qué estás buscando?' className='w-xs' />
-                  <InputGroupAddon align={'inline-end'}>
-                    <InputGroupButton >
-                      <Search />
-                    </InputGroupButton>
-                  </InputGroupAddon>
-                </InputGroup>
-
+                <InputSearch />
                 {/* Navigation menu */}
 
               </div>

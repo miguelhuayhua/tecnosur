@@ -187,7 +187,7 @@ export function CuentaTabs({ data }: CuentaTabsProps) {
                             {data.compras.length > 0 ? (
                                 <div className="space-y-4">
                                     {data.compras.map((compra) => (
-                                        <div key={compra.id_} className="flex items-center justify-between p-4 border rounded-lg">
+                                        <div key={compra.id} className="flex items-center justify-between p-4 border rounded-lg">
                                             <div className="flex-1">
                                                 <h4 className="font-semibold">{compra.edicion.curso.titulo}</h4>
                                                 <p className="text-sm text-muted-foreground">
@@ -233,7 +233,7 @@ export function CuentaTabs({ data }: CuentaTabsProps) {
                                 {data.inscripcionesActivas.length > 0 ? (
                                     <div className="space-y-3">
                                         {data.inscripcionesActivas.map((inscripcion) => (
-                                            <div key={inscripcion.id_} className="p-3 border rounded-lg">
+                                            <div key={inscripcion.id} className="p-3 border rounded-lg">
                                                 <h4 className="font-semibold">{inscripcion.edicion.curso.titulo}</h4>
                                                 <p className="text-sm text-muted-foreground line-clamp-2">
                                                     {inscripcion.edicion.curso.descripcion}
@@ -275,7 +275,7 @@ export function CuentaTabs({ data }: CuentaTabsProps) {
                                 {data.certificadosObtenidos.length > 0 ? (
                                     <div className="space-y-3">
                                         {data.certificadosObtenidos.map((certificado) => (
-                                            <div key={certificado.id_} className="p-3 border rounded-lg">
+                                            <div key={certificado.id} className="p-3 border rounded-lg">
                                                 <h4 className="font-semibold">{certificado.edicion.curso.titulo}</h4>
                                                 <p className="text-sm text-muted-foreground">
                                                     Obtenido el {formatFecha(certificado.fechaEmision)}
@@ -285,7 +285,7 @@ export function CuentaTabs({ data }: CuentaTabsProps) {
                                                         {certificado.codigoUnico}
                                                     </code>
                                                     <Button asChild size="sm" variant="ghost">
-                                                        <Link href={`/dashboard/certificados/${certificado.id_}`}>
+                                                        <Link href={`/dashboard/certificados/${certificado.id}`}>
                                                             Ver
                                                         </Link>
                                                     </Button>
@@ -356,7 +356,7 @@ export function CuentaTabs({ data }: CuentaTabsProps) {
                                 <div className="p-4 border rounded-lg bg-muted/50">
                                     <h4 className="font-semibold mb-2">Datos de Registro</h4>
                                     <div className="text-sm space-y-1">
-                                        <div><strong>ID Usuario:</strong> <code className="text-xs">{data.usuario.id_}</code></div>
+                                        <div><strong>ID Usuario:</strong> <code className="text-xs">{data.usuario.id}</code></div>
                                         <div><strong>Fecha de Registro:</strong> {formatFecha(data.usuario.creadoEn)}</div>
                                         <div><strong>Última Actualización:</strong> {formatFecha(data.usuario.actualizadoEn)}</div>
                                     </div>

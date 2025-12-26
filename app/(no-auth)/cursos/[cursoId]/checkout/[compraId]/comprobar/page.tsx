@@ -22,7 +22,7 @@ export default async function CompletarRegistroPage({ params }: PageProps) {
 
     // Obtener datos de la compra y usuario
     const compra = await prisma.compras.findUnique({
-        where: { id_: compraId },
+        where: { id: compraId },
         include: {
             usuario: {
                 select: {

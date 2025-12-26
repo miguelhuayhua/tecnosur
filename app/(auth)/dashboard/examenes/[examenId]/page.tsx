@@ -17,7 +17,7 @@ async function getExamenDetalle(examenId: string, correo: string) {
     try {
         const examen = await prisma.examenes.findFirst({
             where: {
-                id_: examenId,
+                id: examenId,
                 edicion: {
                     inscripciones: {
                         some: {
