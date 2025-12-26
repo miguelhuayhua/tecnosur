@@ -16,61 +16,44 @@ import { BookOpen, Award, Calendar, FileText, ArrowRight, Users, BarChart3 } fro
 import ListarCursos from "../list";
 
 async function getDashboardData(correo: string) {
-    try {
-        const [inscripciones, certificados, examenes] = await Promise.all([
-            // Cursos inscritos activos
-            prisma.inscripciones.count({
-                where: {
-                    estudiante: {
-                        usuario: { correo }
-                    },
-                    estado: true
-                }
-            }),
+    const [inscripciones, examenes] = await Promise.all([
+        // Cursos inscritos activos
+        prisma.inscripciones.findMany({
+            where: {
+                estudiante: {
+                    usuario: { correo }
+                },
+                estado: true
+            }
+        }),
 
-            // Certificados obtenidos
-            prisma.certificados.count({
-                where: {
-                    estudiante: {
-                        usuario: { correo }
-                    }
-                }
-            }),
 
-            // Exámenes próximos (en los próximos 7 días)
-            prisma.examenes.count({
-                where: {
-                    edicion: {
-                        inscripciones: {
-                            some: {
-                                estudiante: {
-                                    usuario: { correo }
-                                },
-                                estado: true
-                            }
+        // Exámenes próximos (en los próximos 7 días)
+        prisma.examenes.count({
+            where: {
+                edicion: {
+                    inscripciones: {
+                        some: {
+                            estudiante: {
+                                usuario: { correo }
+                            },
+                            estado: true
                         }
-                    },
-                    fechaDisponible: {
-                        gte: new Date(),
-                        lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 días
                     }
+                },
+                fechaDisponible: {
+                    gte: new Date(),
+                    lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 días
                 }
-            })
-        ]);
+            }
+        })
+    ]);
 
-        return {
-            cursosInscritos: inscripciones,
-            certificadosObtenidos: certificados,
-            examenesProximos: examenes
-        };
-    } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-        return {
-            cursosInscritos: 0,
-            certificadosObtenidos: 0,
-            examenesProximos: 0
-        };
-    }
+    return {
+        cursosInscritos: inscripciones,
+        examenesProximos: examenes
+    };
+
 }
 
 export default async function DashboardPage() {
@@ -106,9 +89,9 @@ export default async function DashboardPage() {
                 <p className="text-muted-foreground">
                     Ve nuestros cursos más recientes.
                 </p>
-                <ListarCursos />
+                <ListarCursos inscripciones={data?.cursosInscritos as any} />
             </div>
-            <div className="space-y-4 -mt-14">
+            <div className="space-y-4 mt-10">
                 {/* Estadísticas rápidas */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <Card className="pb-4">
@@ -117,25 +100,14 @@ export default async function DashboardPage() {
                             <BookOpen className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{data.cursosInscritos}</div>
+                            <div className="text-2xl font-bold">{data.cursosInscritos.length}</div>
                             <p className="text-xs text-muted-foreground">
                                 Cursos activos
                             </p>
                         </CardContent>
                     </Card>
 
-                    <Card className="pb-4">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Certificados</CardTitle>
-                            <Award className="h-4 w-4 text-muted-foreground" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold">{data.certificadosObtenidos}</div>
-                            <p className="text-xs text-muted-foreground">
-                                Certificados obtenidos
-                            </p>
-                        </CardContent>
-                    </Card>
+
 
                     <Card className="pb-4">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -172,24 +144,6 @@ export default async function DashboardPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="pb-4">
-                        <CardContent>
-                            <div className="flex items-center gap-4">
-                                <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900">
-                                    <Award className="h-6 w-6 text-green-600 dark:text-green-400" />
-                                </div>
-                                <div className="flex-1">
-                                    <h3 className="font-semibold">Certificados</h3>
-                                    <p className="text-sm text-muted-foreground">Ver mis certificados</p>
-                                </div>
-                                <Button asChild variant="ghost" size="icon">
-                                    <Link href="/dashboard/certificados">
-                                        <ArrowRight className="h-4 w-4" />
-                                    </Link>
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
 
                     <Card className="pb-4">
                         <CardContent>

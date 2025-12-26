@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "@/lib/prisma";
 import { TipoGenero } from "@/prisma/generated";
+
 const handler = NextAuth({
     providers: [
         GoogleProvider({
@@ -16,7 +17,6 @@ const handler = NextAuth({
                     response_type: "code"
                 }
             },
-
         }),
         CredentialsProvider({
             name: 'credenciales',
@@ -25,15 +25,14 @@ const handler = NextAuth({
                 password: { label: "Contraseña", type: "password", placeholder: "" },
             },
             async authorize(credentials) {
-
                 try {
                     const { usuario, password } = credentials as { usuario: string, password: string };
 
-                    // Ir directo a la query sin test
                     const data = await prisma.usuariosEstudiantes.findFirst({
                         where: {
                             OR: [
-                                { nombre: usuario }, { correo: usuario }
+                                { nombre: usuario }, 
+                                { correo: usuario }
                             ]
                         }
                     });
@@ -43,7 +42,8 @@ const handler = NextAuth({
                             email: data.correo,
                             name: data.usuario,
                             id: data.id,
-                            image: ""
+                            image: data.avatar || "",
+                            registrado: data.registrado
                         }
                     }
                     else {
@@ -58,10 +58,10 @@ const handler = NextAuth({
     ],
 
     callbacks: {
-        async signIn({ account, profile }) {
+        async signIn({ account, profile, user }) {
             if (account?.provider === "google") {
                 // Verificar si el usuario ya existe en tu base de datos
-                const existingUser = await prisma.usuariosEstudiantes.findFirst({
+                let existingUser = await prisma.usuariosEstudiantes.findFirst({
                     where: {
                         correo: profile?.email!,
                     },
@@ -69,13 +69,11 @@ const handler = NextAuth({
 
                 // Si no existe, crearlo
                 if (!existingUser) {
-                    await prisma.usuariosEstudiantes.create({
+                    existingUser = await prisma.usuariosEstudiantes.create({
                         data: {
                             correo: profile?.email!,
                             usuario: profile?.email?.split('@')[0] || "Usuario",
-                            // Para Google users, puedes generar una contraseña aleatoria o usar null
                             contrasena: await bcrypt.hash(Math.random().toString(36), 10),
-                            // Guardar la referencia al proveedor OAuth
                             avatar: profile?.image,
                             estudiante: {
                                 create: {
@@ -83,31 +81,61 @@ const handler = NextAuth({
                                     genero: TipoGenero.HOMBRE
                                 }
                             }
-
                         },
                     });
                 }
 
+                // ✅ Agregar los datos del usuario al objeto user
+                // Esto permite que estén disponibles en el callback jwt
+                if (user) {
+                    user.id = existingUser.id;
+                    user.registrado = existingUser.registrado;
+                    user.email = existingUser.correo;
+                    user.name = existingUser.usuario;
+                }
+
                 return true;
             }
-            return false
+            
+            // Para Credentials provider, ya viene con los datos correctos desde authorize()
+            return true;
         },
-        jwt: async ({ session, token, trigger }) => {
-            if (trigger === "update") {
+        
+        jwt: async ({ session, token, trigger, user }) => {
+            // ✅ Primera vez que se crea el token (login)
+            if (user) {
+                token.id = user.id;
+                token.registrado = user.registrado;
+            }
+            
+            // ✅ Cuando se actualiza la sesión manualmente
+            if (trigger === "update" && session) {
                 token.name = session.name;
                 token.email = session.email;
+                // Nota: user.registrado no está disponible en update
+                // Si necesitas actualizar registrado, debes incluirlo en session
+                if (session.registrado !== undefined) {
+                    token.registrado = session.registrado;
+                }
             }
+            
             return token;
         },
+        
+        async session({ session, token }) {
+            if (session?.user) {
+                session.user.id = token.id as string;
+                session.user.registrado = token.registrado as boolean;
+            }
+            return session;
+        }
     },
 
     pages: {
         signIn: '/login',
         newUser: '/registro',
         error: "/login",
-
     },
-
 });
 
 export { handler as GET, handler as POST };

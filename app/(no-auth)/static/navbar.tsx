@@ -16,6 +16,7 @@ import { CurrencySelector } from '@/components/ui/currency-selector';
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group';
 import { useSession } from 'next-auth/react';
 import { UserNav } from '@/components/dashboard/user-nav';
+import { useTheme } from 'next-themes';
 
 
 // Types
@@ -92,7 +93,11 @@ export const Navbar = React.forwardRef<HTMLElement, Navbar02Props>(
     const [isMobile, setIsMobile] = useState(false);
     const containerRef = useRef<HTMLElement>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { setTheme } = useTheme();
 
+    useEffect(() => {
+      setTheme('light'); //set your theme here after component mounts
+    }, []);
     const { status } = useSession();
 
     // Reemplaza tu useEffect actual con esto:
@@ -292,9 +297,9 @@ export const Navbar = React.forwardRef<HTMLElement, Navbar02Props>(
                 </Sheet>
               </div>
               {/* Main nav */}
-              <div className="flex items-center gap-8">
+              <div className="flex items-center gap-8 ">
                 <Link href={'/'}>
-                  <span className="mr-8 font-bold text-xl">TecSur</span>
+                  <span className="mr-0 lg:mr-8 font-bold text-xl">TecSur</span>
                 </Link>
                 <InputGroup className='rounded-full hidden lg:flex'>
                   <InputGroupInput placeholder='¿Qué estás buscando?' className='w-xs' />

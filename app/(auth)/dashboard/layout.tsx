@@ -1,5 +1,4 @@
 import AdminPanelLayout from "@/components/dashboard/admin-panel-layout";
-import { ThemeProvider } from "next-themes";
 
 export default function DemoLayout({
   children
@@ -8,12 +7,6 @@ export default function DemoLayout({
 }) {
   return (
 
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange >
-      <AdminPanelLayout>{children}</AdminPanelLayout>
-    </ThemeProvider>
+    <AdminPanelLayout>{children}</AdminPanelLayout>
   )
 }

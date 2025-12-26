@@ -148,7 +148,8 @@ exports.Prisma.UsuariosEstudiantesScalarFieldEnum = {
   creadoEn: 'creadoEn',
   actualizadoEn: 'actualizadoEn',
   avatar: 'avatar',
-  estudianteId: 'estudianteId'
+  estudianteId: 'estudianteId',
+  registrado: 'registrado'
 };
 
 exports.Prisma.EstudiantesScalarFieldEnum = {

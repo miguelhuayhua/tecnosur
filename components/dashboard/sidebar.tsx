@@ -12,11 +12,10 @@ import { ScrollArea } from "../ui/scroll-area";
 
 export function Sidebar() {
   const sidebar = useStore(useSidebar, (x) => x);
-  if (!sidebar) return null;
-  const { isOpen, toggleOpen, getOpenState, setIsHover, settings } = sidebar;
   const { resolvedTheme } = useTheme();
 
-
+  if (!sidebar) return null;
+  const { isOpen, toggleOpen, getOpenState, setIsHover, settings } = sidebar;
   return (
     <aside
       className={cn(

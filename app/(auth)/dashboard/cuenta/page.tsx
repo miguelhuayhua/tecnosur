@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ContentLayout } from "@/components/admin-panel/content-layout";
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -12,12 +11,13 @@ import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { CuentaTabs } from "./cuenta-tabs";
 import { Button } from "@/components/ui/button";
+import { ContentLayout } from "@/components/dashboard/content-layout";
 
 async function getDatosCuenta(correo: string) {
     try {
-        const [usuario, compras, inscripciones, certificados] = await Promise.all([
+        const [usuario, compras, inscripciones] = await Promise.all([
             // Datos del usuario
-            prisma.usuarios.findUnique({
+            prisma.usuariosEstudiantes.findUnique({
                 where: { correo },
                 include: {
                     estudiante: true
@@ -45,7 +45,7 @@ async function getDatosCuenta(correo: string) {
                     estudiante: {
                         usuario: { correo }
                     },
-                    estaActivo: true
+                    estado: true
                 },
                 include: {
                     edicion: {
@@ -58,31 +58,13 @@ async function getDatosCuenta(correo: string) {
                 }
             }),
 
-            // Certificados obtenidos
-            prisma.certificados.findMany({
-                where: {
-                    estudiante: {
-                        usuario: { correo }
-                    }
-                },
-                include: {
-                    edicion: {
-                        include: {
-                            curso: {
-                                select: { titulo: true }
-                            }
-                        }
-                    }
-                },
-                orderBy: { fechaEmision: 'desc' }
-            })
+
         ]);
 
         return {
             usuario,
             compras,
             inscripcionesActivas: inscripciones,
-            certificadosObtenidos: certificados
         };
     } catch (error) {
         console.error('Error fetching cuenta data:', error);
@@ -143,7 +125,7 @@ export default async function CuentaPage() {
                 </BreadcrumbList>
             </Breadcrumb>
 
-            <CuentaTabs data={data} />
+            <CuentaTabs data={data as any} />
         </ContentLayout>
     );
 }

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ContentLayout } from "@/components/admin-panel/content-layout";
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -12,6 +11,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { Button } from "@/components/ui/button";
 import { ExamenDetail } from "./examen-detail";
+import { ContentLayout } from "@/components/dashboard/content-layout";
 
 async function getExamenDetalle(examenId: string, correo: string) {
     try {
@@ -34,7 +34,7 @@ async function getExamenDetalle(examenId: string, correo: string) {
                     include: {
                         curso: {
                             select: {
-                                id_: true,
+                                id: true,
                                 titulo: true,
                                 descripcion: true,
                                 urlMiniatura: true
@@ -58,7 +58,7 @@ async function getExamenDetalle(examenId: string, correo: string) {
         }
 
         return {
-            id: examen.id_,
+            id: examen.id,
             titulo: examen.titulo,
             descripcion: examen.descripcion,
             fechaDisponible: examen.fechaDisponible,
@@ -67,7 +67,7 @@ async function getExamenDetalle(examenId: string, correo: string) {
             notaMinima: examen.notaMinima,
             calificacion: examen.calificaciones[0] || null,
             curso: {
-                id: examen.edicion.curso.id_,
+                id: examen.edicion.curso.id,
                 titulo: examen.edicion.curso.titulo,
                 descripcion: examen.edicion.curso.descripcion,
                 urlMiniatura: examen.edicion.curso.urlMiniatura,

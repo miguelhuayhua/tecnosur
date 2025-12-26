@@ -5445,6 +5445,7 @@ export namespace Prisma {
     actualizadoEn: Date | null
     avatar: string | null
     estudianteId: string | null
+    registrado: boolean | null
   }
 
   export type UsuariosEstudiantesMaxAggregateOutputType = {
@@ -5457,6 +5458,7 @@ export namespace Prisma {
     actualizadoEn: Date | null
     avatar: string | null
     estudianteId: string | null
+    registrado: boolean | null
   }
 
   export type UsuariosEstudiantesCountAggregateOutputType = {
@@ -5469,6 +5471,7 @@ export namespace Prisma {
     actualizadoEn: number
     avatar: number
     estudianteId: number
+    registrado: number
     _all: number
   }
 
@@ -5483,6 +5486,7 @@ export namespace Prisma {
     actualizadoEn?: true
     avatar?: true
     estudianteId?: true
+    registrado?: true
   }
 
   export type UsuariosEstudiantesMaxAggregateInputType = {
@@ -5495,6 +5499,7 @@ export namespace Prisma {
     actualizadoEn?: true
     avatar?: true
     estudianteId?: true
+    registrado?: true
   }
 
   export type UsuariosEstudiantesCountAggregateInputType = {
@@ -5507,6 +5512,7 @@ export namespace Prisma {
     actualizadoEn?: true
     avatar?: true
     estudianteId?: true
+    registrado?: true
     _all?: true
   }
 
@@ -5592,6 +5598,7 @@ export namespace Prisma {
     actualizadoEn: Date
     avatar: string | null
     estudianteId: string | null
+    registrado: boolean
     _count: UsuariosEstudiantesCountAggregateOutputType | null
     _min: UsuariosEstudiantesMinAggregateOutputType | null
     _max: UsuariosEstudiantesMaxAggregateOutputType | null
@@ -5621,6 +5628,7 @@ export namespace Prisma {
     actualizadoEn?: boolean
     avatar?: boolean
     estudianteId?: boolean
+    registrado?: boolean
     estudiante?: boolean | usuariosEstudiantes$estudianteArgs<ExtArgs>
     reviews?: boolean | usuariosEstudiantes$reviewsArgs<ExtArgs>
     compras?: boolean | usuariosEstudiantes$comprasArgs<ExtArgs>
@@ -5637,6 +5645,7 @@ export namespace Prisma {
     actualizadoEn?: boolean
     avatar?: boolean
     estudianteId?: boolean
+    registrado?: boolean
     estudiante?: boolean | usuariosEstudiantes$estudianteArgs<ExtArgs>
   }, ExtArgs["result"]["usuariosEstudiantes"]>
 
@@ -5650,6 +5659,7 @@ export namespace Prisma {
     actualizadoEn?: boolean
     avatar?: boolean
     estudianteId?: boolean
+    registrado?: boolean
     estudiante?: boolean | usuariosEstudiantes$estudianteArgs<ExtArgs>
   }, ExtArgs["result"]["usuariosEstudiantes"]>
 
@@ -5663,9 +5673,10 @@ export namespace Prisma {
     actualizadoEn?: boolean
     avatar?: boolean
     estudianteId?: boolean
+    registrado?: boolean
   }
 
-  export type usuariosEstudiantesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "correo" | "contrasena" | "usuario" | "estado" | "creadoEn" | "actualizadoEn" | "avatar" | "estudianteId", ExtArgs["result"]["usuariosEstudiantes"]>
+  export type usuariosEstudiantesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "correo" | "contrasena" | "usuario" | "estado" | "creadoEn" | "actualizadoEn" | "avatar" | "estudianteId" | "registrado", ExtArgs["result"]["usuariosEstudiantes"]>
   export type usuariosEstudiantesInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     estudiante?: boolean | usuariosEstudiantes$estudianteArgs<ExtArgs>
     reviews?: boolean | usuariosEstudiantes$reviewsArgs<ExtArgs>
@@ -5696,6 +5707,7 @@ export namespace Prisma {
       actualizadoEn: Date
       avatar: string | null
       estudianteId: string | null
+      registrado: boolean
     }, ExtArgs["result"]["usuariosEstudiantes"]>
     composites: {}
   }
@@ -6131,6 +6143,7 @@ export namespace Prisma {
     readonly actualizadoEn: FieldRef<"usuariosEstudiantes", 'DateTime'>
     readonly avatar: FieldRef<"usuariosEstudiantes", 'String'>
     readonly estudianteId: FieldRef<"usuariosEstudiantes", 'String'>
+    readonly registrado: FieldRef<"usuariosEstudiantes", 'Boolean'>
   }
     
 
@@ -28684,7 +28697,8 @@ export namespace Prisma {
     creadoEn: 'creadoEn',
     actualizadoEn: 'actualizadoEn',
     avatar: 'avatar',
-    estudianteId: 'estudianteId'
+    estudianteId: 'estudianteId',
+    registrado: 'registrado'
   };
 
   export type UsuariosEstudiantesScalarFieldEnum = (typeof UsuariosEstudiantesScalarFieldEnum)[keyof typeof UsuariosEstudiantesScalarFieldEnum]
@@ -29269,6 +29283,7 @@ export namespace Prisma {
     actualizadoEn?: DateTimeFilter<"usuariosEstudiantes"> | Date | string
     avatar?: StringNullableFilter<"usuariosEstudiantes"> | string | null
     estudianteId?: StringNullableFilter<"usuariosEstudiantes"> | string | null
+    registrado?: BoolFilter<"usuariosEstudiantes"> | boolean
     estudiante?: XOR<EstudiantesNullableScalarRelationFilter, estudiantesWhereInput> | null
     reviews?: ReviewsCursosListRelationFilter
     compras?: ComprasListRelationFilter
@@ -29284,6 +29299,7 @@ export namespace Prisma {
     actualizadoEn?: SortOrder
     avatar?: SortOrderInput | SortOrder
     estudianteId?: SortOrderInput | SortOrder
+    registrado?: SortOrder
     estudiante?: estudiantesOrderByWithRelationInput
     reviews?: reviewsCursosOrderByRelationAggregateInput
     compras?: comprasOrderByRelationAggregateInput
@@ -29302,6 +29318,7 @@ export namespace Prisma {
     creadoEn?: DateTimeFilter<"usuariosEstudiantes"> | Date | string
     actualizadoEn?: DateTimeFilter<"usuariosEstudiantes"> | Date | string
     avatar?: StringNullableFilter<"usuariosEstudiantes"> | string | null
+    registrado?: BoolFilter<"usuariosEstudiantes"> | boolean
     estudiante?: XOR<EstudiantesNullableScalarRelationFilter, estudiantesWhereInput> | null
     reviews?: ReviewsCursosListRelationFilter
     compras?: ComprasListRelationFilter
@@ -29317,6 +29334,7 @@ export namespace Prisma {
     actualizadoEn?: SortOrder
     avatar?: SortOrderInput | SortOrder
     estudianteId?: SortOrderInput | SortOrder
+    registrado?: SortOrder
     _count?: usuariosEstudiantesCountOrderByAggregateInput
     _max?: usuariosEstudiantesMaxOrderByAggregateInput
     _min?: usuariosEstudiantesMinOrderByAggregateInput
@@ -29335,6 +29353,7 @@ export namespace Prisma {
     actualizadoEn?: DateTimeWithAggregatesFilter<"usuariosEstudiantes"> | Date | string
     avatar?: StringNullableWithAggregatesFilter<"usuariosEstudiantes"> | string | null
     estudianteId?: StringNullableWithAggregatesFilter<"usuariosEstudiantes"> | string | null
+    registrado?: BoolWithAggregatesFilter<"usuariosEstudiantes"> | boolean
   }
 
   export type estudiantesWhereInput = {
@@ -30916,6 +30935,7 @@ export namespace Prisma {
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     avatar?: string | null
+    registrado?: boolean
     estudiante?: estudiantesCreateNestedOneWithoutUsuarioInput
     reviews?: reviewsCursosCreateNestedManyWithoutUsuarioInput
     compras?: comprasCreateNestedManyWithoutUsuarioInput
@@ -30931,6 +30951,7 @@ export namespace Prisma {
     actualizadoEn?: Date | string
     avatar?: string | null
     estudianteId?: string | null
+    registrado?: boolean
     reviews?: reviewsCursosUncheckedCreateNestedManyWithoutUsuarioInput
     compras?: comprasUncheckedCreateNestedManyWithoutUsuarioInput
   }
@@ -30944,6 +30965,7 @@ export namespace Prisma {
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    registrado?: BoolFieldUpdateOperationsInput | boolean
     estudiante?: estudiantesUpdateOneWithoutUsuarioNestedInput
     reviews?: reviewsCursosUpdateManyWithoutUsuarioNestedInput
     compras?: comprasUpdateManyWithoutUsuarioNestedInput
@@ -30959,6 +30981,7 @@ export namespace Prisma {
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     estudianteId?: NullableStringFieldUpdateOperationsInput | string | null
+    registrado?: BoolFieldUpdateOperationsInput | boolean
     reviews?: reviewsCursosUncheckedUpdateManyWithoutUsuarioNestedInput
     compras?: comprasUncheckedUpdateManyWithoutUsuarioNestedInput
   }
@@ -30973,6 +30996,7 @@ export namespace Prisma {
     actualizadoEn?: Date | string
     avatar?: string | null
     estudianteId?: string | null
+    registrado?: boolean
   }
 
   export type usuariosEstudiantesUpdateManyMutationInput = {
@@ -30984,6 +31008,7 @@ export namespace Prisma {
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    registrado?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type usuariosEstudiantesUncheckedUpdateManyInput = {
@@ -30996,6 +31021,7 @@ export namespace Prisma {
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     estudianteId?: NullableStringFieldUpdateOperationsInput | string | null
+    registrado?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type estudiantesCreateInput = {
@@ -32787,6 +32813,7 @@ export namespace Prisma {
     actualizadoEn?: SortOrder
     avatar?: SortOrder
     estudianteId?: SortOrder
+    registrado?: SortOrder
   }
 
   export type usuariosEstudiantesMaxOrderByAggregateInput = {
@@ -32799,6 +32826,7 @@ export namespace Prisma {
     actualizadoEn?: SortOrder
     avatar?: SortOrder
     estudianteId?: SortOrder
+    registrado?: SortOrder
   }
 
   export type usuariosEstudiantesMinOrderByAggregateInput = {
@@ -32811,6 +32839,7 @@ export namespace Prisma {
     actualizadoEn?: SortOrder
     avatar?: SortOrder
     estudianteId?: SortOrder
+    registrado?: SortOrder
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -36166,6 +36195,7 @@ export namespace Prisma {
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     avatar?: string | null
+    registrado?: boolean
     reviews?: reviewsCursosCreateNestedManyWithoutUsuarioInput
     compras?: comprasCreateNestedManyWithoutUsuarioInput
   }
@@ -36179,6 +36209,7 @@ export namespace Prisma {
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     avatar?: string | null
+    registrado?: boolean
     reviews?: reviewsCursosUncheckedCreateNestedManyWithoutUsuarioInput
     compras?: comprasUncheckedCreateNestedManyWithoutUsuarioInput
   }
@@ -36294,6 +36325,7 @@ export namespace Prisma {
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    registrado?: BoolFieldUpdateOperationsInput | boolean
     reviews?: reviewsCursosUpdateManyWithoutUsuarioNestedInput
     compras?: comprasUpdateManyWithoutUsuarioNestedInput
   }
@@ -36307,6 +36339,7 @@ export namespace Prisma {
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    registrado?: BoolFieldUpdateOperationsInput | boolean
     reviews?: reviewsCursosUncheckedUpdateManyWithoutUsuarioNestedInput
     compras?: comprasUncheckedUpdateManyWithoutUsuarioNestedInput
   }
@@ -37214,6 +37247,7 @@ export namespace Prisma {
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     avatar?: string | null
+    registrado?: boolean
     estudiante?: estudiantesCreateNestedOneWithoutUsuarioInput
     compras?: comprasCreateNestedManyWithoutUsuarioInput
   }
@@ -37228,6 +37262,7 @@ export namespace Prisma {
     actualizadoEn?: Date | string
     avatar?: string | null
     estudianteId?: string | null
+    registrado?: boolean
     compras?: comprasUncheckedCreateNestedManyWithoutUsuarioInput
   }
 
@@ -37301,6 +37336,7 @@ export namespace Prisma {
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    registrado?: BoolFieldUpdateOperationsInput | boolean
     estudiante?: estudiantesUpdateOneWithoutUsuarioNestedInput
     compras?: comprasUpdateManyWithoutUsuarioNestedInput
   }
@@ -37315,6 +37351,7 @@ export namespace Prisma {
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     estudianteId?: NullableStringFieldUpdateOperationsInput | string | null
+    registrado?: BoolFieldUpdateOperationsInput | boolean
     compras?: comprasUncheckedUpdateManyWithoutUsuarioNestedInput
   }
 
@@ -39240,6 +39277,7 @@ export namespace Prisma {
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     avatar?: string | null
+    registrado?: boolean
     estudiante?: estudiantesCreateNestedOneWithoutUsuarioInput
     reviews?: reviewsCursosCreateNestedManyWithoutUsuarioInput
   }
@@ -39254,6 +39292,7 @@ export namespace Prisma {
     actualizadoEn?: Date | string
     avatar?: string | null
     estudianteId?: string | null
+    registrado?: boolean
     reviews?: reviewsCursosUncheckedCreateNestedManyWithoutUsuarioInput
   }
 
@@ -39366,6 +39405,7 @@ export namespace Prisma {
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    registrado?: BoolFieldUpdateOperationsInput | boolean
     estudiante?: estudiantesUpdateOneWithoutUsuarioNestedInput
     reviews?: reviewsCursosUpdateManyWithoutUsuarioNestedInput
   }
@@ -39380,6 +39420,7 @@ export namespace Prisma {
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     estudianteId?: NullableStringFieldUpdateOperationsInput | string | null
+    registrado?: BoolFieldUpdateOperationsInput | boolean
     reviews?: reviewsCursosUncheckedUpdateManyWithoutUsuarioNestedInput
   }
 

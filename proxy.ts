@@ -3,14 +3,16 @@ import { NextRequestWithAuth, withAuth } from "next-auth/middleware"
 import { NextResponse } from "next/server"
 export default withAuth(
     async function proxy(request: NextRequestWithAuth) {
-        let pathname = request.nextUrl.pathname;
         const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-        if (!token && pathname.includes("/dashboard")) {
+        let pathname = request.nextUrl.pathname;
+        if (!token) {
             return NextResponse.redirect(new URL("/login", request.url));
-
+        }
+        if (!token.registrado && !pathname.startsWith('/formulario')) {
+            return NextResponse.redirect(new URL('/formulario', request.url));
         }
     }
 )
 export const config = {
-    matcher: ["/dashboard/:path*"]
+    matcher: ["/dashboard/:path*", "/formulario"]
 }

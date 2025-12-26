@@ -50,8 +50,8 @@ export async function POST(req: NextRequest) {
       purchase_units: [
         {
           reference_id: `${cursoId}_${edicionId}`,
-          description: descripcion.substring(0, 127), // Máximo 127 caracteres
-          custom_id: usuarioEmail || `guest_${Date.now()}`,
+          description: descripcion, // Máximo 127 caracteres
+          custom_id: usuarioEmail || `compra_${Date.now()}`,
           amount: {
             currency_code: moneda,
             value: amountValue,
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
         },
       ],
       application_context: {
-        brand_name: "Tu Plataforma Educativa",
+        brand_name: "Tecsur",
         landing_page: "BILLING",
         user_action: "PAY_NOW",
         cancel_url: `${baseUrl}/cursos/${cursoId}/checkout`,

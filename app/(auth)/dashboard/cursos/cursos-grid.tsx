@@ -1,102 +1,68 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardAction, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Search, BookOpen, Calendar, ArrowRight, Clock } from "lucide-react"
+import { Search, BookOpen, Calendar, ArrowRight, Clock, GraduationCap, Star } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { useState } from "react"
 import { format } from "date-fns"
+import { categorias, categoriasCursos, clases, cursos, edicionesCursos, inscripciones } from "@/prisma/generated"
+import { es } from "date-fns/locale"
+import { Status, StatusIndicator } from "@/components/ui/shadcn-io/status"
+import { ButtonGroup } from "@/components/ui/button-group"
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
 
-interface Curso {
-  id: string;
-  titulo: string;
-  descripcion: string;
-  urlMiniatura?: string | null;
-  fechaInicio: Date;
-  fechaFin: Date;
-  creadoEn: Date;
-  categorias: Categoria[];
-  clases?: Clase[];
+interface Inscripcion extends inscripciones {
+  edicion: edicionesCursos & ({ curso: cursos & { categorias: Array<{ categoria: categorias }> }; clases: Array<clases> })
+
 }
 
-interface Categoria {
-  id: string;
-  nombre: string;
-}
 
-interface Clase {
-  id: string;
-  titulo: string;
-  duracion?: number;
-  orden: number;
-}
-
-interface CursosGridProps {
-  cursos: Curso[];
-}
-
-export function CursosGrid({ cursos }: CursosGridProps) {
+export function CursosGrid({ inscripciones }: { inscripciones: Inscripcion[] }) {
   const [searchTerm, setSearchTerm] = useState("")
 
-  const filteredCursos = cursos.filter(curso => {
-    return curso.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      curso.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredInscripciones = inscripciones.filter(inscripcion => {
+    return inscripcion.edicion.curso.titulo.toLowerCase().includes(searchTerm.toLowerCase())
   })
 
-  const formatFecha = (fecha: Date) => {
-    return new Intl.DateTimeFormat('es-BO', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    }).format(new Date(fecha));
-  }
-
-  const getEstadoCurso = (fechaInicio: Date, fechaFin: Date) => {
-    const ahora = new Date()
-    const inicio = new Date(fechaInicio)
-    const fin = new Date(fechaFin)
-
-    if (ahora < inicio) return { texto: "Próximo", color: "bg-blue-500" }
-    if (ahora > fin) return { texto: "Finalizado", color: "bg-gray-500" }
-    return { texto: "En Curso", color: "bg-green-500" }
-  }
 
   return (
     <div className="space-y-6 mt-8">
       {/* Header con búsqueda */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="relative w-full sm:w-80">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
-            placeholder="Buscar en mis cursos..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
 
-        <div className="text-sm text-muted-foreground">
-          {filteredCursos.length} {filteredCursos.length === 1 ? 'curso' : 'cursos'}
-        </div>
-      </div>
+      <InputGroup className="max-w-md">
+        <InputGroupInput
+          placeholder="Buscar en mis cursos..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)} />
+        <InputGroupAddon align={'inline-start'}>
+          <Search />
+        </InputGroupAddon>
+        <InputGroupAddon align={'inline-end'}>
+          <Badge className="rounded-full" variant={'secondary'}>
+            {filteredInscripciones.length}
+          </Badge>
+        </InputGroupAddon>
+      </InputGroup>
+
 
       {/* Grid de cursos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {filteredCursos.map((curso) => {
-          const estado = getEstadoCurso(curso.fechaInicio, curso.fechaFin)
-          const totalClases = curso.clases?.length || 0
-
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {filteredInscripciones.map((inscripcion) => {
+          const totalClases = inscripcion.edicion.clases?.length || 0
+          const curso = inscripcion.edicion.curso;
+          const edicion = inscripcion.edicion;
           return (
-            <Card
-              key={curso.id}
-              className="hover:shadow-lg transition-shadow h-full flex flex-col"
+            <Card className="relative"
+              key={edicion.id}
             >
-              <CardContent className="flex flex-col h-full">
+              <CardContent className="space-y-3 ">
+
                 {/* Header con icono y badge */}
-                <div className="flex items-start justify-between gap-3 mb-3">
+                <div className="flex items-center  gap-2 ">
                   {/* Icono circular pequeño */}
                   <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 ring-1 ring-border">
                     {curso.urlMiniatura ? (
@@ -113,62 +79,68 @@ export function CursosGrid({ cursos }: CursosGridProps) {
                     )}
                   </div>
 
-                  {/* Badge de estado */}
-                  <Badge className={`${estado.color} text-white text-xs font-semibold px-2 py-0.5 flex-shrink-0`}>
-                    {estado.texto}
-                  </Badge>
-                </div>
+                  <div className="space-y-1">
+                    <h3 className="font-medium text-base  line-clamp-2 leading-tight">
+                      <Link
+                        href={`/dashboard/cursos/${edicion.id}`}
+                        className="hover:text-blue-600 transition-colors"
+                      >
+                        {curso.titulo}
+                      </Link>
+                    </h3>
+                    <Badge variant={'outline'}>
+                      {inscripcion.edicion.codigo}
+                    </Badge>
 
-                {/* Título */}
-                <h3 className="font-bold text-base mb-2 line-clamp-2 leading-tight">
-                  <Link
-                    href={`/dashboard/cursos/${curso.id}`}
-                    className="hover:text-blue-600 transition-colors"
-                  >
-                    {curso.titulo}
-                  </Link>
-                </h3>
-
-                {/* Información compacta */}
-                <div className="space-y-2 mb-4 flex-1">
-                  {/* Número de clases */}
-                  {totalClases > 0 && (
-                    <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                      <BookOpen className="h-3.5 w-3.5" />
-                      <span className="font-medium">{totalClases} {totalClases === 1 ? 'clase' : 'clases'}</span>
-                    </div>
-                  )}
-
-                  {/* Fechas en una línea */}
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Calendar className="h-3.5 w-3.5 flex-shrink-0" />
-                    <span className="truncate">
-                      {formatFecha(curso.fechaInicio)} - {formatFecha(curso.fechaFin)}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Clock className="h-3.5 w-3.5 flex-shrink-0" />
-                    <span className="truncate">
-                      {format(curso.fechaInicio, 'HH:mm')} - {format(curso.fechaFin, 'HH:mm')}
-                    </span>
                   </div>
                 </div>
+                {/* Horarios */}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 ">
+                    <Calendar className='size-4 text-muted-foreground'></Calendar>
+                    <span className="text-xs  text-muted-foreground">Del {format(edicion.fechaInicio, 'dd/MMM/yyyy', { locale: es })} al {format(edicion.fechaFin, 'dd/MMM/yyyy', { locale: es })} </span>
+                  </div>
+                  <div className="flex items-center gap-2 ">
+                    <Clock className='size-4 text-muted-foreground' />
+                    <span className="text-xs  text-muted-foreground">
+                      Horario: {format(edicion.fechaInicio, 'HH:mm')} - {format(edicion.fechaFin, 'HH:mm')}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 ">
+                    <GraduationCap className='size-4 text-muted-foreground' />
+                    <span className="text-xs  text-muted-foreground">
+                      <b>{edicion.clases.length}</b> sesiones
+                    </span>
+                  </div>
+                  <Status status={curso.enVivo ? 'online' : 'offline'}>
+                    <StatusIndicator />
+                    {curso.enVivo ? "En vivo" : "Grabada"}
+                  </Status>
+                </div>
 
-                {/* Botón */}
-                <Button asChild variant={'secondary'} className="w-full" size="sm">
-                  <Link href={`/dashboard/cursos/${curso.id}`}>
-                    Ir al curso
-                    <ArrowRight className="h-3.5 w-3.5 ml-2" />
-                  </Link>
-                </Button>
               </CardContent>
+              <CardFooter>
+                <ButtonGroup className="w-full">
+                  <Button asChild className="flex-1" size="sm">
+                    <Link href={`/dashboard/cursos/${edicion.id}`}>
+                      Ir al curso
+                      <ArrowRight />
+                    </Link>
+                  </Button>
+                  <Button asChild className="bg-yellow-500" variant={'default'} size="sm">
+                    <Link href={`/dashboard/cursos/${edicion.id}/calificar`}>
+                      <Star />
+                    </Link>
+                  </Button>
+                </ButtonGroup>
+              </CardFooter>
             </Card>
           )
         })}
       </div>
 
       {/* Estado vacío */}
-      {filteredCursos.length === 0 && (
+      {filteredInscripciones.length === 0 && (
         <div className="text-center py-16 space-y-4">
           <div className="w-20 h-20 mx-auto bg-muted rounded-full flex items-center justify-center">
             <BookOpen className="h-10 w-10 text-muted-foreground" />

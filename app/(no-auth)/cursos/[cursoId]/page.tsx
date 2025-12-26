@@ -59,6 +59,11 @@ export default async function CursoDetailPage({ params }: PageProps) {
                         }
                     },
                     include: {
+                        compras: {
+                            select: {
+                                usuariosEstudiantesId: true
+                            }
+                        },
                         precios: {
                             where: {
                                 OR: [
@@ -91,7 +96,9 @@ export default async function CursoDetailPage({ params }: PageProps) {
                 },
                 reviews: {
                     include: {
-                        usuario: true
+                        usuario: {
+                            include: { estudiante: true }
+                        }
                     },
                     orderBy: { creadoEn: 'desc' }
                 }
@@ -102,8 +109,6 @@ export default async function CursoDetailPage({ params }: PageProps) {
             notFound();
         }
 
-       
-        console.log('Curso cargado:', curso.id);
 
         return (
             <>

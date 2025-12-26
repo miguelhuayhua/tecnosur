@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ContentLayout } from "@/components/admin-panel/content-layout";
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -11,9 +10,9 @@ import {
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Calendar, Award } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { CalificacionesClient } from "./calificaciones-client";
+import { ContentLayout } from "@/components/dashboard/content-layout";
+import { notFound } from "next/navigation";
 
 // Función para normalizar notas entre diferentes escalas
 const normalizarNota = (
@@ -36,11 +35,11 @@ async function getCalificacionesCurso(edicionId: string, correo: string) {
     try {
         const inscripcion = await prisma.inscripciones.findFirst({
             where: {
-                edicionId,
+                edicion: { id: edicionId },
                 estudiante: {
                     usuario: { correo }
                 },
-                estaActivo: true
+                estado: true
             },
             include: {
                 edicion: {
@@ -125,7 +124,7 @@ async function getCalificacionesCurso(edicionId: string, correo: string) {
                 notaMaxima: inscripcion.edicion.notaMaxima
             },
             examenes: inscripcion.edicion.examenes.map((examen, index) => ({
-                id: examen.id_,
+                id: examen.id,
                 titulo: examen.titulo,
                 descripcion: examen.descripcion,
                 fechaDisponible: examen.fechaDisponible,
@@ -133,11 +132,11 @@ async function getCalificacionesCurso(edicionId: string, correo: string) {
                 notaMaxima: examen.notaMaxima,
                 notaMinima: examen.notaMinima,
                 calificacion: examen.calificaciones[0] ? {
-                    id: examen.calificaciones[0].id_,
+                    id: examen.calificaciones[0].id,
                     nota: examen.calificaciones[0].nota,
                     notaNormalizada: examenesConCalificaciones[index].notaNormalizada,
                     aprobado: examenesConCalificaciones[index].aprobado,
-                    fechaPresentado: examen.calificaciones[0].fechaPresentado,
+                    fechaPresentado: examen.calificaciones[0].creadoEn,
                     comentarios: examen.calificaciones[0].comentarios || undefined
                 } : null
             })),
@@ -159,14 +158,12 @@ async function getCalificacionesCurso(edicionId: string, correo: string) {
     }
 }
 
-export default async function CalificacionesPage({ params }: { params: { id: string } }) {
+export default async function CalificacionesPage({ params }: { params: Promise<{ id: string }> }) {
     const session = await getServerSession();
+    const p = await params;
+    if (!session) return notFound();
 
-    if (!session?.user) {
-        return <div>No autenticado</div>;
-    }
-
-    const data = await getCalificacionesCurso(params.id, session.user.email!);
+    const data = await getCalificacionesCurso(p.id, session.user?.email!);
 
     if (!data) {
         return (
@@ -218,7 +215,7 @@ export default async function CalificacionesPage({ params }: { params: { id: str
 
 
             {/* Componente Client */}
-            <CalificacionesClient data={data as any} edicionId={params.id} />
+            <CalificacionesClient data={data as any} edicionId={p.id} />
         </ContentLayout>
     );
 }

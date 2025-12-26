@@ -83,6 +83,7 @@ model usuariosEstudiantes {
   // Relación uno-a-uno con @unique
   estudiante    estudiantes?    @relation(fields: [estudianteId], references: [id])
   estudianteId  String?         @unique
+  registrado    Boolean         @default(false)
   reviews       reviewsCursos[]
   compras       compras[]
 

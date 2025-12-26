@@ -7,11 +7,10 @@ import {
 } from "@/components/ui/accordion"
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Play, Clock, Star, Users, Award, Search, CheckCircle, Home, Book, TextAlignStart, Download, Share2, Shield, Calendar, GraduationCap, FileBadge, FileCodeCorner, BadgeCheck, ScanEye, ShieldCheck, Building, CreditCard, Info, Check } from 'lucide-react';
+import { Play, Clock, Star, CheckCircle, Home, Book, TextAlignStart, Calendar, CreditCard, Info, Check, Heart, MessageCircleCode } from 'lucide-react';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
-import { Status, StatusIndicator, StatusLabel } from '@/components/ui/shadcn-io/status';
+import { Status, StatusIndicator } from '@/components/ui/shadcn-io/status';
 
 import Image from 'next/image';
 import { format } from 'date-fns';
@@ -20,11 +19,14 @@ import { Separator } from '@/components/ui/separator';
 import { useCursos } from "@/hooks/use-cursos";
 import Link from "next/link";
 import { usePriceFormatter } from '@/hooks/use-price-formatter';
-import { beneficiosCursos, clases, docente, edicionesCursos, objetivosCursos, preciosCursos, requisitosCursos } from "@/prisma/generated";
+import { beneficiosCursos, clases, docente, edicionesCursos, objetivosCursos, preciosCursos, requisitosCursos, usuariosEstudiantes } from "@/prisma/generated";
 import { Curso } from "@/lib/types";
 import { FaWhatsapp } from "react-icons/fa";
 import { CursoCard } from "@/app/(auth)/(componentes)/curso-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useSession } from "next-auth/react";
+import { InputGroup, InputGroupAddon, InputGroupTextarea } from "@/components/ui/input-group";
+import { OpinionesCurso } from "./review-section";
 const faqs = [
     {
         question: "¿Qué es TecSur y qué tipos de cursos ofrecen?",
@@ -59,19 +61,21 @@ interface CursoProps extends Curso {
     objetivos: objetivosCursos[];
     requisitos: requisitosCursos[];
     beneficios: beneficiosCursos[];
-    ediciones: (edicionesCursos & { clases: clases[]; precios: preciosCursos[]; docente: docente })[]
+    ediciones: (edicionesCursos & {
+        clases: clases[]; precios: preciosCursos[]; docente: docente, compras: Array<{ usuariosEstudiantesId: string }>
+    })[]
 }
 export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
     const [searchTerm, setSearchTerm] = useState('');
     const { formatPrice, selectedCurrency } = usePriceFormatter();
     const edicionPrincipal = curso.ediciones?.[0];
-
+    const [showOpinion, setShowOpinion] = useState(false);
     // Extraer datos con nombres correctos de la estructura del servidor
     const categorias = curso.categorias || [];
     const objetivos = curso.objetivos || [];
     const beneficios = curso.beneficios || [];
     const requisitos = curso.requisitos || [];
-
+    const { data } = useSession();
     // Obtener la edición principal
 
     // Usar datos de la edición o del curso base
@@ -102,7 +106,6 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
     // Convertir precios a la moneda seleccionada
     const precioConvertido = precioDefault ? formatPrice(precioDefault.precio) : null;
     const precioOriginalConvertido = precioDefault?.precioOriginal ? formatPrice(precioDefault.precioOriginal) : null;
-
     return (
         <div className="space-y-6  pt-10  px-5">
             <div className="max-w-6xl mx-auto space-y-3">
@@ -138,7 +141,7 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
 
             <div className='max-w-6xl mx-auto grid md:grid-cols-2 mb-10 gap-8'>
                 {/* Contenido principal del curso */}
-                <div className="space-y-6 mt-10 md:mt-0 order-1 md:order-0 md:pr-8">
+                <div className="space-y-6 md:mt-0 order-1 md:order-0 md:pr-8">
                     <h3 className='font-semibold text-muted-foreground'>
                         ¿Qué aprenderás?
                     </h3>
@@ -242,7 +245,7 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                 </div>
             </div>
 
-            <div className="max-w-6xl mx-auto px-5">
+            <div className="max-w-6xl mx-auto ">
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Columna principal (izquierda) */}
                     <div className="lg:w-2/3 space-y-10 md:pr-8">
@@ -281,39 +284,7 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                             {curso.descripcion || 'No cuenta con una descripción'}
                         </p>
 
-                        <h3 className="text-lg md:text-2xl font-bold flex items-center gap-2">
-                            <Building /> Aprende con Tecsur
-                        </h3>
-                        <Card className="border-t-3 max-w-sm border-t-primary">
-                            <CardHeader>
-                                <CardTitle className="text-center">
-                                    Obtén todo el paquete completo con la compra de tu curso
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <Button className="w-full" asChild>
-                                    <Link href={`/cursos/${curso.id}/checkout`}>
-                                        Comprar Curso
-                                    </Link>
-                                </Button>
-                            </CardContent>
-                            <CardFooter>
-                                {beneficios.length > 0 ? (
-                                    <ul className="space-y-2 w-full">
-                                        {beneficios.map((beneficio: any) => (
-                                            <li key={beneficio.id} className="flex items-center text-sm text-muted-foreground gap-2">
-                                                <CheckCircle className="size-4" />
-                                                {beneficio.descripcion}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <p className="text-sm w-full text-center font-bold text-muted-foreground">
-                                        No cuenta con beneficios aún.
-                                    </p>
-                                )}
-                            </CardFooter>
-                        </Card>
+
                     </div>
 
                     {/* Barra lateral sticky (derecha) */}
@@ -369,12 +340,32 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                             </div>
 
                             <div className="space-y-2">
-                                <h3 >Requisitos</h3>
-                                <ul className="space-y-1">
+                                <h3 className="font-medium">
+                                    Requisitos
+                                </h3>
+                                <ul className="space-y-1 list-disc">
                                     {requisitos.length > 0 ? (
-                                        requisitos.map((requisito: any) => (
-                                            <li key={requisito.id} className="text-muted-foreground flex items-center text-sm">
-                                                <span className="mr-2">•</span> {requisito.descripcion}
+                                        requisitos.map((requisito) => (
+                                            <li key={requisito.id} className="text-muted-foreground ml-4 text-sm">
+                                                {requisito.descripcion}
+                                            </li>
+                                        ))
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground">
+                                            No cuenta aún con requisitos
+                                        </p>
+                                    )}
+                                </ul>
+                            </div>
+                            <div className="space-y-2">
+                                <h3 className="font-medium">
+                                    ¿Qué obtendrás?
+                                </h3>
+                                <ul className="space-y-1 list-disc">
+                                    {beneficios.length > 0 ? (
+                                        beneficios.map((beneficio) => (
+                                            <li key={beneficio.id} className="text-muted-foreground ml-4 text-sm">
+                                                {beneficio.descripcion}
                                             </li>
                                         ))
                                     ) : (
@@ -386,7 +377,7 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                             </div>
                             <Separator />
 
-                            <h3>
+                            <h3 className="font-medium">
                                 Profesor del curso
                             </h3>
                             <div className="flex items-center gap-2">
@@ -413,13 +404,14 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                     </div>
                 </div>
             </div>
-
+            <Separator />
+            <OpinionesCurso curso={curso as any} edicionPrincipal={edicionPrincipal} />
             {/* Cursos Recomendados */}
             <div className="space-y-10 border-t p-10 ">
                 <h3 className="text-3xl font-bold text-center tracking-tight">
                     Cursos recomendados
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-x-6 mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-6 mx-auto">
                     {cursosRecomendados && cursosRecomendados.length > 0 ? (
                         cursosRecomendados.map((cursoRec: any) => <CursoCard key={cursoRec.id} curso={cursoRec} />)
                     ) : (
@@ -430,7 +422,7 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                 </div>
             </div>
             {/* FAQ Section */}
-            <div className="px-5 -mt-10">
+            <div className="px-5 ">
                 <div className="max-w-4xl mx-auto">
                     <div className="text-center space-y-4 mb-12">
                         <h2 className="text-3xl font-bold tracking-tight">
