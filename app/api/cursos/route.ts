@@ -1,3 +1,4 @@
+"/api/cursos/route.s"
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 

@@ -1,4 +1,4 @@
-// hooks/useCursos.ts
+// hooks/use-cursos.ts
 import useSWR, { KeyedMutator } from 'swr';
 import { categorias, categoriasCursos, cursos, docente, edicionesCursos, objetivosCursos, preciosCursos, reviewsCursos, usuariosEstudiantes } from '@/prisma/generated';
 

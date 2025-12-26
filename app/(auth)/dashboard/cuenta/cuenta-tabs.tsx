@@ -96,8 +96,8 @@ export function CuentaTabs({ data }: CuentaTabsProps) {
                                         <div>
                                             <label className="text-sm font-medium text-muted-foreground">Estado de la cuenta</label>
                                             <div className="mt-1">
-                                                <Badge variant={data.usuario.estaActivo ? "default" : "secondary"}>
-                                                    {data.usuario.estaActivo ? "Activa" : "Inactiva"}
+                                                <Badge variant={data.usuario.estado ? "default" : "secondary"}>
+                                                    {data.usuario.estado ? "Activa" : "Inactiva"}
                                                 </Badge>
                                             </div>
                                         </div>
@@ -334,11 +334,11 @@ export function CuentaTabs({ data }: CuentaTabsProps) {
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium">Estado de la cuenta</label>
                                     <div className="flex items-center gap-2">
-                                        <Badge variant={data.usuario.estaActivo ? "default" : "secondary"}>
-                                            {data.usuario.estaActivo ? "Activa" : "Inactiva"}
+                                        <Badge variant={data.usuario.estado ? "default" : "secondary"}>
+                                            {data.usuario.estado ? "Activa" : "Inactiva"}
                                         </Badge>
                                         <p className="text-sm text-muted-foreground">
-                                            {data.usuario.estaActivo 
+                                            {data.usuario.estado 
                                                 ? "Tu cuenta está activa y funcionando correctamente"
                                                 : "Tu cuenta está temporalmente desactivada"
                                             }

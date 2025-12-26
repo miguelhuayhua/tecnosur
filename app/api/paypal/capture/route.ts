@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
                     usuario: nombreUsuario,
                     correo: payerEmail,
                     contrasena: hashedPassword,
-                    estaActivo: true
+                    estado: true
                 }
             });
 
@@ -186,7 +186,7 @@ export async function POST(req: NextRequest) {
                     data: {
                         edicionId: edicionId,
                         estudianteId: estudianteId,
-                        estaActivo: true,
+                        estado: true,
                         inscritoEn: new Date()
                     }
                 });
