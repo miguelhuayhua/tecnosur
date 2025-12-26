@@ -43,7 +43,7 @@ export default async function CompletarRegistroPage({ params }: PageProps) {
     }
 
     // Verificar que la compra pertenece al usuario logueado (comparar emails)
-    if (compra.usuario.correo !== session.user?.email) {
+    if (compra.usuario?.correo !== session.user?.email) {
         redirect('/mis-cursos');
     }
 
