@@ -156,7 +156,7 @@ export async function POST(req: NextRequest) {
             data: {
                 providerId: orderID,
                 edicionId: edicionId,
-                usuarioId: usuarioId,
+                usuariosEstudiantesId: usuarioId,
                 monto: monto,
                 moneda: moneda,
                 comprobado: comprobado,
