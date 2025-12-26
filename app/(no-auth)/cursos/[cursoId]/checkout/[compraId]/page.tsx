@@ -1,13 +1,13 @@
 // app/cursos/[id]/checkout/[compraId]/page.tsx
 import { notFound, redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
-import { Footer } from '@/app/componentes/estatico/footer';
-import { MainNavbar } from '@/app/componentes/estatico/navbar';
 import { CheckCircle, ArrowLeft, User, Calendar, BookOpen, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { getServerSession } from 'next-auth';
+import { Navbar } from '@/app/(no-auth)/static/navbar';
+import { Footer } from '@/app/(no-auth)/static/footer';
 
 interface PageProps {
     params: Promise<{
@@ -22,11 +22,11 @@ export default async function CheckoutSuccessPage({ params }: PageProps) {
 
     // Verificar que la compra existe (sin try-catch para redirect)
     const compra = await prisma.compras.findUnique({
-        where: { id_: compraId },
+        where: { id: compraId },
         include: {
             edicion: {
                 select: {
-                    id_: true,
+                    id: true,
                     codigo: true,
                     curso: {
                         include: {
@@ -41,7 +41,7 @@ export default async function CheckoutSuccessPage({ params }: PageProps) {
             },
             usuario: {
                 select: {
-                    id_: true, correo: true,
+                    id: true, correo: true,
 
                     estudiante: true,
 
@@ -50,7 +50,7 @@ export default async function CheckoutSuccessPage({ params }: PageProps) {
         }
     });
 
-    if (!compra || compra.edicion.curso.id_ !== id) {
+    if (!compra || compra.edicion.curso.id !== id) {
         notFound();
     }
 
@@ -59,7 +59,7 @@ export default async function CheckoutSuccessPage({ params }: PageProps) {
     if (compra.comprobado && session) {
         return (
             <>
-                <MainNavbar />
+                <Navbar />
                 <div className="min-h-screen bg-background mt-20 py-8">
                     <div className="max-w-4xl mx-auto px-6">
                         <div className="text-center mb-8">
@@ -180,7 +180,7 @@ export default async function CheckoutSuccessPage({ params }: PageProps) {
     // Si la compra NO está comprobada pero el usuario está logueado → redirigir a comprobar (editar datos)
     if (!compra.comprobado && session) {
         // Verificar si el usuario logueado es el dueño de la compra comparando emails
-        if (compra.usuario.correo === session.user?.email) {
+        if (compra.usuario?.correo === session.user?.email) {
             // Redirigir a completar registro/editar datos
             redirect(`/cursos/${id}/checkout/${compraId}/comprobar`);
         } else {

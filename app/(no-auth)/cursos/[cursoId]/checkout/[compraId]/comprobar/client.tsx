@@ -11,7 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { useModal } from '@/providers/modalprovider';
+import { useModal } from '@/providers/modal-provider';
 
 // Schema de validación mejorado
 const registroSchema = z.object({
