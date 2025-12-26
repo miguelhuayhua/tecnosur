@@ -31,7 +31,7 @@ const handler = NextAuth({
                     const data = await prisma.usuariosEstudiantes.findFirst({
                         where: {
                             OR: [
-                                { nombre: usuario }, 
+                                { usuario },
                                 { correo: usuario }
                             ]
                         }
@@ -96,18 +96,18 @@ const handler = NextAuth({
 
                 return true;
             }
-            
+
             // Para Credentials provider, ya viene con los datos correctos desde authorize()
             return true;
         },
-        
+
         jwt: async ({ session, token, trigger, user }) => {
             // ✅ Primera vez que se crea el token (login)
             if (user) {
                 token.id = user.id;
                 token.registrado = user.registrado;
             }
-            
+
             // ✅ Cuando se actualiza la sesión manualmente
             if (trigger === "update" && session) {
                 token.name = session.name;
@@ -118,10 +118,10 @@ const handler = NextAuth({
                     token.registrado = session.registrado;
                 }
             }
-            
+
             return token;
         },
-        
+
         async session({ session, token }) {
             if (session?.user) {
                 session.user.id = token.id as string;
