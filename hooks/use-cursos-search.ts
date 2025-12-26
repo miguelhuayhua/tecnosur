@@ -1,17 +1,21 @@
-// hooks/use-cursos-search.ts
+// hooks/useCursosSearch.ts
 import { useState, useEffect } from 'react';
 
-// Tipo simplificado solo con lo que devuelve /api/cursos/search
-interface CursoSearch {
-  id: number;
+// Tipo simplificado según el schema real de Prisma
+export interface CursoSearch {
+  id: string; // ✅ UUID en el schema
   titulo: string;
   descripcion: string;
-  imagenUrl: string | null;
+  urlMiniatura: string | null; // ✅ Campo correcto
+  enVivo: boolean; // ✅ Para mostrar si es en vivo o grabado
   ediciones: Array<{
-    id: number;
-    modalidad: string;
+    id: string;
+    codigo: string;
+    fechaInicio: Date; // Puede venir como string del API
+    fechaFin: Date | string;
     precios: Array<{
       precio: number;
+      moneda: string;
     }>;
   }>;
 }
@@ -35,12 +39,11 @@ export function useCursosSearch(query: string, delay: number = 300): SearchResul
     }
 
     setIsLoading(true);
-    
+
     const timeoutId = setTimeout(async () => {
       try {
-        // Usar el endpoint optimizado
         const response = await fetch(`/api/cursos/search?q=${encodeURIComponent(query.trim())}`);
-        
+
         if (!response.ok) {
           throw new Error('Error en la búsqueda');
         }

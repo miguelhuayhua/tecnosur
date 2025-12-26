@@ -38,20 +38,24 @@ const GET = async (req: NextRequest) => {
                 id: true,
                 titulo: true,
                 descripcion: true,
-                imagenUrl: true,
+                urlMiniatura: true, // ✅ Campo correcto del schema
+                enVivo: true, // Para mostrar si es en vivo o grabado
                 ediciones: {
                     where: {
                         estado: 'ACTIVA'
                     },
                     select: {
                         id: true,
-                        modalidad: true,
+                        codigo: true,
+                        fechaInicio: true,
+                        fechaFin: true,
                         precios: {
                             where: {
                                 esPrecioDefault: true
                             },
                             select: {
-                                precio: true
+                                precio: true,
+                                moneda: true
                             },
                             take: 1
                         }
