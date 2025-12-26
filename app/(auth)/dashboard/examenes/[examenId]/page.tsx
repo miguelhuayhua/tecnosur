@@ -24,7 +24,7 @@ async function getExamenDetalle(examenId: string, correo: string) {
                             estudiante: {
                                 usuario: { correo }
                             },
-                            estaActivo: true
+                            estado: true
                         }
                     }
                 }
