@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
         const payerNombre = payer?.name?.given_name || 'Cliente';
         const payerApellido = payer?.name?.surname || 'PayPal';
 
-     
+
         if (!payerEmail) {
             throw new Error("No se pudo obtener el email del pagador de PayPal");
         }
@@ -126,7 +126,9 @@ export async function POST(req: NextRequest) {
                 data: {
                     nombre: nombreUsuario,
                     apellido: apellidoUsuario,
-                    usuarioId: usuarioTemporal.id,
+                    usuario: {
+                        connect: { id: usuarioTemporal.id }
+                    },
                     celular: ''
                 }
             });
@@ -227,7 +229,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(responseData);
 
     } catch (err: any) {
-        
+
         if (err.statusCode) {
             return NextResponse.json(
                 {
