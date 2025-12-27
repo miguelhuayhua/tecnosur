@@ -189,7 +189,7 @@ model reviewsCursos {
   creadoEn              DateTime            @default(now())
   actualizadoEn         DateTime            @updatedAt
   curso                 cursos              @relation(fields: [cursoId], references: [id], onDelete: Cascade)
-  usuario               usuariosEstudiantes @relation(fields: [usuariosEstudiantesId], references: [id])
+  usuario               usuariosEstudiantes @relation(fields: [usuariosEstudiantesId], references: [id], onDelete: Cascade)
   usuariosEstudiantesId String
 
   @@index([cursoId])

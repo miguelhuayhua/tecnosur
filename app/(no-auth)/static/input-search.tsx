@@ -114,7 +114,7 @@ export default function InputSearch() {
                 <InputGroupInput 
                     ref={inputRef}
                     placeholder='¿Qué estás buscando?' 
-                    className='w-sm'
+                    className='w-xs xl:w-md'
                     value={searchQuery}
                     onChange={handleInputChange}
                     onKeyDown={handleKeyDown}

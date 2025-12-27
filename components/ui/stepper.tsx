@@ -1103,7 +1103,7 @@ function StepperTitle(props: StepperTitleProps) {
       dir={context.dir}
       {...titleProps}
       ref={ref}
-      className={cn("font-semibold text-center text-sm", className)}
+      className={cn("font-semibold  text-center text-sm", className)}
     />
   );
 }

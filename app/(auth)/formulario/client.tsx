@@ -240,7 +240,9 @@ export default function Formulario({ estudiante, edicion }: Props) {
                     name: data.usuario,
                     email: data.correo
                 });
-                router.replace(`${params.has('callbackUrl') ? params.get('callbackUrl') : "/dashboard"}`);
+                setTimeout(() => {
+                    router.replace(`${params.has('callbackUrl') ? params.get('callbackUrl') : "/dashboard"}`);
+                }, 1300)
             }
         })
 
@@ -311,10 +313,10 @@ export default function Formulario({ estudiante, edicion }: Props) {
                         <StepperContent value="estudiante">
                             <FieldContent className="space-y-6">
                                 <div className="space-y-1">
-                                    <FieldTitle className="text-2xl font-semibold">
+                                    <FieldTitle className="text-xl md:text-xl text-center mx-auto md:mx-0">
                                         Datos personales
                                     </FieldTitle>
-                                    <FieldDescription className="text-muted-foreground text-md">
+                                    <FieldDescription className="text-muted-foreground text-center md:text-start text-sm md:text-md">
                                         Completa tu información personal para crear tu perfil
                                     </FieldDescription>
                                 </div>
@@ -355,6 +357,7 @@ export default function Formulario({ estudiante, edicion }: Props) {
                                                 placeholder="dd/mm/yyyy"
                                                 aria-invalid={!!form.formState.errors.fechaNacimiento}
                                                 {...form.register("fechaNacimiento")}
+                                                className="cursor-pointer mobile:pr-8"
                                             />
                                         </InputGroup>
                                         <FieldError>{form.formState.errors.fechaNacimiento?.message}</FieldError>
