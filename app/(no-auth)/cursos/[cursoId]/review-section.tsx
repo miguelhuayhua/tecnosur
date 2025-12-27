@@ -23,10 +23,11 @@ import {
 } from '@/components/ui/alert-dialog';
 import { ArrowUpIcon, Heart, MessageCircleCode, Star, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { estudiantes, reviewsCursos, usuariosEstudiantes } from '@/prisma/generated';
 import ReviewComponent from './review';
 import { ButtonGroup } from '@/components/ui/button-group';
+import Link from 'next/link';
 
 interface Review extends reviewsCursos {
     usuario: usuariosEstudiantes & { estudiante: estudiantes }
@@ -52,6 +53,7 @@ interface OpinionesCursoProps {
 
 export function OpinionesCurso({ curso, edicionPrincipal }: OpinionesCursoProps) {
     const { data: session } = useSession();
+    const { cursoId } = useParams();
     const [showOpinion, setShowOpinion] = useState(false);
     const [opinionText, setOpinionText] = useState('');
     const [selectedRating, setSelectedRating] = useState(5);
@@ -272,13 +274,21 @@ export function OpinionesCurso({ curso, edicionPrincipal }: OpinionesCursoProps)
                 {/* Lista de opiniones */}
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
                     {curso.reviews.length > 0 ? (
-                        curso.reviews.map((review) => (
-                            <ReviewComponent
-                                key={review.id}
-                                review={review}
-                                userId={session ? session.user.id : ''}
-                            />
-                        ))
+                        <>
+                            {
+                                curso.reviews.map((review) => (
+                                    <ReviewComponent
+                                        key={review.id}
+                                        review={review}
+                                        userId={session ? session.user.id : ''}
+                                    />
+                                ))
+                            }
+
+                            <Link href={`/cursos/${cursoId}/reviews`}>
+                                Ver
+                            </Link>
+                        </>
                     ) : (
                         <p className="text-muted-foreground text-sm col-span-full">
                             Aún sin opiniones

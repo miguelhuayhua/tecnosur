@@ -27,6 +27,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession } from "next-auth/react";
 import { InputGroup, InputGroupAddon, InputGroupTextarea } from "@/components/ui/input-group";
 import { OpinionesCurso } from "./review-section";
+import { ButtonGroup } from "@/components/ui/button-group";
 const faqs = [
     {
         question: "¿Qué es TecSur y qué tipos de cursos ofrecen?",
@@ -164,7 +165,7 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                             <span className="font-medium mt-0.5">
                                 {selectedCurrency.code}
                             </span>
-                            <b className={`text-4xl ${precioDefault?.esDescuento ? 'line-through decoration-primary mr-4' : ''}`}>
+                            <b className={`text-xl lg:text-4xl ${precioDefault?.esDescuento ? 'line-through decoration-primary mr-4' : ''}`}>
                                 {precioDefault?.esDescuento ? precioOriginalConvertido?.value : precioConvertido?.value || '0'}
                             </b>
                         </div>
@@ -174,7 +175,7 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                                     <span className='mt-1'>
                                         {selectedCurrency.code}
                                     </span>
-                                    <b className='text-4xl'>
+                                    <b className='text-2xl lg:text-4xl'>
                                         {precioConvertido?.value}
                                     </b>
                                 </div>
@@ -185,18 +186,18 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                         )}
                     </div>
 
-                    <div className='space-x-2'>
-                        <Button asChild>
+                    <ButtonGroup className=' w-full'>
+                        <Button className="flex-1" asChild>
                             <Link href={`/cursos/${curso.id}/checkout`}>
                                 <CreditCard />
                                 Comprar Curso
                             </Link>
                         </Button>
-                        <Button variant={'ghost'} className="bg-green-600 text-white">
+                        <Button variant={'ghost'} className="bg-green-600 flex-1 text-white">
                             <FaWhatsapp />
                             Más información
                         </Button>
-                    </div>
+                    </ButtonGroup>
 
                     <div>
                         <small className='text-muted-foreground text-xs'>
@@ -320,7 +321,7 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                                                     <span className={`font-medium ${precioDefault?.esDescuento ? 'text-lg' : 'text-sm'}`}>
                                                         {selectedCurrency.code}
                                                     </span>
-                                                    <span className={`font-bold ${precioDefault?.esDescuento ? 'text-3xl' : 'text-3xl'}`}>
+                                                    <span className={`font-bold ${precioDefault?.esDescuento ? 'text-3xl ' : 'text-3xl'}`}>
                                                         {precioConvertido?.value || '0'}
                                                     </span>
                                                 </div>

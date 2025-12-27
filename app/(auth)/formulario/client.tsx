@@ -229,8 +229,8 @@ export default function Formulario({ estudiante, edicion }: Props) {
     const { openModal } = useModal();
     const onSubmit = useCallback(async (data: FormSchema) => {
         openModal({
-            titulo: '¿Continuar?',
-            content: "Tus datos serán registrados",
+            titulo: '¿Deseas continuar?',
+            content: "Tus datos personales serán registrados.",
             url: "/api/estudiante/validar",
             data: { ...data, estudianteId: estudiante.id },
             showIcon: false,
