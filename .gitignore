@@ -12,8 +12,12 @@
 
 # testing
 /coverage
+# Prisma generated files - NO COMMIT THESE
+/prisma/generated/
+/prisma/client/
 
-# next.js
+# pero mantén el esquema Prisma
+!prisma/schema.prisma# next.js
 /.next/
 /out/
 
