@@ -17,7 +17,8 @@
 /prisma/client/
 
 # pero mantén el esquema Prisma
-!prisma/schema.prisma# next.js
+!prisma/schema.prisma
+# next.js
 /.next/
 /out/
 
