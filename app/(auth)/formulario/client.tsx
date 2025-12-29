@@ -23,15 +23,14 @@ import {
 } from "@/components/ui/field";
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "@/components/ui/input-group";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { cursos, edicionesCursos, estudiantes, usuariosEstudiantes } from "@/prisma/generated";
+import { estudiantes } from "@/prisma/generated";
 import Image from "next/image";
-import { useCallback, useMemo, useState, useTransition } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Home, Info, User, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Home, Info, User } from "lucide-react";
 import {
     Select,
     SelectContent,
@@ -71,12 +70,13 @@ const steps = [
         icon: Info
     },
 ];
-import { CheckIcon, EyeIcon, EyeOffIcon, XIcon } from 'lucide-react';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSession } from "next-auth/react";
+import { PasswordInput } from "@/components/ui/password-input";
 
 const passwordRequirements = [
-    { regex: /.{12,}/, text: 'Al menos 12 caracteres' },
+    { regex: /.{6,}/, text: 'Al menos 6 caracteres' },
     { regex: /[a-z]/, text: 'Al menos 1 letra minúscula' },
     { regex: /[A-Z]/, text: 'Al menos 1 letra mayúscula' },
     { regex: /[0-9]/, text: 'Al menos 1 número' },
@@ -87,10 +87,7 @@ const passwordRequirements = [
 ];
 
 export default function Formulario({ estudiante, edicion }: Props) {
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [step, setStep] = useState("estudiante");
-    const [isPending, startTransition] = useTransition();
     const router = useRouter();
     const { update } = useSession();
     const params = useSearchParams();
@@ -119,15 +116,7 @@ export default function Formulario({ estudiante, edicion }: Props) {
         // Contraseña con validación mejorada
         contrasena: z
             .string()
-            .min(12, "La contraseña debe tener al menos 12 caracteres")
-            .regex(/[a-z]/, "La contraseña debe contener al menos una letra minúscula")
-            .regex(/[A-Z]/, "La contraseña debe contener al menos una letra mayúscula")
-            .regex(/[0-9]/, "La contraseña debe contener al menos un número")
-            .regex(
-                /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/,
-                "La contraseña debe contener al menos un carácter especial"
-            ),
-
+            .min(6, "La contraseña debe tener al menos 12 caracteres"),
         confirmarContrasena: z.string()
     }).refine((data) => data.contrasena === data.confirmarContrasena, {
         message: "Las contraseñas no coinciden",
@@ -177,27 +166,11 @@ export default function Formulario({ estudiante, edicion }: Props) {
                     ))}
                 </div>
 
-                <p className="text-foreground text-sm font-medium">
-                    {getText(strengthScore)}. Debe contener:
+                <p className="text-foreground text-xs ">
+                    {getText(strengthScore)}.
                 </p>
 
-                <ul className="space-y-1.5">
-                    {strength.map((req, index) => (
-                        <li key={index} className="flex items-center gap-2">
-                            {req.met ? (
-                                <CheckIcon className="size-4 text-green-600 dark:text-green-400" />
-                            ) : (
-                                <XIcon className="text-muted-foreground size-4" />
-                            )}
-                            <span className={cn('text-xs', req.met ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground')}>
-                                {req.text}
-                                <span className="sr-only">
-                                    {req.met ? ' - Requisito cumplido' : ' - Requisito no cumplido'}
-                                </span>
-                            </span>
-                        </li>
-                    ))}
-                </ul>
+
             </div>
         );
     };
@@ -242,7 +215,7 @@ export default function Formulario({ estudiante, edicion }: Props) {
                 });
                 setTimeout(() => {
                     router.replace(`${params.has('callbackUrl') ? params.get('callbackUrl') : "/dashboard"}`);
-                }, 1300)
+                }, 2000)
             }
         })
 
@@ -477,31 +450,10 @@ export default function Formulario({ estudiante, edicion }: Props) {
 
                                     <Field className="md:col-span-2">
                                         <FieldLabel htmlFor="contrasena">Contraseña *</FieldLabel>
-                                        <InputGroup>
-                                            <div className="relative w-full">
-                                                <InputGroupInput
-                                                    id="contrasena"
-                                                    type={showPassword ? "text" : "password"}
-                                                    placeholder="Introduce tu contraseña"
-                                                    className="pr-10"
-                                                    aria-invalid={!!form.formState.errors.contrasena}
-                                                    {...form.register("contrasena")}
-                                                />
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={() => setShowPassword(!showPassword)}
-                                                    className="text-muted-foreground focus-visible:ring-ring/50 absolute inset-y-0 right-0 rounded-l-none hover:bg-transparent"
-                                                >
-                                                    {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
-                                                    <span className="sr-only">
-                                                        {showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                                                    </span>
-                                                </Button>
-                                            </div>
-                                        </InputGroup>
-
+                                        <PasswordInput id="contrasena"
+                                            placeholder="Introduce tu contraseña"
+                                            aria-invalid={!!form.formState.errors.contrasena}
+                                            {...form.register("contrasena")} />
                                         {/* Indicador de fortaleza de contraseña */}
                                         {form.watch('contrasena') && (
                                             <div className="mt-3">
@@ -514,30 +466,11 @@ export default function Formulario({ estudiante, edicion }: Props) {
 
                                     <Field className="md:col-span-2">
                                         <FieldLabel htmlFor="confirmarContrasena">Confirmar Contraseña *</FieldLabel>
-                                        <InputGroup>
-                                            <div className="relative w-full">
-                                                <InputGroupInput
-                                                    id="confirmarContrasena"
-                                                    type={showConfirmPassword ? "text" : "password"}
-                                                    placeholder="Repite tu contraseña"
-                                                    className="pr-10"
-                                                    aria-invalid={!!form.formState.errors.confirmarContrasena}
-                                                    {...form.register("confirmarContrasena")}
-                                                />
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                                    className="text-muted-foreground focus-visible:ring-ring/50 absolute inset-y-0 right-0 rounded-l-none hover:bg-transparent"
-                                                >
-                                                    {showConfirmPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
-                                                    <span className="sr-only">
-                                                        {showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                                                    </span>
-                                                </Button>
-                                            </div>
-                                        </InputGroup>
+                                        <PasswordInput id="confirmarContrasena"
+                                            placeholder="Repite tu contraseña"
+                                            aria-invalid={!!form.formState.errors.confirmarContrasena}
+                                            {...form.register("confirmarContrasena")} />
+
                                         <FieldError>{form.formState.errors.confirmarContrasena?.message}</FieldError>
                                     </Field>
                                 </div>
@@ -622,7 +555,7 @@ export default function Formulario({ estudiante, edicion }: Props) {
                         {/* Navegación */}
                         <div className="flex justify-between items-center mt-8">
                             <StepperPrev asChild>
-                                <Button type="button" variant="outline" disabled={isPending}>
+                                <Button type="button" variant="outline" >
                                     Anterior
                                 </Button>
                             </StepperPrev>
@@ -633,20 +566,12 @@ export default function Formulario({ estudiante, edicion }: Props) {
                                 <Button
                                     type="submit"
                                     onClick={form.handleSubmit(onSubmit)}
-                                    disabled={isPending}
                                 >
-                                    {isPending ? (
-                                        <>
-                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            Guardando...
-                                        </>
-                                    ) : (
-                                        "Completar Registro"
-                                    )}
+                                    Completar Registro
                                 </Button>
                             ) : (
                                 <StepperNext asChild>
-                                    <Button type="button" disabled={isPending}>
+                                    <Button type="button" >
                                         Siguiente
                                     </Button>
                                 </StepperNext>

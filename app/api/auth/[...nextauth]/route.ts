@@ -27,7 +27,6 @@ const handler = NextAuth({
             async authorize(credentials) {
                 try {
                     const { usuario, password } = credentials as { usuario: string, password: string };
-
                     const data = await prisma.usuariosEstudiantes.findFirst({
                         where: {
                             OR: [
@@ -36,7 +35,6 @@ const handler = NextAuth({
                             ]
                         }
                     });
-
                     if (data && bcrypt.compareSync(password, data.contrasena)) {
                         return {
                             email: data.correo,

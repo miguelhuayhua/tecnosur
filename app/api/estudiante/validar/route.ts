@@ -6,14 +6,7 @@ import bcrypt from "bcrypt"
 
 const SALT_ROUNDS = 10
 
-// Validaciones de contraseña
-const passwordValidations = [
-  { regex: /.{12,}/, message: "Debe tener al menos 12 caracteres" },
-  { regex: /[a-z]/, message: "Debe tener al menos 1 letra minúscula" },
-  { regex: /[A-Z]/, message: "Debe tener al menos 1 letra mayúscula" },
-  { regex: /[0-9]/, message: "Debe tener al menos 1 número" },
-  { regex: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/, message: "Debe tener al menos 1 carácter especial" }
-]
+
 
 export async function POST(req: NextRequest) {
   try {
@@ -67,11 +60,6 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: "Contraseña es requerida" }, { status: 400 })
     }
 
-    for (const validation of passwordValidations) {
-      if (!validation.regex.test(contrasena)) {
-        return Response.json({ error: validation.message }, { status: 400 })
-      }
-    }
 
     if (contrasena !== confirmarContrasena) {
       return Response.json({ error: "Las contraseñas no coinciden" }, { status: 400 })

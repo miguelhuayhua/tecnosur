@@ -83,9 +83,9 @@ model usuariosEstudiantes {
   // Relación uno-a-uno con @unique
   estudiante    estudiantes?    @relation(fields: [estudianteId], references: [id])
   estudianteId  String?         @unique
-  registrado    Boolean         @default(false)
   reviews       reviewsCursos[]
   compras       compras[]
+  registrado    Boolean         @default(false)
 
   @@index([correo])
   @@index([estado])
@@ -146,23 +146,23 @@ model docente {
 
 // ============ MODELOS DE CURSOS ============
 model cursos {
-  id               String   @id @default(uuid())
+  id               String             @id @default(uuid())
   descripcion      String
   titulo           String
   urlMiniatura     String?
-  creadoEn         DateTime @default(now())
-  actualizadoEn    DateTime @updatedAt
+  creadoEn         DateTime           @default(now())
+  actualizadoEn    DateTime           @updatedAt
   descripcionCorta String?
-  enVivo           Boolean  @default(false)
+  enVivo           Boolean            @default(false)
   urlCurso         String?
-
+  codigo           String?            @unique
   // Relaciones de contenido (terminan en Cursos)
-  ediciones  edicionesCursos[]
-  beneficios beneficiosCursos[]
-  objetivos  objetivosCursos[]
-  requisitos requisitosCursos[]
-  categorias categoriasCursos[]
-  reviews    reviewsCursos[]
+  ediciones        edicionesCursos[]
+  beneficios       beneficiosCursos[]
+  objetivos        objetivosCursos[]
+  requisitos       requisitosCursos[]
+  categorias       categoriasCursos[]
+  reviews          reviewsCursos[]
 
   @@index([titulo])
 }
@@ -182,16 +182,17 @@ model categoriasCursos {
 
 // ============ REVIEWS DE CURSOS ============
 model reviewsCursos {
-  id                    String              @id @default(uuid())
+  id                    String               @id @default(uuid())
   cursoId               String
   rating                Int
   comentario            String?
-  creadoEn              DateTime            @default(now())
-  actualizadoEn         DateTime            @updatedAt
-  curso                 cursos              @relation(fields: [cursoId], references: [id], onDelete: Cascade)
-  usuario               usuariosEstudiantes @relation(fields: [usuariosEstudiantesId], references: [id], onDelete: Cascade)
-  usuariosEstudiantesId String
+  creadoEn              DateTime             @default(now())
+  actualizadoEn         DateTime             @updatedAt
+  curso                 cursos               @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+  usuario               usuariosEstudiantes? @relation(fields: [usuariosEstudiantesId], references: [id])
+  usuariosEstudiantesId String?
 
+  @@unique([cursoId])
   @@index([cursoId])
   @@index([rating])
   @@index([creadoEn])
@@ -267,18 +268,19 @@ model requisitosCursos {
 
 // ============ CLASES Y MATERIALES ============
 model clases {
-  id          String          @id @default(uuid())
-  edicionId   String
-  descripcion String
-  duracion    Int?
-  fecha       DateTime
-  orden       Int
-  titulo      String
-  urlYoutube  String?
-  creadoEn    DateTime        @default(now())
-  edicion     edicionesCursos @relation(fields: [edicionId], references: [id], onDelete: Cascade)
-  materiales  materiales[]
-  grabaciones grabaciones[]
+  id              String          @id @default(uuid())
+  edicionId       String
+  descripcion     String
+  duracion        Int?
+  fecha           DateTime
+  orden           Int
+  titulo          String
+  urlYoutube      String?
+  creadoEn        DateTime        @default(now())
+  edicion         edicionesCursos @relation(fields: [edicionId], references: [id], onDelete: Cascade)
+  materiales      materiales[]
+  grabaciones     grabaciones[]
+  urlPresentacion String?
 
   @@index([edicionId, orden])
   @@index([fecha])
@@ -403,6 +405,7 @@ model compras {
   inscripcion           inscripciones?
   usuariosEstudiantesId String?
   usuario               usuariosEstudiantes? @relation(fields: [usuariosEstudiantesId], references: [id])
+  estadoPago            EstadoPago           @default(PENDIENTE)
 
   @@index([fechaCompra])
   @@index([comprobado])
