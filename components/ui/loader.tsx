@@ -40,7 +40,7 @@ export function Loader({
 
         {variant === "cube" && (
           <motion.div
-            className="absolute inset-0 bg-black dark:bg-white shadow-[0_0_4px_rgba(255,255,255,0.6)] dark:shadow-[0_0_4px_rgba(255,255,255,0.6)]"
+            className="absolute inset-0 bg-linear-to-r from-primary to-secondary  shadow-[0_0_4px_rgba(255,255,255,0.6)] dark:shadow-[0_0_4px_rgba(255,255,255,0.6)]"
             animate={{ rotateX: [0, 180, 0], rotateY: [0, 180, 0] }}
             transition={{ repeat: Infinity, duration: 1.1, ease: "linear" }}
           />

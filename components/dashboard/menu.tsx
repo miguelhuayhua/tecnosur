@@ -75,7 +75,7 @@ export function Menu({ isOpen }: MenuProps) {
             <li className={cn("w-full", groupLabel ? "pt-5" : "")} key={index}>
               {/* Grupo de menú */}
               {(isOpen && groupLabel) ? (
-                <p className="text-sm font-medium  px-4 mb-4 pb-2 max-w-[248px] truncate border-b border-border/50">
+                <p className="text-sm   px-4 mb-4 pb-2 truncate text-white">
                   {groupLabel}
                 </p>
               ) : (!isOpen && groupLabel) ? (
@@ -97,12 +97,12 @@ export function Menu({ isOpen }: MenuProps) {
                         <Tooltip delayDuration={100}>
                           <TooltipTrigger asChild>
                             <Button
-                              variant={isActive ? "ghost" : "ghost"}
+                              variant={"ghost"}
                               className={cn(
-                                "w-full justify-start  h-10 mb-1 transition-colors",
+                                "w-full justify-start text-white   h-10 mb-1 transition-colors",
                                 isActive
-                                  ? "bg-primary/5 border-r-2 border-r-primary "
-                                  : "hover:bg-accent/50 text-muted-foreground"
+                                  ? " border-r-3 border-r-white rounded-none"
+                                  : "hover:bg-accent/10 "
                               )}
                               asChild
                             >
@@ -156,9 +156,9 @@ export function Menu({ isOpen }: MenuProps) {
                 <TooltipTrigger asChild>
                   <Button
                     onClick={() => signOut()}
-                    variant="outline"
+                    variant="ghost"
                     className={cn(
-                      "w-full h-10 mt-5 transition-colors text-muted-foreground hover:text-foreground hover:bg-muted/50",
+                      "w-full h-10 mt-5 transition-colors text-white hover:bg-muted/10",
                       !isOpen ? "justify-center" : "justify-start"
                     )}
                   >
@@ -193,9 +193,9 @@ export function Menu({ isOpen }: MenuProps) {
             )}>
               <Button
                 variant="ghost"
-                size="icon"
+                size="icon-sm"
                 asChild
-                className="h-8 w-8 hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-600 dark:hover:text-blue-400"
+                className="text-white"
               >
                 <Link href={socialLinks.facebook} target="_blank" rel="noopener noreferrer">
                   <Facebook className="h-4 w-4" />
@@ -204,9 +204,9 @@ export function Menu({ isOpen }: MenuProps) {
 
               <Button
                 variant="ghost"
-                size="icon"
+                size="icon-sm"
                 asChild
-                className="h-8 w-8 hover:bg-pink-100 dark:hover:bg-pink-900 hover:text-pink-600 dark:hover:text-pink-400"
+                className="text-white"
               >
                 <Link href={socialLinks.instagram} target="_blank" rel="noopener noreferrer">
                   <Instagram className="h-4 w-4" />
@@ -217,9 +217,9 @@ export function Menu({ isOpen }: MenuProps) {
 
               <Button
                 variant="ghost"
-                size="icon"
+                size="icon-sm"
                 asChild
-                className="h-8 w-8 hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-600 dark:hover:text-blue-400"
+                className="text-white"
               >
                 <Link href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer">
                   <Linkedin className="h-4 w-4" />
@@ -229,7 +229,7 @@ export function Menu({ isOpen }: MenuProps) {
 
             {/* Texto descriptivo cuando el sidebar está abierto */}
             {isOpen && (
-              <p className="text-xs text-center text-muted-foreground px-2">
+              <p className="text-xs text-white/80 text-center">
                 Síguenos en nuestras redes sociales
               </p>
             )}

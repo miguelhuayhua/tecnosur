@@ -295,6 +295,9 @@ export function OpinionesCurso({ curso, edicionPrincipal }: OpinionesCursoProps)
                         </p>
                     )}
                 </div>
+                <Link className='underline text-sm font-semibold' href={`/cursos/${cursoId}/reviews`}>
+                    Ver todas las opiniones
+                </Link>
             </section>
 
             <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>

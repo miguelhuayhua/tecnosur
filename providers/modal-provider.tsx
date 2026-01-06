@@ -11,7 +11,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { Loader2, CheckCircle, XCircle, AlertTriangle, Info } from 'lucide-react';
+import { CheckCircle, XCircle, AlertTriangle, Info } from 'lucide-react';
 import { Loader } from '@/components/ui/loader';
 
 // Tipos para los diferentes estados y tipos de mensaje
@@ -176,7 +176,7 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
             {
                 isLoading && (
                     <div className='fixed z-100 bg-background/50 backdrop-blur-md flex items-center justify-center  h-screen w-screen'>
-                        <Loader variant="dual-ring">
+                        <Loader variant="cube">
                             <span className="text-foreground font-semibold">Procesando solicitud...</span>
                         </Loader>
                     </div>

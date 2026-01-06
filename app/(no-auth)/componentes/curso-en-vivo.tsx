@@ -216,7 +216,7 @@ export const CursoCardDetalladoVertical: React.FC<CursoCardProps & React.HtmlHTM
           </div>
         )}
         <Separator />
-        <p className='text-sm text-muted-foreground'>
+        <p className='text-xs'>
           {curso.descripcionCorta}
         </p>
 

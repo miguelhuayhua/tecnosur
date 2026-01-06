@@ -11,63 +11,62 @@ import {
 import { prisma } from "@/lib/prisma";
 import CursoEstudianteDetalle from "./curso-detalle";
 import { ContentLayout } from "@/components/dashboard/content-layout";
+import { getSession } from "next-auth/react";
 
 
-async function getEdicionCurso(id: string) {
-    try {
-        const edicion = await prisma.edicionesCursos.findUnique({
-            where: { id },
-            include: {
-                curso: {
-                    include: {
-                        categorias: {
-                            include: {
-                                categoria: true
-                            }
-                        },
-                        beneficios: {
-                            orderBy: { orden: 'asc' }
-                        },
-                        objetivos: {
-                            orderBy: { orden: 'asc' }
-                        },
-                        requisitos: {
-                            orderBy: { orden: 'asc' }
+async function getEdicionCurso(id: string, correo: string) {
+
+    const edicion = await prisma.edicionesCursos.findUnique({
+        where: { id },
+        include: {
+            curso: {
+                include: {
+                    categorias: {
+                        include: {
+                            categoria: true
                         }
+                    },
+                    beneficios: {
+                        orderBy: { orden: 'asc' }
+                    },
+                    objetivos: {
+                        orderBy: { orden: 'asc' }
+                    },
+                    requisitos: {
+                        orderBy: { orden: 'asc' }
                     }
-                },
-                clases: {
-                    orderBy: { orden: 'asc' },
-                    include: {
-                        materiales: true
-                    }
-                },
-                examenes: {
-                    orderBy: { creadoEn: 'asc' }
-                },
-                inscripciones: {
-                    include: {
-                        estudiante: true
-                    }
-                },
-                precios: {
-                    orderBy: { esPrecioDefault: 'desc' }
                 }
+            },
+            clases: {
+                orderBy: { orden: 'asc' },
+                include: {
+                    materiales: true
+                }
+            },
+            examenes: {
+                orderBy: { creadoEn: 'asc' }
+            },
+            inscripciones: {
+                include: {
+                    estudiante: true
+                }
+            },
+            precios: {
+                orderBy: { esPrecioDefault: 'desc' }
             }
-        });
+        }
+    });
+    const miReview = await prisma.reviewsCursos.count({ where: { curso: { ediciones: { every: { id } } }, usuario: { correo } } })
+    if (!edicion) return notFound();
 
-        if (!edicion) return notFound();
+    return { edicion, miReview };
 
-        return edicion;
-    } catch (error) {
-        console.error('Error fetching edicion curso:', error);
-        return null;
-    }
 }
 
 export default async function CursoDetailPage({ params }: any) {
     const param = await params;
-    const edicion = await getEdicionCurso(param.id);
+    const session = await getSession();
+    const { edicion, miReview } = await getEdicionCurso(param.id, session?.user.email!);
 
 
     if (!edicion) {
@@ -102,7 +101,7 @@ export default async function CursoDetailPage({ params }: any) {
                 </BreadcrumbList>
             </Breadcrumb>
 
-            <CursoEstudianteDetalle edicion={edicion} />
+            <CursoEstudianteDetalle edicion={edicion} miReview={miReview} />
         </ContentLayout>
     );
 }

@@ -1,16 +1,30 @@
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import CalificarCursoModal from './client';
-export default async function CalificarCurso({ params }: any) {
+import { getServerSession } from 'next-auth';
+interface Props {
+    params: Promise<{ id: string }>
+}
+export default async function CalificarCurso({ params }: Props) {
     const { id } = await params;
+    const user = await getServerSession();
 
-    try {
-        // Obtener paciente con todos los datos
+
+    if (user && user.user && user.user.email) {
         const edicion = await prisma.edicionesCursos.findUnique({
             where: { id },
-            include: {
+            select: {
                 curso: {
-                    include: { reviews: true }
+                    select: {
+                        id: true,
+                        reviews: {
+                            where: {
+                                usuario: {
+                                    correo: user.user.email
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -20,10 +34,7 @@ export default async function CalificarCurso({ params }: any) {
             notFound();
         }
 
-
         return <CalificarCursoModal edicion={edicion} />;
-    } catch (error) {
-        console.error('Error cargando curso para editar:', error);
-        notFound();
     }
+    return null;
 }

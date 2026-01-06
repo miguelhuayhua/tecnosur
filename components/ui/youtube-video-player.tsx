@@ -163,10 +163,10 @@ export function YouTubePlayer({
                 >
                   <Button
                     size="lg"
-                    variant="secondary"
+                    variant="ghost"
                     className={cn(
                       "relative h-16 w-16 rounded-full inset-shadow-sm inset-shadow-secondary border border-border/20 bg-background/80 backdrop-blur-sm md:h-20 md:w-20 p-0",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:bg-background/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                       playButtonClassName
                     )}
                     onClick={handlePlay}
@@ -280,7 +280,7 @@ export function YouTubePlayer({
                       >
                         <Button
                           size="lg"
-                          variant="secondary"
+                          variant="ghost"
                           className={cn(
                             "relative h-16 w-16 rounded-full border inset-shadow-sm inset-shadow-secondary border-border/20 bg-background/80 backdrop-blur-sm md:h-20 md:w-20 p-0",
                             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
@@ -377,7 +377,7 @@ function YouTubePlayerControls({
         >
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
-              variant="secondary"
+              variant="ghost"
               size="icon"
               onClick={onToggleExpand}
               className={cn(

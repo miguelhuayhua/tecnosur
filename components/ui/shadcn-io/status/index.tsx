@@ -9,7 +9,7 @@ export type StatusProps = ComponentProps<typeof Badge> & {
 export const Status = ({ className, status, ...props }: StatusProps) => (
   <Badge
     className={cn('flex items-center gap-2', 'group', status, className)}
-    variant="secondary"
+    variant="outline"
     {...(props as any)}
   />
 );

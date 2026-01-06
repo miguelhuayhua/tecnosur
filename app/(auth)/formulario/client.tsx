@@ -25,7 +25,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "@/
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { estudiantes } from "@/prisma/generated";
 import Image from "next/image";
-import { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -74,6 +74,7 @@ import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSession } from "next-auth/react";
 import { PasswordInput } from "@/components/ui/password-input";
+import { Loader } from "@/components/ui/loader";
 
 const passwordRequirements = [
     { regex: /.{6,}/, text: 'Al menos 6 caracteres' },
@@ -89,6 +90,7 @@ const passwordRequirements = [
 export default function Formulario({ estudiante, edicion }: Props) {
     const [step, setStep] = useState("estudiante");
     const router = useRouter();
+    const [showLoader, setShowLoader] = React.useState(false);
     const { update } = useSession();
     const params = useSearchParams();
     // En el componente Formulario, modifica la parte del esquema de validación:
@@ -208,6 +210,7 @@ export default function Formulario({ estudiante, edicion }: Props) {
             data: { ...data, estudianteId: estudiante.id },
             showIcon: false,
             callback() {
+                setShowLoader(true)
                 update({
                     registrado: true,
                     name: data.usuario,
@@ -215,7 +218,8 @@ export default function Formulario({ estudiante, edicion }: Props) {
                 });
                 setTimeout(() => {
                     router.replace(`${params.has('callbackUrl') ? params.get('callbackUrl') : "/dashboard"}`);
-                }, 2000)
+                    setShowLoader(false);
+                }, 5000)
             }
         })
 
@@ -566,6 +570,7 @@ export default function Formulario({ estudiante, edicion }: Props) {
                                 <Button
                                     type="submit"
                                     onClick={form.handleSubmit(onSubmit)}
+                                    disabled={showLoader}
                                 >
                                     Completar Registro
                                 </Button>
@@ -580,6 +585,13 @@ export default function Formulario({ estudiante, edicion }: Props) {
                     </Stepper>
                 </div>
             </div>
+            {
+                showLoader && (
+                    <div className="fixed z-10 right-5 bottom-5">
+                        <Loader variant="cube" />
+                    </div>
+                )
+            }
         </ScrollArea>
     );
 }

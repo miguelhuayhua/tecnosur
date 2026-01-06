@@ -11,8 +11,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { cursoId, rating, comentario } = await req.json()
-console.log(token)
+    const { cursoId, rating, comentario, reviewId } = await req.json()
     // Validar campos requeridos
     if (!cursoId || !rating || !comentario) {
       return Response.json({
@@ -43,7 +42,7 @@ console.log(token)
       where: {
         usuario: { correo },
         edicion: {
-          cursoId: cursoId
+          cursoId
         }
       }
     })
@@ -55,7 +54,7 @@ console.log(token)
     }
 
     // Verificar que no haya dejado ya una opinión
-    const reviewExistente = await prisma.reviewsCursos.findFirst({
+    const reviewExistente = await prisma.reviewsCursos.findUnique({
       where: {
         cursoId: cursoId,
         usuario: {
@@ -65,29 +64,43 @@ console.log(token)
     })
 
     if (reviewExistente) {
+
+      await prisma.reviewsCursos.update({
+        data: {
+          rating,
+          comentario,
+        },
+        where: {
+          id: reviewId
+        }
+      })
       return Response.json({
-        message: "Ya opinaste este curso",
-        success: false
-      }, { status: 400 })
+        success: true,
+        message: "Reseñada actualizada"
+      }, { status: 201 })
+
+    }
+    else {
+      await prisma.reviewsCursos.create({
+        data: {
+          rating,
+          comentario,
+          curso: {
+            connect: { id: cursoId }
+          },
+          usuario: {
+            connect: { correo }
+          }
+        },
+      })
+      return Response.json({
+        success: true,
+        message: "Reseña publicada"
+      }, { status: 201 })
+
     }
 
-    await prisma.reviewsCursos.create({
-      data: {
-        rating,
-        comentario,
-        curso: {
-          connect: { id: cursoId }
-        },
-        usuario: {
-          connect: { correo }
-        }
-      },
-    })
 
-    return Response.json({
-      success: true,
-      message: "Opinión creada"
-    }, { status: 201 })
 
   } catch (error: any) {
     console.error('Error creando review:', error)

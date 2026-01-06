@@ -18,7 +18,7 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "fixed top-0 left-0 z-20 h-screen -translate-x-full bg-sidebar lg:translate-x-0 transition-[width] ease-in-out duration-300",
+        "fixed top-0 left-0 z-20 h-screen bg-gradient-to-b from-primary to-secondary -translate-x-full  lg:translate-x-0 transition-[width] ease-in-out duration-300",
         !getOpenState() ? "w-[90px]" : "w-72",
         settings.disabled && "hidden"
       )}
@@ -31,22 +31,18 @@ export function Sidebar() {
       >
 
         <Link href="/dashboard" className="flex mx-auto justify-center h-10 mt-4 items-center gap-2">
-          {isOpen && (
-            <>
-              {resolvedTheme == 'light' && (
-                <Image alt='logo' className='w-21' src='/light.png' width={80} height={80} />
-              )}
-              {resolvedTheme == 'dark' && (
-                <Image alt='logo' className='w-21' src='/dark.png' width={80} height={80} />
-              )}
-            </>
-          )}
+          {isOpen ? (
+            <Image alt='logo' className='w-30' src='/dark_logo.png' width={80} height={80} />
+          ) :
+            (
+              <Image alt='logo' className='w-6' src='/dark_icon.png' width={80} height={80} />
+            )
+
+          }
+
         </Link>
         <Menu isOpen={getOpenState()} />
-
-
       </ScrollArea>
-
     </aside>
   );
 }

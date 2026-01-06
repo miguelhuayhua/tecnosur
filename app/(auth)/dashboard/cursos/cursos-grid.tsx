@@ -42,7 +42,7 @@ export function CursosGrid({ inscripciones }: { inscripciones: Inscripcion[] }) 
           <Search />
         </InputGroupAddon>
         <InputGroupAddon align={'inline-end'}>
-          <Badge className="rounded-full" variant={'secondary'}>
+          <Badge  variant={'outline'}>
             {filteredInscripciones.length}
           </Badge>
         </InputGroupAddon>

@@ -40,10 +40,10 @@ interface EdicionCurso extends edicionesCursos {
 
 
 
-export default function CursoEstudianteDetalle({ edicion }: { edicion: EdicionCurso }) {
+export default function CursoEstudianteDetalle({ edicion, miReview }: { edicion: EdicionCurso, miReview: number }) {
   const [claseSeleccionada, setClaseSeleccionada] = useState<clases & { materiales: Array<materiales> } | null>(edicion.clases[0] || null)
   const { id } = useParams();
-
+  const curso = edicion.curso;
   const formatFecha = (fecha: Date) => {
     return new Intl.DateTimeFormat('es-BO', {
       weekday: 'long',
@@ -79,7 +79,7 @@ export default function CursoEstudianteDetalle({ edicion }: { edicion: EdicionCu
       <div className="mx-auto max-w-6xl space-y-6">
         {/* Header del curso */}
         <div >
-          <div className="flex flex-col items-center md:flex-row gap-8">
+          <div className="flex flex-col md:items-center md:flex-row gap-8">
             {/* Imagen del curso */}
             {edicion.curso.urlMiniatura && (
               <div className="relative w-full md:w-96 h-56 rounded-lg overflow-hidden">
@@ -149,16 +149,20 @@ export default function CursoEstudianteDetalle({ edicion }: { edicion: EdicionCu
               </Link>
             </Button>
           )}
-          <Button asChild >
-            <Link href={`/dashboard/calendario`}>
-              <Calendar />
-              Calendario
-            </Link>
-          </Button>
+          {
+            curso.enVivo && (
+              <Button asChild >
+                <Link href={`/dashboard/calendario`}>
+                  <Calendar />
+                  Calendario
+                </Link>
+              </Button>
+            )
+          }
           <Button variant="outline" asChild >
             <Link href={`/dashboard/cursos/${id}/calificaciones`}>
               <Award />
-              Ver calificaciones
+              Ver Notas
             </Link>
           </Button>
 
@@ -166,9 +170,11 @@ export default function CursoEstudianteDetalle({ edicion }: { edicion: EdicionCu
             <Link href={`/dashboard/cursos/${id}/calificar`}>
               <Star />
               Calificar
+              {miReview && (<small className="text-xs border-l border-l-yellow-500 pl-2 text-yellow-500">
+                Calificado
+              </small>)}
             </Link>
           </Button>
-
         </ButtonGroup>
         {/* Contenido principal - Lista de clases y materiales */}
         <div className="grid lg:grid-cols-3  gap-8">
@@ -187,8 +193,7 @@ export default function CursoEstudianteDetalle({ edicion }: { edicion: EdicionCu
                   edicion.clases.map((clase) => (
                     <Card
                       key={clase.id}
-                      className={`cursor-pointer transition-colors hover:border-primary ${claseSeleccionada?.id === clase.id ? 'border-primary bg-secondary  ' : ''
-                        }`}
+                      className={`cursor-pointer transition-colors hover:border-primary ${claseSeleccionada?.id === clase.id ? 'border-primary bg-primary/10  ' : ''}`}
                       onClick={() => setClaseSeleccionada(clase)}
                     >
                       <CardContent >

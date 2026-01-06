@@ -10,6 +10,7 @@ import { Search, Loader2, BookOpen, Calendar, DollarSign, Video, ArrowRight } fr
 import { useCursosSearch } from '@/hooks/use-cursos-search';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { Loader } from '@/components/ui/loader';
 
 export default function InputSearch() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -18,15 +19,15 @@ export default function InputSearch() {
     const inputRef = useRef<HTMLInputElement>(null);
     const resultsRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
-    
+
     const { cursos, isLoading, error } = useCursosSearch(searchQuery);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
-                inputRef.current && 
+                inputRef.current &&
                 !inputRef.current.contains(event.target as Node) &&
-                resultsRef.current && 
+                resultsRef.current &&
                 !resultsRef.current.contains(event.target as Node)
             ) {
                 setShowResults(false);
@@ -59,7 +60,7 @@ export default function InputSearch() {
 
     const handleInputBlur = (e: React.FocusEvent) => {
         // Solo perder el foco si el clic fue fuera del input y del panel de resultados
-        if (!e.relatedTarget || 
+        if (!e.relatedTarget ||
             (resultsRef.current && !resultsRef.current.contains(e.relatedTarget as Node))) {
             // El timeout permite que los clics en los resultados se procesen primero
             setTimeout(() => {
@@ -111,9 +112,9 @@ export default function InputSearch() {
     return (
         <div className="relative hidden lg:block" ref={inputRef}>
             <InputGroup className='rounded-full'>
-                <InputGroupInput 
+                <InputGroupInput
                     ref={inputRef}
-                    placeholder='¿Qué estás buscando?' 
+                    placeholder='¿Qué estás buscando?'
                     className='w-xs xl:w-md'
                     value={searchQuery}
                     onChange={handleInputChange}
@@ -134,14 +135,15 @@ export default function InputSearch() {
 
             {/* Panel de resultados */}
             {showResults && (
-                <div 
+                <div
                     ref={resultsRef}
                     className="absolute top-full left-0 right-0 mt-2 w-[400px] max-w-full bg-background border rounded-lg shadow-lg z-50 animate-in fade-in slide-in-from-top-2 duration-200"
                     style={{ minWidth: inputRef.current?.offsetWidth }}
                 >
                     {isLoading ? (
-                        <div className="flex flex-col items-center justify-center p-6">
-                            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground mb-3" />
+                        <div className="flex flex-col items-center justify-center gap-6 py-10 p-6">
+                            <Loader variant='cube' />
+
                             <p className="text-sm text-muted-foreground">Buscando cursos...</p>
                         </div>
                     ) : error ? (
@@ -155,15 +157,15 @@ export default function InputSearch() {
                                     {cursos.length} resultado{cursos.length !== 1 ? 's' : ''} encontrado{cursos.length !== 1 ? 's' : ''}
                                 </p>
                             </div>
-                            
+
                             <ScrollArea className="max-h-[400px]">
                                 <div className="p-2 space-y-1">
                                     {cursos.map((curso) => {
                                         const edicion = curso.ediciones[0];
                                         const precio = edicion?.precios[0];
-                                        
+
                                         return (
-                                            <Card 
+                                            <Card
                                                 key={curso.id}
                                                 className="hover:bg-accent transition-colors cursor-pointer"
                                                 onClick={() => handleCursoClick(curso.id)}
@@ -172,8 +174,8 @@ export default function InputSearch() {
                                                 <CardContent>
                                                     <div className="flex items-start gap-3">
                                                         {curso.urlMiniatura ? (
-                                                            <img 
-                                                                src={curso.urlMiniatura} 
+                                                            <img
+                                                                src={curso.urlMiniatura}
                                                                 alt={curso.titulo}
                                                                 className="w-16 h-16 object-cover rounded-md flex-shrink-0"
                                                             />
@@ -182,7 +184,7 @@ export default function InputSearch() {
                                                                 <BookOpen className="w-6 h-6 text-muted-foreground" />
                                                             </div>
                                                         )}
-                                                        
+
                                                         <div className="flex-1 min-w-0 space-y-1.5">
                                                             <div className="flex items-start justify-between gap-2">
                                                                 <h3 className="font-semibold text-sm line-clamp-1 flex-1">
@@ -195,11 +197,11 @@ export default function InputSearch() {
                                                                     </Badge>
                                                                 )}
                                                             </div>
-                                                            
+
                                                             <p className="text-xs text-muted-foreground  line-clamp-1">
                                                                 {curso.descripcion}
                                                             </p>
-                                                            
+
                                                             {edicion && (
                                                                 <div className="flex items-center gap-3 pt-0.5">
                                                                     {precio && (
@@ -222,7 +224,7 @@ export default function InputSearch() {
                                     })}
                                 </div>
                             </ScrollArea>
-                           
+
                         </>
                     ) : searchQuery.trim().length >= 2 ? (
                         <div className="flex flex-col items-center justify-center p-8 rounded-lg">

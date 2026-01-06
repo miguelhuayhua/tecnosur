@@ -33,6 +33,32 @@ enum EstadoPago {
   REEMBOLSADO
 }
 
+// ============ ENUM DE TABLAS PARA AUDITORÍA ============
+enum Tabla {
+  AUDITORIA
+  CATEGORIAS
+  USUARIOS_ESTUDIANTES
+  ESTUDIANTES
+  USUARIOS_ADMINISTRADORES
+  DOCENTE
+  CURSOS
+  CATEGORIAS_CURSOS
+  REVIEWS_CURSOS
+  EDICIONES_CURSOS
+  BENEFICIOS_CURSOS
+  OBJETIVOS_CURSOS
+  REQUISITOS_CURSOS
+  CLASES
+  MATERIALES
+  EXAMENES
+  CALIFICACIONES
+  INSCRIPCIONES
+  CERTIFICADOS
+  PRECIOS_CURSOS
+  COMPRAS
+  GRABACIONES
+}
+
 enum AccionAuditoria {
   CREAR
   ACTUALIZAR
@@ -40,16 +66,54 @@ enum AccionAuditoria {
   ELIMINAR
 }
 
+enum MetodoPago {
+  YAPE
+  PLIN
+  PAYPAL
+  BINANCE
+  WESTER_UNION
+  TRANSFERENCIA
+  TRANSFERENCIA_DOLARES
+  EFECTIVO
+  OTRO
+}
+
+enum TipoMaterial {
+  PDF
+  DOCUMENTO
+  PRESENTACION
+  HOJA_DE_CALCULO
+  VIDEO
+  AUDIO
+  IMAGEN
+  ENLACE
+  CODIGO
+  ZIP
+  TAREA
+  CUESTIONARIO
+  EXAMEN
+  FORMULARIO
+  LIBRO
+  ARTICULO
+  PLANTILLA
+  INFORME
+  GUIA
+  TUTORIAL
+  EJERCICIO
+  SOLUCION
+  OTRO
+}
+
 // ============ TABLA DE AUDITORÍA ============
 model auditoria {
-  id         String                   @id @default(uuid())
-  tabla      String
+  id         String                  @id @default(uuid())
+  tabla      Tabla // <-- Se aplica el enum aquí
   registroId String?
   accion     AccionAuditoria
   detalles   Json?
-  usuarioId  String?
-  creadoEn   DateTime                 @default(now())
-  usuario    usuariosAdministradores? @relation(fields: [usuarioId], references: [id])
+  usuarioId  String
+  creadoEn   DateTime                @default(now())
+  usuario    usuariosAdministradores @relation(fields: [usuarioId], references: [id])
 
   @@index([tabla])
   @@index([registroId])
@@ -96,8 +160,8 @@ model estudiantes {
   id              String               @id @default(uuid())
   apellido        String?
   celular         String?
-  pais            String?
-  genero          TipoGenero?
+  pais            String               @default("")
+  genero          TipoGenero           @default(HOMBRE)
   fechaNacimiento DateTime?
   nombre          String
   creadoEn        DateTime             @default(now())
@@ -140,6 +204,7 @@ model docente {
   usuario         usuariosAdministradores @relation(fields: [usuarioId], references: [id])
   usuarioId       String                  @unique
   ediciones       edicionesCursos[]
+  pais            String                  @default("PE")
 
   @@index([especialidad])
 }
@@ -155,7 +220,7 @@ model cursos {
   descripcionCorta String?
   enVivo           Boolean            @default(false)
   urlCurso         String?
-  codigo           String?            @unique
+  codigo           String             @unique
   // Relaciones de contenido (terminan en Cursos)
   ediciones        edicionesCursos[]
   beneficios       beneficiosCursos[]
@@ -164,7 +229,7 @@ model cursos {
   categorias       categoriasCursos[]
   reviews          reviewsCursos[]
 
-  @@index([titulo])
+  @@index([codigo])
 }
 
 // Relación muchos-a-muchos entre cursos y categorías
@@ -213,8 +278,8 @@ model edicionesCursos {
   vigente       Boolean       @default(false)
   creadoEn      DateTime      @default(now())
   actualizadoEn DateTime      @updatedAt
-  docenteId     String
-  docente       docente       @relation(fields: [docenteId], references: [id], onDelete: Cascade)
+  docenteId     String?
+  docente       docente?      @relation(fields: [docenteId], references: [id], onDelete: Cascade)
 
   // Relaciones
   curso         cursos          @relation(fields: [cursoId], references: [id], onDelete: Cascade)
@@ -287,13 +352,13 @@ model clases {
 }
 
 model materiales {
-  id       String   @id @default(uuid())
+  id       String       @id @default(uuid())
   claseId  String
-  tipo     String
+  tipo     TipoMaterial @default(PDF)
   titulo   String
   url      String
-  creadoEn DateTime @default(now())
-  clase    clases   @relation(fields: [claseId], references: [id], onDelete: Cascade)
+  creadoEn DateTime     @default(now())
+  clase    clases       @relation(fields: [claseId], references: [id], onDelete: Cascade)
 
   @@index([claseId])
   @@index([tipo])
@@ -334,16 +399,15 @@ model calificaciones {
 
 // ============ INSCRIPCIÓN ============
 model inscripciones {
-  id            String          @id @default(uuid())
-  edicionId     String
-  estado        Boolean         @default(true)
-  estudianteId  String
-  inscritoEn    DateTime        @default(now())
-  actualizadoEn DateTime        @updatedAt
-  edicion       edicionesCursos @relation(fields: [edicionId], references: [id], onDelete: Cascade)
-  estudiante    estudiantes     @relation(fields: [estudianteId], references: [id], onDelete: Cascade)
-  compra        compras?        @relation(fields: [compraId], references: [id], onDelete: Cascade)
-  compraId      String?         @unique
+  id           String          @id @default(uuid())
+  edicionId    String
+  estado       Boolean         @default(true)
+  estudianteId String
+  inscritoEn   DateTime        @default(now())
+  edicion      edicionesCursos @relation(fields: [edicionId], references: [id], onDelete: Cascade)
+  estudiante   estudiantes     @relation(fields: [estudianteId], references: [id], onDelete: Cascade)
+  compra       compras         @relation(fields: [compraId], references: [id], onDelete: Cascade)
+  compraId     String          @unique
 
   @@unique([estudianteId, edicionId])
   @@index([estado])
@@ -391,21 +455,20 @@ model preciosCursos {
 // ============ COMPRAS ============
 model compras {
   id                    String               @id @default(uuid())
-  nombre                String
-  apellido              String
   edicionId             String
   monto                 Float
   moneda                String               @default("USD")
   providerId            String
   comprobado            Boolean              @default(false)
   fechaCompra           DateTime             @default(now())
-  metodo                String?
+  metodo                MetodoPago           @default(TRANSFERENCIA) // <- CAMBIADO A ENUM
   // Relaciones
   edicion               edicionesCursos      @relation(fields: [edicionId], references: [id], onDelete: Cascade)
   inscripcion           inscripciones?
   usuariosEstudiantesId String?
   usuario               usuariosEstudiantes? @relation(fields: [usuariosEstudiantesId], references: [id])
   estadoPago            EstadoPago           @default(PENDIENTE)
+  updatedAt             DateTime             @updatedAt
 
   @@index([fechaCompra])
   @@index([comprobado])

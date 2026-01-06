@@ -156,7 +156,7 @@ export const Navbar = React.forwardRef<HTMLElement, Navbar02Props>(
       <>
         {/* Top Bar - Contact and Social Media */}
         <div className={cn(
-          "hidden lg:flex py-2  bg-gradient-to-r from-primary/90 to-primary transition-all duration-300",
+          "hidden lg:flex py-2  bg-gradient-to-r from-primary/90 to-secondary transition-all duration-300",
         )}>
           <div className="container mx-auto h-full px-4 ">
             <div className="flex items-center justify-between h-full">
