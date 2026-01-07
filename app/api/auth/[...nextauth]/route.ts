@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import bcrypt from "bcrypt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
 import { prisma } from "@/lib/prisma";
 import { TipoGenero } from "@/prisma/generated";
 
@@ -17,6 +18,15 @@ const handler = NextAuth({
                     response_type: "code"
                 }
             },
+        }),
+        GitHubProvider({
+            clientId: process.env.GITHUB_ID!,
+            clientSecret: process.env.GITHUB_SECRET!,
+            authorization: {
+                params: {
+                    scope: "read:user user:email"
+                }
+            }
         }),
         CredentialsProvider({
             name: 'credenciales',
@@ -57,7 +67,46 @@ const handler = NextAuth({
 
     callbacks: {
         async signIn({ account, profile, user }) {
-            if (account?.provider === "google") {
+            if (account?.provider === "github") {
+                // GitHub devuelve: name: 'uayua', email: undefined
+                const githubUsername = user.name || "github_user"; // 'miguelhuayhua'
+                const githubName = profile?.name || githubUsername; // 'uayua'
+                const avatar = user.image || profile?.image;
+
+
+                // Buscar usuario por email generado
+                let existingUser = await prisma.usuariosEstudiantes.findUnique({
+                    where: { usuario: githubName },
+                });
+
+                // Si no existe, crearlo
+                if (!existingUser) {
+                    existingUser = await prisma.usuariosEstudiantes.create({
+                        data: {
+                            correo: githubName, // Email generado: miguelhuayhua@github.nexuseduca.com
+                            usuario: githubUsername, // 'miguelhuayhua'
+                            contrasena: await bcrypt.hash(Math.random().toString(36), await bcrypt.genSalt()),
+                            avatar: avatar,
+                            estudiante: {
+                                create: {
+                                    nombre: githubName, // 'uayua'
+                                    genero: TipoGenero.HOMBRE
+                                }
+                            }
+                        },
+                    });
+                }
+
+                // ✅ Agregar los datos al objeto user
+                user.id = existingUser.id;
+                user.registrado = existingUser.registrado;
+                user.email = existingUser.correo;
+                user.name = existingUser.usuario;
+
+                return true;
+            }
+            else if (account?.provider === "google") {
+                console.log(profile, 'perfil', user, 'usuario')
                 // Verificar si el usuario ya existe en tu base de datos
                 let existingUser = await prisma.usuariosEstudiantes.findFirst({
                     where: {
@@ -67,6 +116,7 @@ const handler = NextAuth({
 
                 // Si no existe, crearlo
                 if (!existingUser) {
+                    const perfil = profile as any;
                     existingUser = await prisma.usuariosEstudiantes.create({
                         data: {
                             correo: profile?.email!,
@@ -75,7 +125,8 @@ const handler = NextAuth({
                             avatar: profile?.image,
                             estudiante: {
                                 create: {
-                                    nombre: profile?.name || '',
+                                    nombre: perfil?.given_name as any || '',
+                                    apellido: perfil.family_name as any || '',
                                     genero: TipoGenero.HOMBRE
                                 }
                             }
@@ -84,7 +135,6 @@ const handler = NextAuth({
                 }
 
                 // ✅ Agregar los datos del usuario al objeto user
-                // Esto permite que estén disponibles en el callback jwt
                 if (user) {
                     user.id = existingUser.id;
                     user.registrado = existingUser.registrado;
@@ -100,6 +150,7 @@ const handler = NextAuth({
         },
 
         jwt: async ({ session, token, trigger, user }) => {
+            console.log('se disparó al go', trigger)
             // ✅ Primera vez que se crea el token (login)
             if (user) {
                 token.id = user.id;
@@ -107,14 +158,12 @@ const handler = NextAuth({
             }
 
             // ✅ Cuando se actualiza la sesión manualmente
-            if (trigger === "update" && session) {
-                console.log('actualizando')
-                console.log('sesion', session)
+            if (trigger == "update") {
+                console.log(user, token, "actualizado")
                 token.name = session.name;
                 token.email = session.email;
-                // Nota: user.registrado no está disponible en update
-                // Si necesitas actualizar registrado, debes incluirlo en session
-                if (session.registrado !== undefined) {
+                if (session.registrado != undefined) {
+                    console.log('actualizado')
                     token.registrado = session.registrado;
                 }
             }
@@ -136,6 +185,7 @@ const handler = NextAuth({
         newUser: '/registro',
         error: "/login",
     },
+
 });
 
 export { handler as GET, handler as POST };

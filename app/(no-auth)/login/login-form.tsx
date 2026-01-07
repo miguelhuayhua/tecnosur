@@ -18,7 +18,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useForm, Controller } from "react-hook-form"
 import { Loader2 } from "lucide-react"
 import Link from "next/link"
-import { FaGoogle } from "react-icons/fa"
+import { FaGithub, FaGoogle, FaTwitch } from "react-icons/fa"
 
 type LoginFormData = {
   usuario: string
@@ -158,10 +158,10 @@ export function LoginForm({
         </Field>
 
 
-        <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
+        <FieldSeparator >
           O inicia sesión con
         </FieldSeparator>
-        <Field>
+        <Field className="space-y-1">
           <Button variant="outline"
             onClick={() => signIn('google', {
               callbackUrl: params.has('callbackUrl') ?
@@ -172,9 +172,19 @@ export function LoginForm({
             <FaGoogle />
             Iniciar sesión con Google
           </Button>
+          <Button variant="outline"
+            onClick={() => signIn('github', {
+              callbackUrl: params.has('callbackUrl') ?
+                params.get('callbackUrl')! : '/dashboard',
+              redirect: params.has('callbackUrl')
+            })}
+            type="button">
+            <FaGithub />
+            Iniciar sesión con Github
+          </Button>
           <FieldDescription className="text-center pt-2 ">
             ¿No tienes una cuenta?{" "}
-            <Link href="/registro" className="underline underline-offset-4">
+            <Link href="/registro" className="underline text-primary underline-offset-4">
               Regístrate
             </Link>
           </FieldDescription>

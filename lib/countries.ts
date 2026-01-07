@@ -189,10 +189,3 @@ export const sortedCountries = [...spanishSpeakingCountries].sort((a, b) =>
   a.name.localeCompare(b.name)
 );
 
-// Ejemplo de uso
-// const argentina = getCountryByCode('AR');
-// console.log(argentina?.phoneCode); // '+54'
-// 
-// const phoneNumber = '987654321';
-// const formatted = formatPhoneNumber(phoneNumber, 'PE');
-// console.log(formatted); // '+51 987654321'

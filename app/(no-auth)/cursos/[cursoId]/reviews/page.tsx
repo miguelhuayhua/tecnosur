@@ -50,21 +50,36 @@ export default async function CursoReviewsPage({ params }: PageProps) {
                     categoria: true
                 }
             },
+            ediciones: {
+                select: {
+                    codigo: true,
+                    creadoEn: true,
+                    clases: {
+                        select: {
+                            titulo: true, urlPresentacion: true, duracion: true,
+                        },
+                        take: 1,
+                        orderBy: {
+                            orden: 'asc'
+                        }
+                    }
+                },
+                where: {
+                    estado: { in: ["ACTIVA"] },
+                    vigente: true
+                },
+                take: 1,
+                orderBy: { creadoEn: 'desc' }
+            },
             // TODAS las reviews con información del estudiante
             reviews: {
                 include: {
                     usuario: {
-                        select: { 
-                            estudiante: {
-                                select: {
-                                    nombre: true,
-                                    apellido: true,
-                                    pais: true
-                                }
-                            },
-                            avatar:true,
-                            usuario:true,
-                            
+                        select: {
+                            estudiante: true,
+                            avatar: true,
+                            usuario: true,
+
                         }
                     }
                 },
@@ -77,12 +92,12 @@ export default async function CursoReviewsPage({ params }: PageProps) {
         notFound();
     }
 
- 
+
 
     return (
         <>
             <Navbar />
-            <CursoReviewsClient 
+            <CursoReviewsClient
                 curso={curso}
             />
             <Footer />

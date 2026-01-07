@@ -236,7 +236,7 @@ export const CursoCardDetalladoVertical: React.FC<CursoCardProps & React.HtmlHTM
             asChild
             size={'sm'}
             variant="outline"
-            className="border-green-500 w-1/6 text-green-600 hover:bg-green-50 hover:text-green-700"
+            className="border-green-500 w-1/6 text-green-600 bg-background hover:bg-green-50 hover:text-green-700"
           >
             <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer">
               <FaWhatsapp />

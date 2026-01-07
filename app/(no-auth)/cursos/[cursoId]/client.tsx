@@ -19,15 +19,15 @@ import { Separator } from '@/components/ui/separator';
 import { useCursos } from "@/hooks/use-cursos";
 import Link from "next/link";
 import { usePriceFormatter } from '@/hooks/use-price-formatter';
-import { beneficiosCursos, clases, docente, edicionesCursos, objetivosCursos, preciosCursos, requisitosCursos, usuariosEstudiantes } from "@/prisma/generated";
-import { Curso } from "@/lib/types";
+import { beneficiosCursos, categorias, categoriasCursos, clases, cursos, docente, edicionesCursos, estudiantes, objetivosCursos, preciosCursos, requisitosCursos, reviewsCursos, usuariosEstudiantes } from "@/prisma/generated";
 import { FaWhatsapp } from "react-icons/fa";
 import { CursoCard } from "@/app/(auth)/(componentes)/curso-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession } from "next-auth/react";
-import { InputGroup, InputGroupAddon, InputGroupTextarea } from "@/components/ui/input-group";
 import { OpinionesCurso } from "./review-section";
 import { ButtonGroup } from "@/components/ui/button-group";
+import { notFound } from "next/navigation";
+import { YouTubePlayer } from "@/components/ui/youtube-video-player";
 const faqs = [
     {
         question: "¿Qué es TecSur y qué tipos de cursos ofrecen?",
@@ -58,52 +58,54 @@ const faqs = [
         answer: "Sí, nuestra plataforma es completamente responsive. Puedes estudiar desde tu computadora, tablet o smartphone, solo necesitas conexión a internet para acceder a los contenidos."
     }
 ];
-interface CursoProps extends Curso {
+export interface Edicion extends edicionesCursos {
+    clases: clases[]; precios: preciosCursos[]; docente: docente, compras: Array<{ usuariosEstudiantesId: string | null }>
+
+}
+
+export interface Review extends reviewsCursos {
+    usuario: { usuario: string, avatar: string | null, estudiante: estudiantes | null } | null
+}
+export interface Curso extends cursos {
     objetivos: objetivosCursos[];
     requisitos: requisitosCursos[];
     beneficios: beneficiosCursos[];
-    ediciones: (edicionesCursos & {
-        clases: clases[]; precios: preciosCursos[]; docente: docente, compras: Array<{ usuariosEstudiantesId: string }>
-    })[]
+    reviews: Array<Review>;
+    categorias: Array<categoriasCursos & { categoria: categorias }>
+    ediciones: Array<Edicion>
 }
-export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
+export default function CursoDetailClient({ curso }: { curso: Curso }) {
+    const edicionPrincipal = curso.ediciones?.[0];
+    if (!edicionPrincipal) return notFound();
     const [searchTerm, setSearchTerm] = useState('');
     const { formatPrice, selectedCurrency } = usePriceFormatter();
-    const edicionPrincipal = curso.ediciones?.[0];
-    const [showOpinion, setShowOpinion] = useState(false);
     // Extraer datos con nombres correctos de la estructura del servidor
     const categorias = curso.categorias || [];
     const objetivos = curso.objetivos || [];
     const beneficios = curso.beneficios || [];
     const requisitos = curso.requisitos || [];
-    const { data } = useSession();
     // Obtener la edición principal
-
     // Usar datos de la edición o del curso base
     const fechaInicio = edicionPrincipal?.fechaInicio;
     const fechaFin = edicionPrincipal?.fechaFin;
     const clases = edicionPrincipal?.clases || [];
-
+    const presentacion = clases.find(clase => clase.urlPresentacion && clase.orden == 1);
     // Precios: primero de la edición, luego del curso base
     let precios: preciosCursos[] = [];
     if (edicionPrincipal?.precios?.length > 0) {
         precios = edicionPrincipal.precios;
     }
-
     const precioDefault = precios.find(p => p.esPrecioDefault) || precios[0];
-
     // Obtener cursos recomendados usando IDs de categorías
     const { cursos: cursosRecomendados, isLoading } = useCursos({
         categoria: categorias.map((cat: any) => cat.categoria.id).join('&'),
         limit: 4
     });
-
     // Filtrar clases por búsqueda
     const clasesFiltradas = clases.filter((clase: any) =>
         clase.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
         clase.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
     // Convertir precios a la moneda seleccionada
     const precioConvertido = precioDefault ? formatPrice(precioDefault.precio) : null;
     const precioOriginalConvertido = precioDefault?.precioOriginal ? formatPrice(precioDefault.precioOriginal) : null;
@@ -124,9 +126,14 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                     </BreadcrumbList>
                 </Breadcrumb>
 
-                <Badge variant={'outline'} >
-                    {categorias[0]?.categoria.nombre || 'Curso'}
-                </Badge>
+                <div className="flex items-center gap-2 flex-wrap">
+                    <Badge variant={'outline'} >
+                        {categorias[0]?.categoria.nombre || 'Curso'}
+                    </Badge>
+                    <Badge variant={curso.enVivo ? "secondary" : "default"}>
+                        {curso.enVivo ? "En Vivo" : "Grabado"}
+                    </Badge>
+                </div>
 
                 <h1 className="text-2xl lg:text-3xl xl:text-4xl font-bold">
                     Curso: {curso.titulo}
@@ -135,7 +142,7 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                 {/* Mostrar código de edición si está disponible */}
                 {edicionPrincipal && (
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span>Edición: {edicionPrincipal.codigo}</span>
+                        <span>Edición: {edicionPrincipal.codigo}</span> <p className="text-xs border-l pl-2">{edicionPrincipal.descripcion}</p>
                     </div>
                 )}
             </div>
@@ -193,7 +200,7 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                                 Comprar Curso
                             </Link>
                         </Button>
-                        <Button variant={'ghost'} className="bg-green-600 flex-1 text-white">
+                        <Button variant={'outline'} className="flex-1 text-secondary">
                             <FaWhatsapp />
                             Más información
                         </Button>
@@ -208,15 +215,24 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
 
                 {/* Imagen y detalles del curso */}
                 <div className='space-y-4'>
-                    <div className="relative aspect-video rounded-lg overflow-hidden">
-                        <Image
-                            fill
-                            alt={curso.titulo}
-                            className='object-cover'
-                            src={curso.urlMiniatura || '/placeholder.svg'}
-                            priority
-                        />
-                    </div>
+                    {
+                        presentacion && presentacion.urlPresentacion ?
+                            <div className="relative aspect-video rounded-lg overflow-hidden">
+                                <YouTubePlayer expandButtonClassName="hidden"
+                                    playButtonClassName="!size-10"
+                                    videoId={presentacion.urlPresentacion} customThumbnail={curso.urlMiniatura!} />
+                            </div> :
+                            <div className="relative aspect-video rounded-lg overflow-hidden">
+                                <Image
+                                    fill
+                                    alt={curso.titulo}
+                                    className='object-cover'
+                                    src={curso.urlMiniatura || '/placeholder.svg'}
+                                    priority
+                                />
+                            </div>
+                    }
+
 
                     <div className="flex flex-wrap gap-2 divide-x text-sm">
 
@@ -406,7 +422,7 @@ export default function CursoDetailClient({ curso }: { curso: CursoProps }) {
                 </div>
             </div>
             <Separator />
-            <OpinionesCurso curso={curso as any} edicionPrincipal={edicionPrincipal} />
+            <OpinionesCurso curso={curso} edicionPrincipal={edicionPrincipal} />
             {/* Cursos Recomendados */}
             <div className="space-y-10 border-t p-10 ">
                 <h3 className="text-3xl font-bold text-center tracking-tight">

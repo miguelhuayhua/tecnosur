@@ -16,7 +16,7 @@ export default function ListarCursos({ inscripciones }: Props) {
 
     });
     return (
-        <div className="grid grid-cols-2 mx-auto justify-center md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5  gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 mx-auto justify-center md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5  gap-4">
             {
                 cursos.filter(value => inscripciones.every(value2 => value2.edicionId != value.ediciones.at(0)?.id)).map(curso => <CursoCard key={curso.id} curso={curso} />)
             }

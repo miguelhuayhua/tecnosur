@@ -24,9 +24,6 @@ interface PageProps {
 export default async function CheckoutSuccessPage({ params }: PageProps) {
     const { cursoId, compraId } = await params;
     const session = await getServerSession();
-    console.log(session)
-
-
     if (session) {
         // Verificar que la compra existe (sin try-catch para redirect)
         const compra = await prisma.compras.findUnique({

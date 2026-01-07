@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Formulario from "./client";
 
 async function getInformacion(correo: string) {
@@ -9,7 +9,7 @@ async function getInformacion(correo: string) {
             usuario: { correo }
         },
         include: {
-            usuario: { select: { correo: true, usuario: true } }
+            usuario: { select: { correo: true, usuario: true, registrado: true } }
         }
     });
 
@@ -42,9 +42,20 @@ export default async function FormularioPage({ searchParams }: Props) {
     if (!session) {
         return notFound();
     }
-
+    console.log(session)
     const estudiante = await getInformacion(session.user.email!)
     if (!estudiante || !estudiante.usuario) return notFound();
+    if (estudiante.usuario.registrado) {
+        const compra = await prisma.compras.findFirst({
+            select: {
+                edicion: { select: { id: true, cursoId: true } }, id: true
+            },
+            where: { usuario: { correo: session.user.email! } }, orderBy: { fechaCompra: "desc" }
+        })
+        if (!compra) return redirect('/dashboad')
+        return redirect(`/cursos/${compra?.edicion.cursoId}/checkout/${compra.id}`)
+    }
+    console.log('continua')
     const edicionData = sParams.edicionId ? await getEdicion(sParams.edicionId) : undefined;
     const edicion = edicionData ?? undefined;
     return (

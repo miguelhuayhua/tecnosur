@@ -2,14 +2,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { estudiantes, reviewsCursos, usuariosEstudiantes } from "@/prisma/generated"
 import { Star } from "lucide-react";
-
+import { Review } from "./client";
+import Image from "next/image";
+import { spanishSpeakingCountries } from "@/lib/countries";
 interface Props {
-    review: reviewsCursos & { usuario: usuariosEstudiantes & { estudiante: estudiantes } };
-    userId: string
+    review: Review;
+    userId: string | undefined
 }
 
 
 export default function ReviewComponent({ review, userId }: Props) {
+    const usuario = review.usuario;
+    if (!usuario || !usuario.estudiante) return null;
     return (
         <div className="bg-muted relative p-4 space-y-4 rounded-lg">
             {
@@ -22,21 +26,21 @@ export default function ReviewComponent({ review, userId }: Props) {
             <div className="flex items-center gap-3">
                 <Avatar >
                     <span
-                        className='absolute -top-2 bg-foreground text-background font-bold rounded-full text-[.6em] p-1 -right-2'>
-                        {review.usuario.estudiante.pais}
+                        className='absolute -bottom-2  rounded-full size-5 rounded-full overflow-hidden  -right-2'>
+                        <Image alt="bandera" src={spanishSpeakingCountries.find(pais => pais.code == usuario.estudiante?.pais)?.flag!} fill className="object-cover" />
                     </span>
-                    <AvatarImage src={review.usuario.avatar || ""} />
+                    <AvatarImage src={usuario.avatar || ""} />
                     <AvatarFallback>
-                        {review.usuario.usuario.charAt(0).toUpperCase()}
+                        {usuario.usuario.charAt(0).toUpperCase()}
                     </AvatarFallback>
                 </Avatar>
                 <div>
                     <p className="font-bold text-sm">
-                        {review.usuario.estudiante.nombre} {review.usuario.estudiante.apellido}
+                        {usuario.estudiante.nombre} {usuario.estudiante.apellido}
                     </p>
                     <div className='flex items-center gap-3'>
                         <span className='text-muted-foreground text-xs'>
-                            @{review.usuario.usuario}
+                            @{usuario.usuario}
                         </span>
                         <div className="flex items-center">
                             {[1, 2, 3, 4, 5].map((star) => (

@@ -165,7 +165,7 @@ export function YouTubePlayer({
                     size="lg"
                     variant="ghost"
                     className={cn(
-                      "relative h-16 w-16 rounded-full inset-shadow-sm inset-shadow-secondary border border-border/20 bg-background/80 backdrop-blur-sm md:h-20 md:w-20 p-0",
+                      "relative h-16 w-16 rounded-full inset-shadow-sm inset-shadow-gray-400 border border-border/20 bg-background/80 backdrop-blur-sm md:h-20 md:w-20 p-0",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:bg-background/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                       playButtonClassName
                     )}

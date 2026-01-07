@@ -38,7 +38,7 @@ export const CursoCard: React.FC<{ curso: Curso } & React.HtmlHTMLAttributes<HTM
             href={`/cursos/${curso.urlCurso || curso.id}`}>
             <Card
                 className={cn("w-full  flex flex-col ease-in border-none   p-0 relative  transition-all duration-300 shadow-md !rounded-xl shadow-none !bg-transparent  cursor-pointer group", isHovered && ('!rounded-b-none'))}>
-                <Status className='absolute top-3 left-3 z-10' status={curso.enVivo ? "online" : "offline"}>
+                <Status className='absolute bg-background top-3 left-3 z-10' status={curso.enVivo ? "online" : "offline"}>
                     <StatusIndicator />
                     {curso.enVivo ? "Curso en vivo" : "Curso grabado"}
                 </Status>

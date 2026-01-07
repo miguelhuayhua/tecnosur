@@ -4,9 +4,6 @@ import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcrypt"
 
-const SALT_ROUNDS = 10
-
-
 
 export async function POST(req: NextRequest) {
   try {
@@ -47,7 +44,7 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: "País es requerido" }, { status: 400 })
     }
 
-    if (!usuario || usuario.length < 3 || !/^[a-zA-Z0-9_]+$/.test(usuario)) {
+    if (!usuario || usuario.length < 3 || !/^[a-zA-Z0-9_.]+$/.test(usuario)) {
       return Response.json({ error: "Usuario inválido. Debe tener al menos 3 caracteres y solo letras, números y guiones bajos" }, { status: 400 })
     }
 
@@ -103,7 +100,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Hashear contraseña
-    const hashedPassword = await bcrypt.hash(contrasena, SALT_ROUNDS)
+    const hashedPassword = await bcrypt.hash(contrasena, await bcrypt.genSalt())
 
     // Actualizar en transacción
     await prisma.$transaction(async (tx) => {

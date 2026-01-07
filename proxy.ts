@@ -5,6 +5,7 @@ export default withAuth(
     async function proxy(request: NextRequestWithAuth) {
         const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
         let pathname = request.nextUrl.pathname;
+        console.log(token, 'token mio')
         if (!token) {
             return NextResponse.redirect(new URL("/login", request.url));
         }

@@ -70,7 +70,6 @@ const steps = [
         icon: Info
     },
 ];
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSession } from "next-auth/react";
 import { PasswordInput } from "@/components/ui/password-input";
@@ -110,7 +109,7 @@ export default function Formulario({ estudiante, edicion }: Props) {
             .string()
             .min(3, "El usuario debe tener al menos 3 caracteres")
             .regex(
-                /^[a-zA-Z0-9_]+$/,
+                /^[a-zA-Z0-9_.]+$/,
                 "El usuario solo puede contener letras, números y guiones bajos"
             ),
         correo: z.email("Ingresa un correo electrónico válido"),
@@ -118,7 +117,7 @@ export default function Formulario({ estudiante, edicion }: Props) {
         // Contraseña con validación mejorada
         contrasena: z
             .string()
-            .min(6, "La contraseña debe tener al menos 12 caracteres"),
+            .min(6, "La contraseña debe tener al menos 6 caracteres"),
         confirmarContrasena: z.string()
     }).refine((data) => data.contrasena === data.confirmarContrasena, {
         message: "Las contraseñas no coinciden",
@@ -210,16 +209,22 @@ export default function Formulario({ estudiante, edicion }: Props) {
             data: { ...data, estudianteId: estudiante.id },
             showIcon: false,
             callback() {
+                console.log('llama callback')
                 setShowLoader(true)
                 update({
                     registrado: true,
                     name: data.usuario,
                     email: data.correo
-                });
-                setTimeout(() => {
-                    router.replace(`${params.has('callbackUrl') ? params.get('callbackUrl') : "/dashboard"}`);
-                    setShowLoader(false);
-                }, 5000)
+                }).then(() => {
+                    console.log('actualizado')
+                    setTimeout(() => {
+                        router.replace(`${params.has('callbackUrl') ? params.get('callbackUrl') : "/dashboard"}`);
+                        setShowLoader(false);
+                    }, 7000)
+                }).catch(err=>{
+                    console.log('error')
+                })
+
             }
         })
 

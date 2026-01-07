@@ -28,30 +28,10 @@ import { estudiantes, reviewsCursos, usuariosEstudiantes } from '@/prisma/genera
 import ReviewComponent from './review';
 import { ButtonGroup } from '@/components/ui/button-group';
 import Link from 'next/link';
+import { Curso, Edicion } from './client';
 
-interface Review extends reviewsCursos {
-    usuario: usuariosEstudiantes & { estudiante: estudiantes }
-}
 
-interface Curso {
-    id: string;
-    reviews: Review[];
-}
-
-interface Compra {
-    usuariosEstudiantesId: string;
-}
-
-interface EdicionPrincipal {
-    compras: Compra[];
-}
-
-interface OpinionesCursoProps {
-    curso: Curso;
-    edicionPrincipal: EdicionPrincipal;
-}
-
-export function OpinionesCurso({ curso, edicionPrincipal }: OpinionesCursoProps) {
+export function OpinionesCurso({ curso, edicionPrincipal }: { curso: Curso, edicionPrincipal: Edicion }) {
     const { data: session } = useSession();
     const { cursoId } = useParams();
     const [showOpinion, setShowOpinion] = useState(false);
@@ -63,7 +43,7 @@ export function OpinionesCurso({ curso, edicionPrincipal }: OpinionesCursoProps)
 
     // Verificar si el usuario ya opinó
     const userAlreadyReviewed = curso.reviews.some(
-        review => review.usuario.id === session?.user?.id
+        review => review.usuariosEstudiantesId === session?.user?.id
     );
 
     const hasPurchased = session?.user?.id &&
@@ -167,23 +147,19 @@ export function OpinionesCurso({ curso, edicionPrincipal }: OpinionesCursoProps)
                         Opiniones del curso
                     </Badge>
 
-                    {session && hasPurchased && !userAlreadyReviewed && (
+                    {session && hasPurchased  && (
                         <Button
                             variant={'outline'}
                             size="sm"
                             onClick={() => setShowOpinion(!showOpinion)}
                         >
-                            <MessageCircleCode className="h-4 w-4 mr-1.5" />
-                            {showOpinion ? 'Cancelar' : 'Dejar mi opinión'}
+                            <MessageCircleCode />
+                            {showOpinion ? 'Cancelar' : `${userAlreadyReviewed?"Cambiar mi reseña":"Publicar nueva reseña"}`}
+
                         </Button>
                     )}
 
-                    {session && userAlreadyReviewed && (
-                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                            <MessageCircleCode className="h-3.5 w-3.5 mr-1.5" />
-                            Ya opinaste este curso
-                        </Badge>
-                    )}
+                  
                 </div>
 
                 {/* Formulario de opinión */}
@@ -284,10 +260,6 @@ export function OpinionesCurso({ curso, edicionPrincipal }: OpinionesCursoProps)
                                     />
                                 ))
                             }
-
-                            <Link href={`/cursos/${cursoId}/reviews`}>
-                                Ver
-                            </Link>
                         </>
                     ) : (
                         <p className="text-muted-foreground text-sm col-span-full">

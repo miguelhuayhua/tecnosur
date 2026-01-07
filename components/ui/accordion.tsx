@@ -28,6 +28,7 @@ function AccordionItem({
 function AccordionTrigger({
   className,
   children,
+  
   ...props
 }: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
   return (

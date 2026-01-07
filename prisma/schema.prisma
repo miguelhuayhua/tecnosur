@@ -278,8 +278,8 @@ model edicionesCursos {
   vigente       Boolean       @default(false)
   creadoEn      DateTime      @default(now())
   actualizadoEn DateTime      @updatedAt
-  docenteId     String?
-  docente       docente?      @relation(fields: [docenteId], references: [id], onDelete: Cascade)
+  docenteId     String        @default("")
+  docente       docente       @relation(fields: [docenteId], references: [id], onDelete: Cascade)
 
   // Relaciones
   curso         cursos          @relation(fields: [cursoId], references: [id], onDelete: Cascade)

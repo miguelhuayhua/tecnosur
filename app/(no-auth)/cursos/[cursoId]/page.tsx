@@ -46,79 +46,68 @@ export default async function CursoDetailPage({ params }: PageProps) {
     // CORRECCIÓN: await params directamente en lugar de usar use()
     const resolvedParams = await params;
     const { cursoId } = resolvedParams;
-
-    try {
-        const curso = await prisma.cursos.findFirst({
-            where: { OR: [{ id: cursoId }, { urlCurso: cursoId }] },
-            include: {
-                // Incluir ediciones con sus precios y clases
-                ediciones: {
-                    where: {
-                        estado: {
-                            in: ['ACTIVA']
+    const curso = await prisma.cursos.findFirst({
+        where: { OR: [{ id: cursoId }, { urlCurso: cursoId }] },
+        include: {
+            // Incluir ediciones con sus precios y clases
+            ediciones: {
+                where: {
+                    estado: {
+                        in: ['ACTIVA'],
+                    },
+                    vigente: true
+                },
+                include: {
+                    compras: {
+                        select: {
+                            usuariosEstudiantesId: true
                         }
                     },
-                    include: {
-                        compras: {
-                            select: {
-                                usuariosEstudiantesId: true
-                            }
-                        },
-                        precios: {
-                            where: {
-                                OR: [
-                                    { esPrecioDefault: true },
-                                    { esDescuento: true }
-                                ]
-                            },
-                            orderBy: { esPrecioDefault: 'desc' }
-                        },
-                        clases: {
-                            orderBy: { orden: 'asc' }
-                        },
-                        docente: true
+                    precios: {
+                        where: { esPrecioDefault: true },
                     },
-                    orderBy: { fechaInicio: 'asc' }
-                },
-                categorias: {
-                    include: {
-                        categoria: true
-                    }
-                },
-                objetivos: {
-                    orderBy: { orden: 'asc' }
-                },
-                beneficios: {
-                    orderBy: { orden: 'asc' }
-                },
-                requisitos: {
-                    orderBy: { orden: 'asc' }
-                },
-                reviews: {
-                    include: {
-                        usuario: {
-                            include: { estudiante: true }
-                        }
+                    clases: {
+                        orderBy: { orden: 'asc' }
                     },
-                    orderBy: { creadoEn: 'desc' }
+                    docente: true
+                },
+                orderBy: { fechaInicio: 'asc' }
+            },
+            categorias: {
+                include: {
+                    categoria: true
                 }
             },
-        });
+            objetivos: {
+                orderBy: { orden: 'asc' }
+            },
+            beneficios: {
+                orderBy: { orden: 'asc' }
+            },
+            requisitos: {
+                orderBy: { orden: 'asc' }
+            },
+            reviews: {
+                include: {
+                    usuario: {
+                        select: { estudiante: true, usuario: true, avatar: true }
+                    }
+                },
+                orderBy: { creadoEn: 'desc' }
+            }
+        },
+    });
 
-        if (!curso) {
-            notFound();
-        }
-
-
-        return (
-            <>
-                <Navbar />
-                <CursoDetailClient curso={curso as any} />
-                <Footer />
-            </>
-        );
-    } catch (error) {
-        console.error('Error fetching curso:', error);
+    if (!curso) {
         notFound();
     }
+
+    return (
+        <>
+            <Navbar />
+            <CursoDetailClient curso={curso} />
+            <Footer />
+        </>
+    );
+
 }

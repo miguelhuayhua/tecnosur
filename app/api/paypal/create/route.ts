@@ -8,16 +8,15 @@ import { z } from "zod";
 const createOrderSchema = z.object({
   cursoId: z.string().min(1, "ID del curso requerido"),
   edicionId: z.string().min(1, "ID de edición requerido"),
-  monto: z.number().min(0.01, "Monto debe ser mayor a 0"),
+  monto: z.string().min(0.01, "Monto debe ser mayor a 0"),
   moneda: z.string().default("USD"),
   descripcion: z.string().min(1, "Descripción requerida"),
-  usuarioEmail: z.string().email("Email válido requerido").optional(),
+  usuarioEmail: z.email("Email válido requerido").optional(),
 });
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-
     // Validar datos de entrada
     const validationResult = createOrderSchema.safeParse(body);
     if (!validationResult.success) {
@@ -43,7 +42,7 @@ export async function POST(req: NextRequest) {
     request.prefer("return=representation");
 
     // Preparar el amount con breakdown requerido
-    const amountValue = monto.toFixed(2);
+    const amountValue = (+monto).toFixed(2);
 
     request.requestBody({
       intent: "CAPTURE",
