@@ -126,7 +126,7 @@ export function CursosGrid({ inscripciones }: { inscripciones: Inscripcion[] }) 
                       <ArrowRight />
                     </Link>
                   </Button>
-                  <Button asChild className="bg-yellow-500 border border-yellow-500 text-white" variant={'ghost'} size="sm">
+                  <Button asChild className="bg-yellow-500  text-white"  size="sm">
                     <Link href={`/dashboard/cursos/${edicion.id}/calificar`}>
                       <Star />
                     </Link>

@@ -11,8 +11,6 @@ import { ScrollArea } from "../ui/scroll-area";
 
 export function Sidebar() {
   const sidebar = useStore(useSidebar, (x) => x);
-  const { resolvedTheme } = useTheme();
-
   if (!sidebar) return null;
   const { isOpen, toggleOpen, getOpenState, setIsHover, settings } = sidebar;
   return (
@@ -24,10 +22,10 @@ export function Sidebar() {
       )}
     >
       <SidebarToggle isOpen={isOpen} setIsOpen={toggleOpen} />
-      <ScrollArea
+      <div
         onMouseEnter={() => setIsHover(true)}
         onMouseLeave={() => setIsHover(false)}
-        className="relative h-full flex flex-col px-3  shadow-md dark:shadow-zinc-800"
+        className="relative h-full flex flex-col px-3  shadow-md "
       >
 
         <Link href="/dashboard" className="flex mx-auto justify-center h-10 mt-4 items-center gap-2">
@@ -42,7 +40,7 @@ export function Sidebar() {
 
         </Link>
         <Menu isOpen={getOpenState()} />
-      </ScrollArea>
+      </div>
     </aside>
   );
 }

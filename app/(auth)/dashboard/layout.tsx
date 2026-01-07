@@ -4,6 +4,7 @@ import AdminPanelLayout from "@/components/dashboard/admin-panel-layout";
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 import { NuqProvider } from "./nuq-provider";
+import { ModalProvider } from "@/providers/modal-provider";
 
 
 export default function DashboardLayout({
@@ -14,10 +15,14 @@ export default function DashboardLayout({
 
 }) {
 
-  return <NuqProvider>
-    <AdminPanelLayout>
-      {children}
-      {modal}
-    </AdminPanelLayout>
-  </NuqProvider>
+  return (
+    <ModalProvider>
+      <NuqProvider>
+        <AdminPanelLayout>
+          {children}
+          {modal}
+        </AdminPanelLayout>
+      </NuqProvider>
+    </ModalProvider>
+  )
 }

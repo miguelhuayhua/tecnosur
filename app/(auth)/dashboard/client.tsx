@@ -1,14 +1,6 @@
 "use client";
 import Link from "next/link";
-import { ContentLayout } from "@/components/dashboard/content-layout";
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator
-} from "@/components/ui/breadcrumb";
+import Image from "next/image";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getServerSession } from "next-auth";
@@ -78,10 +70,9 @@ const salesChartConfig = {
 
 
 export default function DashboardClient({ piechart, misCursos, stats, cursoActual }: Props) {
-    console.log(cursoActual)
     const { data: token } = useSession();
     const filledBars = Math.round(cursoActual.miPromedio / 3)
-
+    console.log(piechart)
     const salesChartData = Array.from({ length: cursoActual.mejorPromedio / 3 }, (_, index) => {
         return {
             date: "",
@@ -115,7 +106,7 @@ export default function DashboardClient({ piechart, misCursos, stats, cursoActua
 
                             <div className='grid gap-4 sm:grid-cols-2'>
                                 {stats.map((stat, index) => (
-                                    <div key={index} className='flex items-center gap-3 rounded-md border px-4 py-2'>
+                                    <div key={index} className='flex items-center gap-3 rounded-md px-4 py-2'>
                                         <Avatar className='size-8.5 rounded-sm'>
                                             <AvatarFallback className='bg-primary/10 text-primary shrink-0 rounded-sm'>
                                                 {stat.icon}
@@ -129,62 +120,77 @@ export default function DashboardClient({ piechart, misCursos, stats, cursoActua
                                 ))}
                             </div>
                         </div>
-                        <Card className='gap-4 py-4 shadow-none lg:col-span-2'>
+                        <Card className='  shadow-none lg:col-span-2'>
                             <CardHeader className='gap-1'>
                                 <CardTitle className='text-lg font-semibold'>
                                     Cursos Inscritos
                                 </CardTitle>
                             </CardHeader>
 
-                            <CardContent className='px-0'>
-                                <ChartContainer config={pieChartConfig} >
-                                    <PieChart >
-                                        <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                                        <ChartLegend
-                                            content={<ChartLegendContent nameKey="name" />}
+                            <CardContent >
+                                {
+                                    piechart.every(value => !value.value) ?
+                                        <div className="flex gap-3 flex-col items-center">
+                                            <Image alt="buscar cursos" width={200} height={100} src={"/buscar-cursos.svg"} />
+                                            <p className="text-muted-foreground">
+                                                Parece que aún no estás inscrito en ningún curso
+                                            </p>
+                                        </div> :
+                                        <ChartContainer config={pieChartConfig} >
+                                            <PieChart >
+                                                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                                                <ChartLegend
+                                                    content={<ChartLegendContent nameKey="name" />}
 
-                                        />
-                                        <Pie
-                                            data={piechart}
-                                            dataKey='value'
-                                            nameKey='name'
-                                            startAngle={300}
-                                            endAngle={660}
-                                            innerRadius={58}
-                                            outerRadius={75}
-                                            paddingAngle={2}
-                                        >
-                                            <Label
-                                                content={({ viewBox }) => {
-                                                    if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                                                        return (
-                                                            <text x={viewBox.cx} y={viewBox.cy} textAnchor='middle' dominantBaseline='middle'>
-                                                                <tspan
-                                                                    x={viewBox.cx}
-                                                                    y={(viewBox.cy || 0) - 12}
-                                                                    className='fill-card-foreground text-lg font-medium'
-                                                                >
-                                                                    {
-                                                                        piechart.reduce((suma, value) => suma + value.value, 0)
-                                                                    }
-                                                                </tspan>
-                                                                <tspan
-                                                                    x={viewBox.cx}
-                                                                    y={(viewBox.cy || 0) + 19}
-                                                                    className='fill-muted-foreground text-sm'
-                                                                >
-                                                                    Total
-                                                                </tspan>
-                                                            </text>
-                                                        )
-                                                    }
-                                                }}
-                                            />
-                                        </Pie>
-                                    </PieChart>
-                                </ChartContainer>
+                                                />
+                                                <Pie
+                                                    data={piechart}
+                                                    dataKey='value'
+                                                    nameKey='name'
+                                                    startAngle={300}
+                                                    endAngle={660}
+                                                    innerRadius={58}
+                                                    outerRadius={75}
+                                                    paddingAngle={2}
+                                                >
+                                                    <Label
+                                                        content={({ viewBox }) => {
+                                                            if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+                                                                return (
+                                                                    <text x={viewBox.cx} y={viewBox.cy} textAnchor='middle' dominantBaseline='middle'>
+                                                                        <tspan
+                                                                            x={viewBox.cx}
+                                                                            y={(viewBox.cy || 0) - 12}
+                                                                            className='fill-card-foreground text-lg font-medium'
+                                                                        >
+                                                                            {
+                                                                                piechart.reduce((suma, value) => suma + value.value, 0)
+                                                                            }
+                                                                        </tspan>
+                                                                        <tspan
+                                                                            x={viewBox.cx}
+                                                                            y={(viewBox.cy || 0) + 19}
+                                                                            className='fill-muted-foreground text-sm'
+                                                                        >
+                                                                            Total
+                                                                        </tspan>
+                                                                    </text>
+                                                                )
+                                                            }
+                                                        }}
+                                                    />
+                                                </Pie>
+                                            </PieChart>
+                                        </ChartContainer>
+                                }
                             </CardContent>
-
+                            <CardFooter className="mt-auto">
+                                <Button asChild variant={'secondary'} className="w-full">
+                                    <Link href='/cursos' target="_blank">
+                                        Buscar más Cursos
+                                    </Link>
+                                </Button>
+                            </CardFooter>
                         </Card>
                     </div>
                     {
@@ -199,7 +205,7 @@ export default function DashboardClient({ piechart, misCursos, stats, cursoActua
 
                                         <div className='flex flex-col justify-center gap-5'>
                                             <span className='text-md font-bold text-center'>Mi Rendimiento sobre 100 pts</span>
-                                            <span className='max-lg:2xl text-center font-bold text-5xl'>{cursoActual.miPromedio}pts</span>
+                                            <span className='max-lg:2xl text-center font-bold text-5xl'>{cursoActual.miPromedio} pts</span>
                                             <span className='text-muted-foreground text-xs text-center'>Tu nivel de rendimiento comparado con estudiantes del curso</span>
                                         </div>
                                         <div className='flex flex-col gap-3 text-lg md:col-span-4'>
@@ -213,7 +219,7 @@ export default function DashboardClient({ piechart, misCursos, stats, cursoActua
                                                 </Badge>
                                             </h2>
                                             <Button className="w-25"
-                                            variant={"secondary"} size={'sm'} asChild>
+                                                variant={"secondary"} size={'sm'} asChild>
                                                 <Link href={`/dashboard/cursos/${cursoActual.edicionId}/`}>
                                                     Ir al Curso <ChevronRight />
                                                 </Link>
@@ -254,7 +260,9 @@ export default function DashboardClient({ piechart, misCursos, stats, cursoActua
                     }
                 </CardContent>
             </Card>
-
+            <h3 className="font-semibold">
+                Puede que estos cursos sean de tu interés
+            </h3>
             <ListarCursos inscripciones={misCursos} />
             {/* Acciones rápidas */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">

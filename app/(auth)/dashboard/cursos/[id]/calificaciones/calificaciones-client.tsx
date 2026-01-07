@@ -42,6 +42,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useDataTable } from '@/hooks/use-data-table'
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
+import { BarChartData, DoubleBarChartData, Stat } from "@/config/charts"
+import Stats from "./(.charts)/stats"
+import { Charts } from "./(.charts)/charts"
 
 interface Inscripcion extends inscripciones {
     edicion: edicionesCursos & {
@@ -50,7 +53,14 @@ interface Inscripcion extends inscripciones {
     }
 
 }
-export function CalificacionesClient({ inscripcion }: { inscripcion: Inscripcion }) {
+export function CalificacionesClient({ inscripcion, charts, stats }: {
+    inscripcion: Inscripcion,
+    stats: Stat[],
+    charts: {
+        doublebarchart: DoubleBarChartData[],
+        barchart: BarChartData[]
+    }
+}) {
     const edicion = inscripcion.edicion;
     const [examenSearch] = useQueryState("examen", parseAsString.withDefault(""))
     const filteredExamenes = React.useMemo(() => {
@@ -189,6 +199,9 @@ export function CalificacionesClient({ inscripcion }: { inscripcion: Inscripcion
                 </TabsContent>
 
                 <TabsContent value="charts" >
+
+                    <Stats stats={stats} />
+                    <Charts {...charts} />
                 </TabsContent>
             </Tabs>
         </div>

@@ -8,11 +8,9 @@ import { motion } from "framer-motion"
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { Separator } from '@/components/ui/separator';
 import { CurrencySelector } from '@/components/ui/currency-selector';
 import { useSession } from 'next-auth/react';
 import { UserNav } from '@/components/dashboard/user-nav';
-import { useTheme } from 'next-themes';
 import InputSearch from './input-search';
 import Image from 'next/image';
 // Types
@@ -86,12 +84,7 @@ export const Navbar = React.forwardRef<HTMLElement, Navbar02Props>(
     const [isMobile, setIsMobile] = useState(false);
     const containerRef = useRef<HTMLElement>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const { setTheme } = useTheme();
-
-    useEffect(() => {
-      setTheme('light');
-    }, []);
-
+   
     const { status } = useSession();
 
     useEffect(() => {

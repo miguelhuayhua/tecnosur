@@ -7,7 +7,8 @@ import {
   LayoutGrid,
   LucideIcon,
   Calendar,
-  FileSpreadsheet
+  FileSpreadsheet,
+  SquareChartGantt
 } from "lucide-react";
 
 type Submenu = {
@@ -49,7 +50,7 @@ export function getMenuList(pathname: string): Group[] {
          {
           href: "/dashboard/cursos",
           label: "Mis cursos",
-          icon: SquarePen
+          icon: SquareChartGantt
         },
         {
           href: "/dashboard/calendario",
@@ -68,7 +69,7 @@ export function getMenuList(pathname: string): Group[] {
       groupLabel: "Configuración",
       menus: [
         {
-          href: "/dashboard/cuenta",
+          href: "/dashboard/configuracion/perfil",
           label: "Mi cuenta",
           icon: Users
         }

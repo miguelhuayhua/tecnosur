@@ -55,7 +55,6 @@ export default async function FormularioPage({ searchParams }: Props) {
         if (!compra) return redirect('/dashboad')
         return redirect(`/cursos/${compra?.edicion.cursoId}/checkout/${compra.id}`)
     }
-    console.log('continua')
     const edicionData = sParams.edicionId ? await getEdicion(sParams.edicionId) : undefined;
     const edicion = edicionData ?? undefined;
     return (

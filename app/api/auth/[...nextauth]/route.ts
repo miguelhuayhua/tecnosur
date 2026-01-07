@@ -106,7 +106,6 @@ const handler = NextAuth({
                 return true;
             }
             else if (account?.provider === "google") {
-                console.log(profile, 'perfil', user, 'usuario')
                 // Verificar si el usuario ya existe en tu base de datos
                 let existingUser = await prisma.usuariosEstudiantes.findFirst({
                     where: {
@@ -150,7 +149,6 @@ const handler = NextAuth({
         },
 
         jwt: async ({ session, token, trigger, user }) => {
-            console.log('se disparó al go', trigger)
             // ✅ Primera vez que se crea el token (login)
             if (user) {
                 token.id = user.id;
@@ -159,7 +157,6 @@ const handler = NextAuth({
 
             // ✅ Cuando se actualiza la sesión manualmente
             if (trigger == "update") {
-                console.log(user, token, "actualizado")
                 token.name = session.name;
                 token.email = session.email;
                 if (session.registrado != undefined) {

@@ -278,8 +278,8 @@ model edicionesCursos {
   vigente       Boolean       @default(false)
   creadoEn      DateTime      @default(now())
   actualizadoEn DateTime      @updatedAt
-  docenteId     String        @default("")
-  docente       docente       @relation(fields: [docenteId], references: [id], onDelete: Cascade)
+  docenteId     String?
+  docente       docente?      @relation(fields: [docenteId], references: [id], onDelete: Cascade)
 
   // Relaciones
   curso         cursos          @relation(fields: [cursoId], references: [id], onDelete: Cascade)
@@ -465,6 +465,7 @@ model compras {
   // Relaciones
   edicion               edicionesCursos      @relation(fields: [edicionId], references: [id], onDelete: Cascade)
   inscripcion           inscripciones?
+  deuda                 Float                @default(0)
   usuariosEstudiantesId String?
   usuario               usuariosEstudiantes? @relation(fields: [usuariosEstudiantesId], references: [id])
   estadoPago            EstadoPago           @default(PENDIENTE)

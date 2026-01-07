@@ -68,175 +68,157 @@ export function Menu({ isOpen }: MenuProps) {
   };
 
   return (
-    <ScrollArea className="[&>div>div[style]]:!block h-fit">
-      <nav className=" w-full">
-        <ul className="flex flex-col min-h-screen lg:min-h-[calc(100vh-32px-40px-32px)] items-start space-y-1 ">
-          {menuList.map(({ groupLabel, menus }, index) => (
-            <li className={cn("w-full", groupLabel ? "pt-5" : "")} key={index}>
-              {/* Grupo de menú */}
-              {(isOpen && groupLabel) ? (
-                <p className="text-sm   px-4 mb-4 pb-2 truncate text-white">
-                  {groupLabel}
-                </p>
-              ) : (!isOpen && groupLabel) ? (
-                null
-              ) : (
-                <div className="py-2" />
-              )}
-
-              {/* Items del menú */}
-              {menus.map(
-                ({ href, label, icon: Icon, active, submenus }, index) => {
-                  // Para items con submenús, considerarlos como "padre"
-                  const isParent = submenus && submenus.length > 0;
-                  const isActive = isItemActive(href, active, isParent);
-
-                  return !submenus || submenus.length === 0 ? (
-                    <div className="w-full" key={index}>
-                      <TooltipProvider disableHoverableContent>
-                        <Tooltip delayDuration={100}>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant={"ghost"}
-                              className={cn(
-                                "w-full justify-start text-white   h-10 mb-1 transition-colors",
-                                isActive
-                                  ? " border-r-3 border-r-white rounded-none"
-                                  : "hover:bg-accent/10 "
-                              )}
-                              asChild
-                            >
-                              <Link href={href}>
-                                <span className={cn(!isOpen ? "pl-2" : "mr-4")}>
-                                  <Icon size={18} />
-                                </span>
-                                <p
-                                  className={cn(
-                                    "max-w-[200px] truncate transition-all duration-200",
-                                    !isOpen
-                                      ? "opacity-0 w-0"
-                                      : "opacity-100 w-auto"
-                                  )}
-                                >
-                                  {label}
-                                </p>
-                              </Link>
-                            </Button>
-                          </TooltipTrigger>
-                          {!isOpen && (
-                            <TooltipContent side="right" sideOffset={10}>
-                              {label}
-                            </TooltipContent>
-                          )}
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                  ) : (
-                    <div className="w-full" key={index}>
-                      <CollapseMenuButton
-                        icon={Icon}
-                        label={label}
-                        active={isActive}
-                        submenus={submenus}
-                        isOpen={isOpen}
-                        isItemActive={isItemActive}
-                      />
-                    </div>
-                  );
-                }
-              )}
-            </li>
-          ))}
-
-
-          {/* Botón de cerrar sesión */}
-          <li className="w-full grow flex mb-4 items-end mt-auto">
-            <TooltipProvider disableHoverableContent>
-              <Tooltip delayDuration={100}>
-                <TooltipTrigger asChild>
-                  <Button
-                    onClick={() => signOut()}
-                    variant="ghost"
-                    className={cn(
-                      "w-full h-10 mt-5 transition-colors text-white hover:bg-muted/10",
-                      !isOpen ? "justify-center" : "justify-start"
-                    )}
-                  >
-                    <span className={cn(!isOpen ? "pl-2" : "mr-4")}>
-                      <LogOut size={18} />
-                    </span>
-                    <p
-                      className={cn(
-                        "whitespace-nowrap transition-all duration-200",
-                        !isOpen ? "opacity-0 w-0" : "opacity-100 w-auto"
-                      )}
-                    >
-                      Cerrar sesión
-                    </p>
-                  </Button>
-                </TooltipTrigger>
-                {!isOpen && (
-                  <TooltipContent side="right" sideOffset={10}>
-                    Cerrar sesión
-                  </TooltipContent>
-                )}
-              </Tooltip>
-            </TooltipProvider>
-
-          </li>
-          {/* Redes Sociales */}
-          <div className="mt-auto w-full  space-y-4">
-            {/* Botones de redes sociales */}
-            <div className={cn(
-              "flex justify-center gap-2",
-              !isOpen ? "flex-col items-center" : "flex-row"
-            )}>
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                asChild
-                className="text-white"
-              >
-                <Link href={socialLinks.facebook} target="_blank" rel="noopener noreferrer">
-                  <Facebook className="h-4 w-4" />
-                </Link>
-              </Button>
-
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                asChild
-                className="text-white"
-              >
-                <Link href={socialLinks.instagram} target="_blank" rel="noopener noreferrer">
-                  <Instagram className="h-4 w-4" />
-                </Link>
-              </Button>
-
-
-
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                asChild
-                className="text-white"
-              >
-                <Link href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer">
-                  <Linkedin className="h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-
-            {/* Texto descriptivo cuando el sidebar está abierto */}
-            {isOpen && (
-              <p className="text-xs text-white/80 text-center">
-                Síguenos en nuestras redes sociales
+    <nav className="h-full  w-full flex flex-col">
+      <ul className="flex flex-col flex-1 items-start pb-10 h-full">
+        {menuList.map(({ groupLabel, menus }, index) => (
+          <li className={cn("w-full", groupLabel ? "pt-5" : "")} key={index}>
+            {/* Grupo de menú */}
+            {(isOpen && groupLabel) ? (
+              <p className="text-sm   px-4 mb-4 pb-2 truncate text-white">
+                {groupLabel}
               </p>
+            ) : (!isOpen && groupLabel) ? (
+              null
+            ) : (
+              <div className="py-2" />
             )}
-          </div>
-        </ul>
-      </nav>
 
-    </ScrollArea>
+            {/* Items del menú */}
+            {menus.map(
+              ({ href, label, icon: Icon, active, submenus }, index) => {
+                // Para items con submenús, considerarlos como "padre"
+                const isParent = submenus && submenus.length > 0;
+                const isActive = isItemActive(href, active, isParent);
+
+                return !submenus || submenus.length === 0 ? (
+                  <div className="w-full" key={index}>
+                    <TooltipProvider disableHoverableContent>
+                      <Tooltip delayDuration={100}>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant={"ghost"}
+                            className={cn(
+                              "w-full justify-start text-white   h-10 mb-1 transition-colors",
+                              isActive
+                                ? " border-r-3 border-r-white rounded-none"
+                                : "hover:bg-accent/10 "
+                            )}
+                            asChild
+                          >
+                            <Link href={href}>
+                              <span className={cn(!isOpen ? "pl-2" : "mr-4")}>
+                                <Icon size={18} />
+                              </span>
+                              <p
+                                className={cn(
+                                  "max-w-[200px] truncate transition-all duration-200",
+                                  !isOpen
+                                    ? "opacity-0 w-0"
+                                    : "opacity-100 w-auto"
+                                )}
+                              >
+                                {label}
+                              </p>
+                            </Link>
+                          </Button>
+                        </TooltipTrigger>
+                        {!isOpen && (
+                          <TooltipContent side="right" sideOffset={10}>
+                            {label}
+                          </TooltipContent>
+                        )}
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                ) : (
+                  <div className="w-full" key={index}>
+                    <CollapseMenuButton
+                      icon={Icon}
+                      label={label}
+                      active={isActive}
+                      submenus={submenus}
+                      isOpen={isOpen}
+                      isItemActive={isItemActive}
+                    />
+                  </div>
+                );
+              }
+            )}
+          </li>
+        ))}
+
+        {/* Redes Sociales */}
+        <div className="mt-auto w-full  space-y-4">
+          <Button
+            onClick={() => signOut()}
+            variant="ghost"
+            className={cn(
+              "w-full h-10 mt-5 transition-colors text-white hover:bg-muted/10",
+              !isOpen ? "justify-center" : "justify-start"
+            )}
+          >
+            <span className={cn(!isOpen ? "pl-2" : "mr-4")}>
+              <LogOut size={18} />
+            </span>
+            <p
+              className={cn(
+                "whitespace-nowrap transition-all duration-200",
+                !isOpen ? "opacity-0 w-0" : "opacity-100 w-auto"
+              )}
+            >
+              Cerrar sesión
+            </p>
+          </Button>
+          {/* Botones de redes sociales */}
+          <div className={cn(
+            "flex justify-center gap-2",
+            !isOpen ? "flex-col items-center" : "flex-row"
+          )}>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              asChild
+              className="text-white"
+            >
+              <Link href={socialLinks.facebook} target="_blank" rel="noopener noreferrer">
+                <Facebook className="h-4 w-4" />
+              </Link>
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              asChild
+              className="text-white"
+            >
+              <Link href={socialLinks.instagram} target="_blank" rel="noopener noreferrer">
+                <Instagram className="h-4 w-4" />
+              </Link>
+            </Button>
+
+
+
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              asChild
+              className="text-white"
+            >
+              <Link href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer">
+                <Linkedin className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+
+          {/* Texto descriptivo cuando el sidebar está abierto */}
+          {isOpen && (
+            <p className="text-xs text-white/80 text-center">
+              Síguenos en nuestras redes sociales
+            </p>
+          )}
+        </div>
+      </ul>
+    </nav>
+
   );
 }
