@@ -36,16 +36,20 @@ const barChartConfig = {
         color: "var(--chart-2)",
         label: "Del 21 al 40"
     },
-    "41-60": {
+    "41-50": {
         color: "var(--chart-3)",
-        label: "Del 41 al 60"
+        label: "Del 41 al 50"
+    },
+    "51-60": {
+        color: "var(--chart-4)",
+        label: "Del 51 al 60"
     },
     "61-80": {
-        color: "var(--chart-4)",
+        color: "var(--chart-5)",
         label: "Del 61 al 80"
     },
     "81-100": {
-        color: "var(--chart-5)",
+        color: "var(--chart-6)",
         label: "Del 81 - 100"
     }
 } satisfies ChartConfig;
@@ -74,11 +78,15 @@ export function Charts({ barchart, doublebarchart }: Props) {
                 <CardContent >
                     {barchart.length > 0 ? (
                         <ChartContainer config={barChartConfig}>
+
                             <BarChart
                                 accessibilityLayer
                                 data={barchart}
 
                             >
+
+                                <CartesianGrid vertical={false} />
+
                                 <XAxis
                                     type="category"
                                     dataKey="x"
@@ -90,7 +98,6 @@ export function Charts({ barchart, doublebarchart }: Props) {
                                     type="number"
                                     hide
                                 />
-                                <ChartLegend content={<ChartLegendContent />} />
 
                                 <ChartTooltip
                                     cursor={false}
@@ -103,6 +110,8 @@ export function Charts({ barchart, doublebarchart }: Props) {
                                     radius={[12, 12, 12, 12]}
 
                                 />
+                                <ChartLegend content={<ChartLegendContent />} />
+
                             </BarChart>
                         </ChartContainer>
                     ) : (
@@ -111,8 +120,13 @@ export function Charts({ barchart, doublebarchart }: Props) {
                         </div>
                     )}
                 </CardContent>
-                <CardFooter className="flex-col mt-auto items-start gap-2 text-sm">
-
+                <CardFooter className="flex-col items-start gap-2 text-sm">
+                    <div className="flex gap-2 leading-none font-medium">
+                        Distribución de estudiantes por rango de calificaciones
+                    </div>
+                    <div className="text-muted-foreground leading-none">
+                        Mostrando estudiantes inscritos por categoría de calificación
+                    </div>
                 </CardFooter>
             </Card>
 
@@ -122,28 +136,39 @@ export function Charts({ barchart, doublebarchart }: Props) {
                     <CardDescription>Las notas están normalizadas a una escala de 0-100</CardDescription>
                 </CardHeader>
                 <CardContent >
-                    <ChartContainer config={doubleBarChartConfig}>
-                        <BarChart accessibilityLayer data={doublebarchart}>
-                            <CartesianGrid vertical={false} />
-                            <XAxis
-                                dataKey="name"
-                                tickLine={false}
-                                tickMargin={10}
-                                axisLine={false}
-                            />
-                            <ChartLegend content={<ChartLegendContent />} />
+                    {doublebarchart.length > 0 ? (
+                        <ChartContainer config={doubleBarChartConfig}>
+                            <BarChart accessibilityLayer data={doublebarchart}>
+                                <CartesianGrid vertical={false} />
+                                <XAxis
+                                    dataKey="name"
+                                    tickLine={false}
+                                    tickMargin={10}
+                                    axisLine={false}
+                                />
+                                <ChartLegend content={<ChartLegendContent />} />
 
-                            <ChartTooltip
-                                cursor={false}
-                                content={<ChartTooltipContent indicator="dashed" />}
-                            />
-                            <Bar dataKey="value" fill="var(--chart-1)" radius={12} />
-                            <Bar dataKey="value2" fill="var(--chart-2)" radius={12} />
-                        </BarChart>
-                    </ChartContainer>
+                                <ChartTooltip
+                                    cursor={false}
+                                    content={<ChartTooltipContent indicator="dashed" />}
+                                />
+                                <Bar dataKey="value" fill="var(--chart-1)" radius={12} />
+                                <Bar dataKey="value2" fill="var(--chart-2)" radius={12} />
+                            </BarChart>
+                        </ChartContainer>
+                    ) : (
+                        <div className="flex items-center justify-center h-[300px]">
+                            <p className="text-muted-foreground">No hay datos de notas disponibles</p>
+                        </div>
+                    )}
                 </CardContent>
-                <CardFooter className="flex-col mt-auto items-start gap-2 text-sm">
-
+                <CardFooter >
+                    <p className="flex gap-2 leading-none font-medium">
+                        Comparativa de rendimiento académico
+                    </p>
+                    <p className="text-muted-foreground leading-none">
+                        Mostrando tu nota vs promedio del curso en cada examen
+                    </p>
                 </CardFooter>
             </Card>
 

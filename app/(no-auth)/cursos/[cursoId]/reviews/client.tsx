@@ -1,32 +1,13 @@
 'use client';
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from "@/components/ui/accordion"
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Play, Clock, CheckCircle, Home, Book, TextAlignStart, Calendar, CreditCard, Info, Check, Heart, MessageCircleCode, Youtube } from 'lucide-react';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
-import { Status, StatusIndicator } from '@/components/ui/shadcn-io/status';
-
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Separator } from '@/components/ui/separator';
-import { useCursos } from "@/hooks/use-cursos";
 import Link from "next/link";
-import { usePriceFormatter } from '@/hooks/use-price-formatter';
-import { beneficiosCursos, categorias, clases, cursos, docente, edicionesCursos, estudiantes, objetivosCursos, preciosCursos, requisitosCursos, reviewsCursos, usuariosEstudiantes } from "@/prisma/generated";
-import { FaWhatsapp } from "react-icons/fa";
-import { CursoCard } from "@/app/(auth)/(componentes)/curso-card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {  categorias, cursos, estudiantes, reviewsCursos } from "@/prisma/generated";
 import { useSession } from "next-auth/react";
-import { InputGroup, InputGroupAddon, InputGroupTextarea } from "@/components/ui/input-group";
-import { ButtonGroup } from "@/components/ui/button-group";
-
 import { Star, StarHalf } from "lucide-react";
 import { notFound } from "next/navigation";
 import { YouTubePlayer } from "@/components/ui/youtube-video-player";
@@ -114,7 +95,7 @@ export default function CursoReviewsClient({ curso }: { curso: Curso }) {
                             claseBienvenida && claseBienvenida.urlPresentacion ?
                                 <YouTubePlayer videoId={claseBienvenida.urlPresentacion} /> :
                                 <div className="relative w-full h-50 ">
-                                    <Image src={curso.urlMiniatura || '/placeholder.svg'} fill alt='portada curso' />
+                                    <Image src={curso.urlMiniatura || '/placeholder.svg'} className='object-cover' fill alt='portada curso' />
 
                                 </div>
                         }
@@ -128,7 +109,7 @@ export default function CursoReviewsClient({ curso }: { curso: Curso }) {
                     </CardFooter>
                 </Card>
             </div>
-            <div className="col-span-3 grid sm:grid-cols-2 lg:grid-cols-3">
+            <div className="col-span-3 gap-4 grid sm:grid-cols-2 lg:grid-cols-3">
                 {
                     curso.reviews.map(review => (<ReviewComponent review={review} userId={data?.user.id} />))
                 }

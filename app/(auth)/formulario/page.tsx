@@ -42,7 +42,6 @@ export default async function FormularioPage({ searchParams }: Props) {
     if (!session) {
         return notFound();
     }
-    console.log(session)
     const estudiante = await getInformacion(session.user.email!)
     if (!estudiante || !estudiante.usuario) return notFound();
     if (estudiante.usuario.registrado) {

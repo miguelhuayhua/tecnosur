@@ -11,6 +11,7 @@ export default async function CalificarCurso({ params }: Props) {
 
 
     if (user && user.user && user.user.email) {
+       
         const edicion = await prisma.edicionesCursos.findUnique({
             where: { id },
             select: {
@@ -29,7 +30,6 @@ export default async function CalificarCurso({ params }: Props) {
             }
 
         });
-
         if (!edicion) {
             notFound();
         }

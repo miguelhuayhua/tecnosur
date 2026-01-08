@@ -218,7 +218,7 @@ export default function Formulario({ estudiante, edicion }: Props) {
                 }).then(() => {
                     console.log('actualizado')
                     setTimeout(() => {
-                        router.replace(`${params.has('callbackUrl') ? params.get('callbackUrl') : "/dashboard"}`);
+                        router.replace(`${params.has('callbackUrl') ? params.get('callbackUrl') : "/dashboard/panel"}`);
                         setShowLoader(false);
                     }, 7000)
                 }).catch(err=>{

@@ -407,17 +407,7 @@ export default function CheckoutClient({ curso }: { curso: Curso }) {
                     value={paymentMethod}
                     className='space-y-3 mb-3 mt-6'
                   >
-                    <AccordionItem value="asistido">
-                      <Button className='w-full rounded-[.3em] ' onClick={() => setPaymentMethod("asistido")}>
-                        Pago Asistido
-                      </Button>
-                      <AccordionContent className="flex flex-col gap-4 text-balance">
-                        <p>
-                          Contactos
-                        </p>
-
-                      </AccordionContent>
-                    </AccordionItem>
+                   
                     <AccordionItem value="PLIN">
                       <Button className="w-full rounded-[.3em] bg-gradient-to-r from-[#2788f6] to-[#07e1ce]" onClick={() => setPaymentMethod("PLIN")}>
                         <Image src="/plin.png" width={48} height={48} alt="Plin" className='w-5' />
@@ -490,19 +480,7 @@ export default function CheckoutClient({ curso }: { curso: Curso }) {
                       </AccordionContent>
                     </AccordionItem>
 
-                    {/* TRANSFERENCIA */}
-                    <AccordionItem value="TRANSFERENCIA">
-                      <Button
-                        className="w-full rounded-[.3em] bg-slate-700"
-                        onClick={() => setPaymentMethod("TRANSFERENCIA")}
-                      >
-                        Transferencia Bancaria
-                      </Button>
-                      <AccordionContent>
-                        Banco · Cuenta · Titular
-                      </AccordionContent>
-                    </AccordionItem>
-
+                  
                  
                   </Accordion>
                   <PayPalButtons

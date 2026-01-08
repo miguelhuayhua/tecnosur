@@ -17,7 +17,7 @@ export function CurrencySelector() {
   return (
     <Select value={selectedCurrency.code} onValueChange={handleCurrencyChange}>
       <SelectTrigger 
-        className="w-25   rounded-full "
+        className="w-30   rounded-full "
       >
         <SelectValue>
           <div className="flex items-center gap-2">

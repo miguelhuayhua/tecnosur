@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { BookOpen, Award, Calendar, FileText, ArrowRight, Users, BarChart3, CirclePercentIcon, ChartNoAxesCombinedIcon, TrendingUpIcon, BadgePercentIcon, DollarSignIcon, ShoppingBagIcon, ChevronRight } from "lucide-react";
-import ListarCursos from "../list";
+import ListarCursos from "../../list";
 import { BarChartData, PieChartData, Stat } from "@/lib/charts";
 import { inscripciones } from "@/prisma/generated";
 import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
@@ -72,7 +72,6 @@ const salesChartConfig = {
 export default function DashboardClient({ piechart, misCursos, stats, cursoActual }: Props) {
     const { data: token } = useSession();
     const filledBars = Math.round(cursoActual.miPromedio / 3)
-    console.log(piechart)
     const salesChartData = Array.from({ length: cursoActual.mejorPromedio / 3 }, (_, index) => {
         return {
             date: "",
@@ -86,32 +85,15 @@ export default function DashboardClient({ piechart, misCursos, stats, cursoActua
                     <div className='grid gap-6 lg:grid-cols-5'>
                         <div className='flex flex-col gap-4 lg:col-span-3'>
                             <span className='text-lg font-semibold'>Bienvenido al panel de estudiante</span>
-                            <div className='flex items-center gap-3'>
-                                <Avatar >
-                                    <AvatarImage src={token?.user.image!} />
-                                    <AvatarFallback className='bg-primary/10 text-primary shrink-0 rounded-sm'>
-                                        {token?.user.name?.charAt(0).toUpperCase()}
-                                    </AvatarFallback>
-                                </Avatar>
-                                <div className='flex flex-col'>
-                                    <span className='text-xl font-medium'>
-                                        {token?.user.name}
-                                    </span>
-                                    <span className='text-muted-foreground text-sm'>
-                                        {token?.user.email!}
-                                    </span>
-                                </div>
-                            </div>
+                           
 
 
                             <div className='grid gap-4 sm:grid-cols-2'>
                                 {stats.map((stat, index) => (
-                                    <div key={index} className='flex items-center gap-3 rounded-md px-4 py-2'>
-                                        <Avatar className='size-8.5 rounded-sm'>
-                                            <AvatarFallback className='bg-primary/10 text-primary shrink-0 rounded-sm'>
+                                    <div key={index} className='flex items-center gap-6 rounded-md px-4 py-2'>
+                                        <span className="p-4 rounded-md bg-primary/5">
                                                 {stat.icon}
-                                            </AvatarFallback>
-                                        </Avatar>
+                                            </span>
                                         <div className='flex flex-col gap-0.5'>
                                             <span className='text-muted-foreground text-sm font-medium'>{stat.titulo}</span>
                                             <span className='text-lg font-medium'>{stat.valor}</span>
@@ -197,10 +179,10 @@ export default function DashboardClient({ piechart, misCursos, stats, cursoActua
                         cursoActual.edicionCodigo && (
                             <>
                                 <Separator />
-                                <h3 className="text-center text-xl">
-                                    Revisa el último curso que te inscribiste
+                                <h3 className="text-center text-primary font-bold text-xl">
+                                    Tu último curso
                                 </h3>
-                                <Card className='relative border-none'>
+                                <Card className='relative border-none shadow-none'>
                                     <CardContent className='grid gap-8 px-4 lg:grid-cols-5'>
 
                                         <div className='flex flex-col justify-center gap-5'>

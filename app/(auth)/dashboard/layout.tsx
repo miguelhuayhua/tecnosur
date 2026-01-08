@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 import { NuqProvider } from "./nuq-provider";
 import { ModalProvider } from "@/providers/modal-provider";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 
 export default function DashboardLayout({
@@ -16,13 +17,15 @@ export default function DashboardLayout({
 }) {
 
   return (
-    <ModalProvider>
-      <NuqProvider>
-        <AdminPanelLayout>
-          {children}
-          {modal}
-        </AdminPanelLayout>
-      </NuqProvider>
-    </ModalProvider>
+    <SidebarProvider>
+      <ModalProvider>
+        <NuqProvider>
+          <AdminPanelLayout>
+            {children}
+            {modal}
+          </AdminPanelLayout>
+        </NuqProvider>
+      </ModalProvider>
+    </SidebarProvider>
   )
 }

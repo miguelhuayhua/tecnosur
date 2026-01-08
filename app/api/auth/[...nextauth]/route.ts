@@ -160,7 +160,6 @@ const handler = NextAuth({
                 token.name = session.name;
                 token.email = session.email;
                 if (session.registrado != undefined) {
-                    console.log('actualizado')
                     token.registrado = session.registrado;
                 }
             }

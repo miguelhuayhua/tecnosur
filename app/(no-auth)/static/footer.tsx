@@ -4,9 +4,10 @@ import Link from "next/link"
 import { Facebook, Instagram, Youtube, Linkedin } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import Image from "next/image"
+import { useTheme } from "next-themes"
 export function Footer() {
   const currentYear = new Date().getFullYear()
-
+  const { resolvedTheme } = useTheme();
   return (
     <footer className="border-t bg-gradient-to-b from-background to-muted/20">
       <div className="container mx-auto px-4 py-6 md:py-8">
@@ -16,8 +17,11 @@ export function Footer() {
           <div className="space-y-3">
             <div>
               <Link href={'/'}>
-                <Image alt='logo' width={100} height={100} src={'/logo.png'} />
-              </Link>
+                {
+                  resolvedTheme == "light" ?
+                    <Image alt='logo' width={100} height={100} src={'/logo.png'} /> :
+                    <Image alt='logo' width={100} height={100} src={'/dark_logo.png'} />
+                }              </Link>
               <p className="text-sm text-muted-foreground">
                 Educación tecnológica de calidad para el Perú.
               </p>

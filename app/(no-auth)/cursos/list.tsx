@@ -95,14 +95,12 @@ function FiltersPanel({
                                 <div className="flex items-center gap-3">
                                     <RadioGroupItem value="true" id="r1" />
                                     <Label htmlFor="r1" className="flex items-center gap-2">
-                                        <Video className="h-4 w-4 text-green-600" />
                                         <span>Cursos en Vivo</span>
                                     </Label>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <RadioGroupItem value="false" id="r2" />
                                     <Label htmlFor="r2" className="flex items-center gap-2">
-                                        <PlayCircle className="h-4 w-4 text-blue-600" />
                                         <span>Cursos Grabados</span>
                                     </Label>
                                 </div>
@@ -150,7 +148,6 @@ function FiltersPanel({
                         onClick={onResetFilters}
                         disabled={!hasActiveFilters}
                     >
-                        <FilterX className="h-4 w-4" />
                         Limpiar filtros
                     </Button>
                 </FieldGroup>
@@ -435,7 +432,6 @@ export function ListWithFilters() {
 
                                 {enVivo && (
                                     <Badge variant="secondary" className="flex items-center gap-1">
-                                        {enVivoIcon}
                                         <span>{enVivoText}</span>
                                         <button
                                             onClick={handleRemoveEnVivo}

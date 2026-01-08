@@ -16,7 +16,6 @@ const obtenerUsuario = async (correo: string) => {
             usuario: true
         }
     });
-    console.log(usuario)
     if (!usuario) return notFound();
     return usuario;
 }

@@ -11,11 +11,10 @@ import {
 import { prisma } from "@/lib/prisma";
 import CursoEstudianteDetalle from "./curso-detalle";
 import { ContentLayout } from "@/components/dashboard/content-layout";
-import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
 
 
 async function getEdicionCurso(id: string, correo: string) {
-
     const edicion = await prisma.edicionesCursos.findUnique({
         where: { id },
         include: {
@@ -26,14 +25,12 @@ async function getEdicionCurso(id: string, correo: string) {
                             categoria: true
                         }
                     },
-                    beneficios: {
-                        orderBy: { orden: 'asc' }
-                    },
-                    objetivos: {
-                        orderBy: { orden: 'asc' }
-                    },
-                    requisitos: {
-                        orderBy: { orden: 'asc' }
+                    reviews: {
+                        where: {
+                            usuario: {
+                                correo
+                            }
+                        }
                     }
                 }
             },
@@ -53,20 +50,20 @@ async function getEdicionCurso(id: string, correo: string) {
             },
             precios: {
                 orderBy: { esPrecioDefault: 'desc' }
-            }
+            },
+
         }
     });
-    const miReview = await prisma.reviewsCursos.count({ where: { curso: { ediciones: { every: { id } } }, usuario: { correo } } })
-    if (!edicion) return notFound();
 
-    return { edicion, miReview };
+    if (!edicion) return notFound();
+    return { edicion };
 
 }
 
 export default async function CursoDetailPage({ params }: any) {
     const param = await params;
-    const session = await getSession();
-    const { edicion, miReview } = await getEdicionCurso(param.id, session?.user.email!);
+    const session = await getServerSession();
+    const { edicion } = await getEdicionCurso(param.id, session?.user.email!);
 
 
     if (!edicion) {
@@ -74,19 +71,11 @@ export default async function CursoDetailPage({ params }: any) {
     }
 
     return (
-        <ContentLayout title={`Curso: ${edicion.curso.titulo} - ${edicion.codigo}`}>
+        <ContentLayout title={`${edicion.curso.titulo} - ${edicion.codigo}`}>
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
-                        <BreadcrumbLink asChild>
-                            <Link href="/">Home</Link>
-                        </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                        <BreadcrumbLink asChild>
-                            <Link href="/dashboard">Dashboard</Link>
-                        </BreadcrumbLink>
+                        Dashboard
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
@@ -101,7 +90,7 @@ export default async function CursoDetailPage({ params }: any) {
                 </BreadcrumbList>
             </Breadcrumb>
 
-            <CursoEstudianteDetalle edicion={edicion} miReview={miReview} />
+            <CursoEstudianteDetalle edicion={edicion}  />
         </ContentLayout>
     );
 }

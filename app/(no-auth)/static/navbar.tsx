@@ -13,6 +13,7 @@ import { useSession } from 'next-auth/react';
 import { UserNav } from '@/components/dashboard/user-nav';
 import InputSearch from './input-search';
 import Image from 'next/image';
+import { useTheme } from 'next-themes';
 // Types
 export interface Navbar02NavItem {
   href?: string;
@@ -84,9 +85,9 @@ export const Navbar = React.forwardRef<HTMLElement, Navbar02Props>(
     const [isMobile, setIsMobile] = useState(false);
     const containerRef = useRef<HTMLElement>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-   
+    const { resolvedTheme, forcedTheme } = useTheme()
     const { status } = useSession();
-
+    console.log(resolvedTheme, forcedTheme)
     useEffect(() => {
       const checkWidth = () => {
         setIsMobile(window.innerWidth < 1024);
@@ -139,7 +140,7 @@ export const Navbar = React.forwardRef<HTMLElement, Navbar02Props>(
         link: "/contacto",
       },
     ];
-
+    console.log(resolvedTheme == "light")
     return (
       <>
         {/* Top Bar - Contact and Social Media */}
@@ -201,7 +202,7 @@ export const Navbar = React.forwardRef<HTMLElement, Navbar02Props>(
         <header
           ref={combinedRef}
           className={cn(
-            'sticky top-0 z-50 w-full border-b px-4 md:px-10 lg:px-5 xl:px-20 2xl:px-50 backdrop-blur bg-background/95 [&_*]:no-underline',
+            'sticky top-0 z-50 w-full border-b px-4 md:px-10 lg:px-5 xl:px-20 2xl:px-50 backdrop-blur bg-background [&_*]:no-underline',
             className
           )}
           {...(props as any)}
@@ -283,7 +284,9 @@ export const Navbar = React.forwardRef<HTMLElement, Navbar02Props>(
               {/* Logo y navegación */}
               <div className="flex items-center gap-8">
                 <Link href={'/'}>
-                  <Image alt='logo' width={100} height={100} src={'/logo.png'} />
+                  {
+                    <Image alt='logo' width={100} height={100} src={resolvedTheme == 'light' ? '/logo.png' : '/dark_logo.png'} />
+                  }
                 </Link>
                 <InputSearch />
               </div>

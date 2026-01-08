@@ -18,12 +18,13 @@ import {
   FileBadge,
   Calendar1,
   ExternalLink,
-  Star
+  Star,
+  Check
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { useParams } from "next/navigation"
-import { categorias, categoriasCursos, clases, cursos, edicionesCursos, examenes, materiales } from "@/prisma/generated"
+import { categorias, categoriasCursos, clases, cursos, edicionesCursos, examenes, materiales, reviewsCursos } from "@/prisma/generated"
 import { format } from "date-fns"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { FaWhatsapp } from "react-icons/fa"
@@ -33,17 +34,18 @@ import { Status, StatusIndicator } from "@/components/ui/shadcn-io/status"
 
 interface EdicionCurso extends edicionesCursos {
 
-  curso: cursos & { categorias: Array<categoriasCursos & { categoria: categorias }> };
+  curso: cursos & { reviews: Array<reviewsCursos>, categorias: Array<categoriasCursos & { categoria: categorias }> };
   clases: Array<clases & { materiales: Array<materiales> }>;
   examenes: Array<examenes>;
 }
 
 
 
-export default function CursoEstudianteDetalle({ edicion, miReview }: { edicion: EdicionCurso, miReview: number }) {
+export default function CursoEstudianteDetalle({ edicion }: { edicion: EdicionCurso }) {
   const [claseSeleccionada, setClaseSeleccionada] = useState<clases & { materiales: Array<materiales> } | null>(edicion.clases[0] || null)
   const { id } = useParams();
   const curso = edicion.curso;
+  const miReview = curso.reviews.length
   const formatFecha = (fecha: Date) => {
     return new Intl.DateTimeFormat('es-BO', {
       weekday: 'long',
@@ -140,7 +142,7 @@ export default function CursoEstudianteDetalle({ edicion, miReview }: { edicion:
         </div>
         <Separator />
         {/* Botones de acción */}
-        <ButtonGroup>
+        <div className="flex gap-1 flex-wrap">
           {edicion.urlWhatsapp && (
             <Button asChild className="bg-green-700 text-white hover:bg-green-800 border-green-700">
               <Link href={edicion.urlWhatsapp} target="_blank">
@@ -162,7 +164,7 @@ export default function CursoEstudianteDetalle({ edicion, miReview }: { edicion:
           <Button variant="outline" asChild >
             <Link href={`/dashboard/cursos/${id}/calificaciones`}>
               <Award />
-              Ver Notas
+              Notas
             </Link>
           </Button>
 
@@ -170,12 +172,12 @@ export default function CursoEstudianteDetalle({ edicion, miReview }: { edicion:
             <Link href={`/dashboard/cursos/${id}/calificar`}>
               <Star />
               Calificar
-              {miReview && (<small className="text-xs border-l border-l-yellow-500 pl-2 text-yellow-500">
-                Calificado
+              {miReview > 0 && (<small className="text-xs border-l border-l-yellow-500 pl-2 text-yellow-500">
+                <Check />
               </small>)}
             </Link>
           </Button>
-        </ButtonGroup>
+        </div>
         {/* Contenido principal - Lista de clases y materiales */}
         <div className="grid lg:grid-cols-3  gap-8">
           {/* Lista de clases (scrollable) */}

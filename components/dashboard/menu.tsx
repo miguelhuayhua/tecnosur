@@ -69,12 +69,12 @@ export function Menu({ isOpen }: MenuProps) {
 
   return (
     <nav className="h-full  w-full flex flex-col">
-      <ul className="flex flex-col flex-1 items-start pb-10 h-full">
+      <ul className="flex flex-col flex-1  items-start pb-10 h-full">
         {menuList.map(({ groupLabel, menus }, index) => (
           <li className={cn("w-full", groupLabel ? "pt-5" : "")} key={index}>
             {/* Grupo de menú */}
             {(isOpen && groupLabel) ? (
-              <p className="text-sm   px-4 mb-4 pb-2 truncate text-white">
+              <p className="text-sm   px-4 mb-4 pb-2 truncate ">
                 {groupLabel}
               </p>
             ) : (!isOpen && groupLabel) ? (
@@ -98,7 +98,7 @@ export function Menu({ isOpen }: MenuProps) {
                           <Button
                             variant={"ghost"}
                             className={cn(
-                              "w-full justify-start text-white   h-10 mb-1 transition-colors",
+                              "w-full justify-start    h-10 mb-1 transition-colors",
                               isActive
                                 ? " border-r-3 border-r-white rounded-none"
                                 : "hover:bg-accent/10 "
@@ -107,11 +107,11 @@ export function Menu({ isOpen }: MenuProps) {
                           >
                             <Link href={href}>
                               <span className={cn(!isOpen ? "pl-2" : "mr-4")}>
-                                <Icon size={18} />
+                                <Icon size={18} className="text-white" />
                               </span>
                               <p
                                 className={cn(
-                                  "max-w-[200px] truncate transition-all duration-200",
+                                  "max-w-[200px] truncate transition-all text-lg text-white duration-200",
                                   !isOpen
                                     ? "opacity-0 w-0"
                                     : "opacity-100 w-auto"
@@ -153,7 +153,7 @@ export function Menu({ isOpen }: MenuProps) {
             onClick={() => signOut()}
             variant="ghost"
             className={cn(
-              "w-full h-10 mt-5 transition-colors text-white hover:bg-muted/10",
+              "w-full h-10 mt-5 transition-colors hover:bg-muted/10",
               !isOpen ? "justify-center" : "justify-start"
             )}
           >
@@ -178,7 +178,6 @@ export function Menu({ isOpen }: MenuProps) {
               variant="ghost"
               size="icon-sm"
               asChild
-              className="text-white"
             >
               <Link href={socialLinks.facebook} target="_blank" rel="noopener noreferrer">
                 <Facebook className="h-4 w-4" />
@@ -189,7 +188,6 @@ export function Menu({ isOpen }: MenuProps) {
               variant="ghost"
               size="icon-sm"
               asChild
-              className="text-white"
             >
               <Link href={socialLinks.instagram} target="_blank" rel="noopener noreferrer">
                 <Instagram className="h-4 w-4" />

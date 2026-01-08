@@ -68,15 +68,10 @@ export default async function MisCursosPage() {
                 <BreadcrumbList>
                     <BreadcrumbItem>
                         <BreadcrumbLink asChild>
-                            <Link href="/">Home</Link>
+                            <Link href="/">Dashboard</Link>
                         </BreadcrumbLink>
                     </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                        <BreadcrumbLink asChild>
-                            <Link href="/dashboard">Dashboard</Link>
-                        </BreadcrumbLink>
-                    </BreadcrumbItem>
+                  
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
                         <BreadcrumbPage>Mis Cursos</BreadcrumbPage>

@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { estudiantes, reviewsCursos, usuariosEstudiantes } from "@/prisma/generated"
-import { Star } from "lucide-react";
+import { Star, User } from "lucide-react";
 import { Review } from "./client";
 import Image from "next/image";
 import { spanishSpeakingCountries } from "@/lib/countries";
@@ -19,7 +19,7 @@ export default function ReviewComponent({ review, userId }: Props) {
             {
                 review.usuariosEstudiantesId == userId && (
                     <Badge className='absolute top-2 right-2'>
-                        Tu comentario
+                        <User />
                     </Badge>
                 )
             }

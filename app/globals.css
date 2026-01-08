@@ -43,7 +43,8 @@
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
-  --text-sm: 0.88rem;
+  --text-sm: 0.95rem;
+  --text-xs:0.8rem;
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
@@ -58,9 +59,9 @@
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: #8f00ff;
+  --primary: #6a00ff;
   --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: #00b850;
+  --secondary: #00b86e;
   --secondary-foreground: oklch(100% 0.00011 271.152);
   --muted: oklch(0.968 0.007 247.896);
   --muted-foreground: oklch(51.379% 0.00006 271.152);
@@ -68,17 +69,17 @@
   --accent-foreground: oklch(0.208 0.042 265.755);
   --destructive: oklch(0.577 0.245 27.325);
   --warning: oklch(67.091% 0.1396 76.834);
-  --border: oklch(94.915% 0.02452 278.345);
+  --border: oklch(91.346% 0.02746 279.021);
   --input: oklch(100% 0.00011 271.152);
   --ring: #8f00ff;
-  --chart-1: oklch(43.255% 0.22095 299.834);
-  --chart-2: oklch(69.282% 0.12102 185.064);
-  --chart-3: oklch(41.245% 0.22371 287.113);
-  --chart-4: oklch(86.765% 0.29314 142.206);
-  --chart-5: oklch(42.648% 0.12912 254.622);
-  --chart-6: oklch(42.648% 0.12912 254.622);
-  --chart-7: oklch(38.423% 0.19056 303.834);
-  --sidebar: oklch(49.471% 0.14371 136.784);
+  --chart-1: oklch(59.133% 0.22755 304.847);
+  --chart-2: oklch(65.145% 0.19708 145.811);
+  --chart-3: oklch(49.511% 0.1885 294.838);
+  --chart-4: oklch(64.719% 0.19816 141.79);
+  --chart-5: oklch(53.748% 0.13276 304.873);
+  --chart-6: oklch(41.971% 0.1633 295.341);
+  --chart-7: oklch(63.963% 0.19703 143.01);
+  --sidebar: oklch(98.212% 0.00011 271.152);
   --sidebar-foreground: oklch(0.129 0.042 264.695);
   --sidebar-primary: oklch(0.208 0.042 265.755);
   --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
@@ -95,7 +96,7 @@
   --card-foreground: oklch(0.984 0.003 247.858);
   --popover: oklch(0.208 0.042 265.755);
   --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: #7119b4;
+  --primary: #ab7ee8;
   --primary-foreground: oklch(100% 0.00011 271.152);
   --secondary: #00ac4a;
   --secondary-foreground: oklch(100% 0.00011 271.152);
@@ -125,4 +126,46 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+
+/* Scrollbar delgado y discreto */
+
+/* Para navegadores WebKit (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 6px; /* Ancho del scrollbar vertical */
+  height: 6px; /* Alto del scrollbar horizontal */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Fondo transparente */
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2); /* Color del thumb en modo claro */
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4); /* Color al hacer hover */
+}
+
+/* Para modo oscuro */
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Para Firefox */
+* {
+  scrollbar-width: thin; /* Hace el scrollbar delgado */
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent; /* thumb y track */
+}
+
+.dark * {
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }

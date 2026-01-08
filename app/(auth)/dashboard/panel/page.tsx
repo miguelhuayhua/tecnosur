@@ -8,12 +8,10 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { BookOpen, Award, Calendar, FileText, ArrowRight, Users, BarChart3, FolderPlus, Eye } from "lucide-react";
-import ListarCursos from "../list";
 import DashboardClient from "./client";
 import { notFound } from "next/navigation";
 import { PieChartData, Stat } from "@/lib/charts";
@@ -30,160 +28,160 @@ async function getMisCursos(correo: string) {
     })
 }
 async function getCardInfoCursoActual(correo: string): Promise<{
-  cursoTitulo: string
-  edicionId: string
-  edicionCodigo: string
-  
-  // TUS DATOS
-  miPromedio: number            // Tu promedio (60%)
-  
-  // COMPARATIVAS
-  promedioCurso: number         // Promedio del curso (79%)
-  mejorPromedio: number         // Mejor estudiante (98%)
-  
-  // POSICIÓN
-  miPosicion: number            // Tu posición (2)
-  totalEstudiantes: number      // Total inscritos (3)
-  estudiantesConCalificaciones: number // Con notas (2)
-  
-  // DIFERENCIAS
-  diferenciaConMejor: number    // 60 - 98 = -38pts
-  diferenciaConPromedio: number // 60 - 79 = -19pts
-  
-  mensaje: string
+    cursoTitulo: string
+    edicionId: string
+    edicionCodigo: string
+
+    // TUS DATOS
+    miPromedio: number            // Tu promedio (60%)
+
+    // COMPARATIVAS
+    promedioCurso: number         // Promedio del curso (79%)
+    mejorPromedio: number         // Mejor estudiante (98%)
+
+    // POSICIÓN
+    miPosicion: number            // Tu posición (2)
+    totalEstudiantes: number      // Total inscritos (3)
+    estudiantesConCalificaciones: number // Con notas (2)
+
+    // DIFERENCIAS
+    diferenciaConMejor: number    // 60 - 98 = -38pts
+    diferenciaConPromedio: number // 60 - 79 = -19pts
+
+    mensaje: string
 }> {
-  // 1. Buscar estudiante
-  const usuario = await prisma.usuariosEstudiantes.findUnique({
-    where: { correo },
-    include: { estudiante: { select: { id: true } } }
-  })
+    // 1. Buscar estudiante
+    const usuario = await prisma.usuariosEstudiantes.findUnique({
+        where: { correo },
+        include: { estudiante: { select: { id: true } } }
+    })
 
-  if (!usuario?.estudiante) throw new Error('Estudiante no encontrado')
-  const estudianteId = usuario.estudiante.id
+    if (!usuario?.estudiante) throw new Error('Estudiante no encontrado')
+    const estudianteId = usuario.estudiante.id
 
-  // 2. Buscar curso activo
-  const inscripcion = await prisma.inscripciones.findFirst({
-    where: {
-      estudianteId,
-      estado: true,
-      edicion: { estado: 'ACTIVA' }
-    },
-    include: {
-      edicion: {
+    // 2. Buscar curso activo
+    const inscripcion = await prisma.inscripciones.findFirst({
+        where: {
+            estudianteId,
+            estado: true,
+            edicion: { estado: 'ACTIVA' }
+        },
         include: {
-          curso: { select: { titulo: true } },
-          _count: { select: { inscripciones: { where: { estado: true } } } }
+            edicion: {
+                include: {
+                    curso: { select: { titulo: true } },
+                    _count: { select: { inscripciones: { where: { estado: true } } } }
+                }
+            }
+        },
+        orderBy: { inscritoEn: 'desc' }
+    })
+
+    if (!inscripcion) {
+        return {
+            cursoTitulo: 'Sin curso activo',
+            edicionId: '',
+            edicionCodigo: '',
+            miPromedio: 0,
+            promedioCurso: 0,
+            mejorPromedio: 0,
+            miPosicion: 0,
+            totalEstudiantes: 0,
+            estudiantesConCalificaciones: 0,
+            diferenciaConMejor: 0,
+            diferenciaConPromedio: 0,
+            mensaje: 'No tienes cursos activos'
         }
-      }
-    },
-    orderBy: { inscritoEn: 'desc' }
-  })
-
-  if (!inscripcion) {
-    return {
-      cursoTitulo: 'Sin curso activo',
-      edicionId: '',
-      edicionCodigo: '',
-      miPromedio: 0,
-      promedioCurso: 0,
-      mejorPromedio: 0,
-      miPosicion: 0,
-      totalEstudiantes: 0,
-      estudiantesConCalificaciones: 0,
-      diferenciaConMejor: 0,
-      diferenciaConPromedio: 0,
-      mensaje: 'No tienes cursos activos'
     }
-  }
 
-  const edicion = inscripcion.edicion
+    const edicion = inscripcion.edicion
 
-  // 3. Obtener todas las calificaciones
-  const todasCalificaciones = await prisma.calificaciones.findMany({
-    where: { examen: { edicionId: edicion.id } },
-    include: { examen: { select: { notaMaxima: true } } }
-  })
+    // 3. Obtener todas las calificaciones
+    const todasCalificaciones = await prisma.calificaciones.findMany({
+        where: { examen: { edicionId: edicion.id } },
+        include: { examen: { select: { notaMaxima: true } } }
+    })
 
-  // 4. Calcular promedios por estudiante (simple)
-  const promedios = new Map<string, number[]>()
-  
-  todasCalificaciones.forEach(cal => {
-    const notaMaxima = cal.examen.notaMaxima || 100
-    const porcentaje = (cal.nota / notaMaxima) * 100
-    
-    const notas = promedios.get(cal.estudianteId) || []
-    notas.push(Math.min(100, Math.max(0, porcentaje)))
-    promedios.set(cal.estudianteId, notas)
-  })
+    // 4. Calcular promedios por estudiante (simple)
+    const promedios = new Map<string, number[]>()
 
-  // 5. Crear array de estudiantes con promedios
-  const estudiantes: Array<{id: string, promedio: number}> = []
-  
-  promedios.forEach((notas, id) => {
-    const promedio = notas.reduce((a, b) => a + b, 0) / notas.length
-    estudiantes.push({ id, promedio })
-  })
+    todasCalificaciones.forEach(cal => {
+        const notaMaxima = cal.examen.notaMaxima || 100
+        const porcentaje = (cal.nota / notaMaxima) * 100
 
-  // Ordenar de mayor a menor
-  estudiantes.sort((a, b) => b.promedio - a.promedio)
+        const notas = promedios.get(cal.estudianteId) || []
+        notas.push(Math.min(100, Math.max(0, porcentaje)))
+        promedios.set(cal.estudianteId, notas)
+    })
 
-  // 6. Buscar mi posición
-  const miIndex = estudiantes.findIndex(e => e.id === estudianteId)
-  
-  if (miIndex === -1 || estudiantes.length === 0) {
-    return {
-      cursoTitulo: edicion.curso.titulo,
-      edicionId: edicion.id,
-      edicionCodigo: edicion.codigo,
-      miPromedio: 0,
-      promedioCurso: 0,
-      mejorPromedio: 0,
-      miPosicion: 0,
-      totalEstudiantes: edicion._count.inscripciones,
-      estudiantesConCalificaciones: estudiantes.length,
-      diferenciaConMejor: 0,
-      diferenciaConPromedio: 0,
-      mensaje: 'Aún no tienes calificaciones'
+    // 5. Crear array de estudiantes con promedios
+    const estudiantes: Array<{ id: string, promedio: number }> = []
+
+    promedios.forEach((notas, id) => {
+        const promedio = notas.reduce((a, b) => a + b, 0) / notas.length
+        estudiantes.push({ id, promedio })
+    })
+
+    // Ordenar de mayor a menor
+    estudiantes.sort((a, b) => b.promedio - a.promedio)
+
+    // 6. Buscar mi posición
+    const miIndex = estudiantes.findIndex(e => e.id === estudianteId)
+
+    if (miIndex === -1 || estudiantes.length === 0) {
+        return {
+            cursoTitulo: edicion.curso.titulo,
+            edicionId: edicion.id,
+            edicionCodigo: edicion.codigo,
+            miPromedio: 0,
+            promedioCurso: 0,
+            mejorPromedio: 0,
+            miPosicion: 0,
+            totalEstudiantes: edicion._count.inscripciones,
+            estudiantesConCalificaciones: estudiantes.length,
+            diferenciaConMejor: 0,
+            diferenciaConPromedio: 0,
+            mensaje: 'Aún no tienes calificaciones'
+        }
     }
-  }
 
-  // 7. Calcular estadísticas
-  const miPromedio = estudiantes[miIndex].promedio
-  const mejorPromedio = estudiantes[0].promedio
-  
-  const sumaPromedios = estudiantes.reduce((sum, e) => sum + e.promedio, 0)
-  const promedioCurso = sumaPromedios / estudiantes.length
-  
-  const diferenciaConMejor = miPromedio - mejorPromedio
-  const diferenciaConPromedio = miPromedio - promedioCurso
+    // 7. Calcular estadísticas
+    const miPromedio = estudiantes[miIndex].promedio
+    const mejorPromedio = estudiantes[0].promedio
 
-  // 8. Mensaje
-  let mensaje = ''
-  if (estudiantes.length === 1) {
-    mensaje = 'Eres el único con calificaciones'
-  } else if (miIndex === 0) {
-    mensaje = 'Eres el mejor del curso'
-  } else if (diferenciaConPromedio > 0) {
-    mensaje = `Estás ${diferenciaConPromedio.toFixed(1)} pts sobre el promedio`
-  } else {
-    mensaje = `Estás ${Math.abs(diferenciaConPromedio).toFixed(1)} pts bajo el promedio`
-  }
+    const sumaPromedios = estudiantes.reduce((sum, e) => sum + e.promedio, 0)
+    const promedioCurso = sumaPromedios / estudiantes.length
 
-  // 9. Retornar
-  return {
-    cursoTitulo: edicion.curso.titulo,
-    edicionId: edicion.id,
-    edicionCodigo: edicion.codigo,
-    miPromedio: Number(miPromedio.toFixed(1)),
-    promedioCurso: Number(promedioCurso.toFixed(1)),
-    mejorPromedio: Number(mejorPromedio.toFixed(1)),
-    miPosicion: miIndex + 1,
-    totalEstudiantes: edicion._count.inscripciones,
-    estudiantesConCalificaciones: estudiantes.length,
-    diferenciaConMejor: Number(diferenciaConMejor.toFixed(1)),
-    diferenciaConPromedio: Number(diferenciaConPromedio.toFixed(1)),
-    mensaje
-  }
+    const diferenciaConMejor = miPromedio - mejorPromedio
+    const diferenciaConPromedio = miPromedio - promedioCurso
+
+    // 8. Mensaje
+    let mensaje = ''
+    if (estudiantes.length === 1) {
+        mensaje = 'Eres el único con calificaciones'
+    } else if (miIndex === 0) {
+        mensaje = 'Eres el mejor del curso'
+    } else if (diferenciaConPromedio > 0) {
+        mensaje = `Estás ${diferenciaConPromedio.toFixed(1)} pts sobre el promedio`
+    } else {
+        mensaje = `Estás ${Math.abs(diferenciaConPromedio).toFixed(1)} pts bajo el promedio`
+    }
+
+    // 9. Retornar
+    return {
+        cursoTitulo: edicion.curso.titulo,
+        edicionId: edicion.id,
+        edicionCodigo: edicion.codigo,
+        miPromedio: Number(miPromedio.toFixed(1)),
+        promedioCurso: Number(promedioCurso.toFixed(1)),
+        mejorPromedio: Number(mejorPromedio.toFixed(1)),
+        miPosicion: miIndex + 1,
+        totalEstudiantes: edicion._count.inscripciones,
+        estudiantesConCalificaciones: estudiantes.length,
+        diferenciaConMejor: Number(diferenciaConMejor.toFixed(1)),
+        diferenciaConPromedio: Number(diferenciaConPromedio.toFixed(1)),
+        mensaje
+    }
 }
 async function getBalanceFormacionPie(correo: string): Promise<PieChartData[]> {
     // Obtener todas las inscripciones del estudiante con estado de edición
@@ -336,28 +334,28 @@ async function getDashboardStats(correo: string): Promise<Stat[]> {
             valor: clasesHoy,
             badge: clasesHoy > 0 ? "hoy" : "libre",
             descripcion: "Clases programadas para hoy",
-            icon: <Calendar className="size-4" />
+            icon: <Calendar  className="size-6 text-primary" />
         },
         {
             titulo: "Exámenes próximos",
             valor: examenesSemana,
             badge: examenesSemana > 0 ? "pronto" : "clear",
             descripcion: "Exámenes en los próximos 7 días",
-            icon: <FileText className="size-4" />
+            icon: <FileText className="size-6 text-primary" />
         },
         {
             titulo: "Material nuevo",
             valor: materialesNuevos,
             badge: materialesNuevos > 0 ? "nuevo" : "actualizado",
             descripcion: "Materiales nuevos última semana",
-            icon: <FolderPlus className="size-4" />
+            icon: <FolderPlus className="size-6 text-primary" />
         },
         {
             titulo: "Clases por repasar",
             valor: clasesPasadas,
             badge: clasesPasadas > 0 ? "pendiente" : "al día",
             descripcion: "Clases de esta semana por repasar",
-            icon: <Eye className="size-4" />
+            icon: <Eye className="size-6 text-primary" />
         }
     ]
 }
@@ -375,9 +373,7 @@ export default async function DashboardPage() {
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
-                        <BreadcrumbLink asChild>
-                            <Link href="/">Home</Link>
-                        </BreadcrumbLink>
+                        Dashboard
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>

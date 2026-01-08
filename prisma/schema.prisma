@@ -257,7 +257,6 @@ model reviewsCursos {
   usuario               usuariosEstudiantes? @relation(fields: [usuariosEstudiantesId], references: [id])
   usuariosEstudiantesId String?
 
-  @@unique([cursoId])
   @@index([cursoId])
   @@index([rating])
   @@index([creadoEn])
@@ -384,7 +383,7 @@ model examenes {
 
 model calificaciones {
   id           String      @id @default(uuid())
-  aprobado     Boolean
+  aprobado     Boolean     @default(false)
   comentarios  String?
   estudianteId String
   examenId     String

@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Verificar que no haya dejado ya una opinión
-    const reviewExistente = await prisma.reviewsCursos.findUnique({
+    const reviewExistente = await prisma.reviewsCursos.findFirst({
       where: {
         cursoId: cursoId,
         usuario: {
