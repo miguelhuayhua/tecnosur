@@ -1,33 +1,22 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import Link from 'next/link';
-import { categorias, categoriasCursos, cursos, docente, edicionesCursos, objetivosCursos, preciosCursos, reviewsCursos, usuariosEstudiantes } from "@/prisma/generated"
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { usePriceFormatter } from '@/hooks/use-price-formatter';
-import { Check, CheckCheck, Eye, Star } from 'lucide-react';
+import { Check, Eye, Star } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { format } from 'date-fns';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Button } from '@/components/ui/button';
 import { FaWhatsapp } from 'react-icons/fa';
 import { Status, StatusIndicator } from '@/components/ui/shadcn-io/status';
+import { Cursos } from '@/hooks/use-cursos';
 
-interface Curso extends cursos {
-  ediciones: Array<edicionesCursos & {
-    precios: preciosCursos[], docente: docente
-  }>;
-  categorias: (categoriasCursos & { categoria: categorias })[]
-  reviews: Array<reviewsCursos & { usuario: usuariosEstudiantes }>;
-  objetivos: Array<objetivosCursos>;
-
-}
-
-
-export const CursoGeneral: React.FC<{ curso: Curso } & React.HtmlHTMLAttributes<HTMLDivElement>> = ({
+export const CursoGeneral: React.FC<{ curso: Cursos } & React.HtmlHTMLAttributes<HTMLDivElement>> = ({
   curso,
   className,
 }) => {

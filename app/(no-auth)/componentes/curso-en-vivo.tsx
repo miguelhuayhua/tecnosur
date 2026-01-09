@@ -16,17 +16,10 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { FaWhatsapp } from 'react-icons/fa';
 import { Status, StatusIndicator } from '@/components/ui/shadcn-io/status';
-
-// Interfaz que coincide EXACTAMENTE con lo que devuelve la API
-interface CursoAPI extends cursos {
-  ediciones: Array<edicionesCursos & { precios: preciosCursos[], _count: { clases: number } }>;
-  categorias: (categoriasCursos & { categoria: categorias })[]
-  reviews: Array<reviewsCursos>;
-  objetivos: Array<objetivosCursos>;
-}
+import { Cursos } from '@/hooks/use-cursos';
 
 interface CursoCardProps {
-  curso: CursoAPI;
+  curso: Cursos;
 }
 
 export const CursoCardDetalladoVertical: React.FC<CursoCardProps & React.HtmlHTMLAttributes<HTMLDivElement>> = ({
@@ -164,7 +157,7 @@ export const CursoCardDetalladoVertical: React.FC<CursoCardProps & React.HtmlHTM
               <div className="flex items-center justify-between">
 
                 {(precioDefault.esPrecioDefault) && (
-                  <div className="flex items-baseline gap-2 text-md">
+                  <div className="flex items-baseline gap-2 text-xl underline decoration-primary underline-offset-4">
                     <span className='font-semibold'>
                       {precioConvertido?.value} {precioConvertido?.code}
                     </span>

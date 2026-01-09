@@ -469,6 +469,7 @@ model compras {
   usuario               usuariosEstudiantes? @relation(fields: [usuariosEstudiantesId], references: [id])
   estadoPago            EstadoPago           @default(PENDIENTE)
   updatedAt             DateTime             @updatedAt
+  conDescuento          Boolean              @default(false)
 
   @@index([fechaCompra])
   @@index([comprobado])

@@ -50,7 +50,7 @@ const defaultNavigationLinks: Navbar02NavItem[] = [
   },
   {
     label: 'En vivo',
-    href: '/en-vivo',
+    href: '/#en-vivo',
   },
   {
     label: 'Certificaciones',
@@ -83,11 +83,25 @@ export const Navbar = React.forwardRef<HTMLElement, Navbar02Props>(
     ref
   ) => {
     const [isMobile, setIsMobile] = useState(false);
+    const [mounted, setMounted] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
     const containerRef = useRef<HTMLElement>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { resolvedTheme, forcedTheme } = useTheme()
     const { status } = useSession();
-    console.log(resolvedTheme, forcedTheme)
+
+    useEffect(() => {
+      setMounted(true);
+      const handleScroll = () => {
+        setScrolled(window.scrollY > 20);
+      };
+
+      window.addEventListener('scroll', handleScroll);
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }, []);
+
     useEffect(() => {
       const checkWidth = () => {
         setIsMobile(window.innerWidth < 1024);
@@ -140,12 +154,12 @@ export const Navbar = React.forwardRef<HTMLElement, Navbar02Props>(
         link: "/contacto",
       },
     ];
-    console.log(resolvedTheme == "light")
     return (
       <>
         {/* Top Bar - Contact and Social Media */}
         <div className={cn(
-          "hidden lg:flex py-2 bg-gradient-to-r from-primary/90 to-secondary transition-all duration-300",
+          "fixed top-0 left-0 right-0 z-[60] py-2 bg-gradient-to-r from-primary/95 to-secondary/95 transition-all duration-500 ease-in-out lg:flex hidden",
+          scrolled ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
         )}>
           <div className="container mx-auto h-full px-4">
             <div className="flex items-center justify-between h-full">
@@ -202,7 +216,8 @@ export const Navbar = React.forwardRef<HTMLElement, Navbar02Props>(
         <header
           ref={combinedRef}
           className={cn(
-            'sticky top-0 z-50 w-full border-b px-4 md:px-10 lg:px-5 xl:px-20 2xl:px-50 backdrop-blur bg-background [&_*]:no-underline',
+            'fixed left-0 right-0 z-50 w-full transition-all duration-500 ease-in-out backdrop-blur-md bg-background/80 [&_*]:no-underline px-4 md:px-10 lg:px-5 xl:px-20 2xl:px-50',
+            scrolled ? 'top-0 shadow-sm' : 'top-0 lg:top-10',
             className
           )}
           {...(props as any)}
@@ -284,9 +299,17 @@ export const Navbar = React.forwardRef<HTMLElement, Navbar02Props>(
               {/* Logo y navegación */}
               <div className="flex items-center gap-8">
                 <Link href={'/'}>
-                  {
-                    <Image alt='logo' width={100} height={100} src={resolvedTheme == 'light' ? '/logo.png' : '/dark_logo.png'} />
-                  }
+                  {mounted ? (
+                    <Image
+                      alt='logo'
+                      width={100}
+                      height={100}
+                      src={resolvedTheme === 'dark' ? '/dark_logo.png' : '/light.png'}
+                      priority
+                    />
+                  ) : (
+                    <div className="w-[100px] h-[100px]" />
+                  )}
                 </Link>
                 <InputSearch />
               </div>

@@ -52,14 +52,14 @@ export function RegistroForm({
       const result = await signIn("credentials", {
         usuario: data.usuario,
         password: data.password,
-        callbackUrl: params.has('callbackUrl') ? params.get('callbackUrl')! : '/dashboard',
+        callbackUrl: params.has('callbackUrl') ? params.get('callbackUrl')! : '/dashboard/panel',
         redirect: params.has('callbackUrl')
       })
 
       if (result?.error) {
         setError("Credenciales inválidas. Por favor, inténtalo de nuevo.")
       } else {
-        router.push("/dashboard")
+        router.push("/dashboard/panel")
         router.refresh()
       }
     } catch (error) {
@@ -83,7 +83,7 @@ export function RegistroForm({
         <Button variant="outline"
           onClick={() => signIn('google', {
             callbackUrl: params.has('callbackUrl') ?
-              params.get('callbackUrl')! : '/dashboard',
+              params.get('callbackUrl')! : '/dashboard/panel',
             redirect: params.has('callbackUrl')
           })}
           type="button">
@@ -93,23 +93,14 @@ export function RegistroForm({
         <Button variant="outline"
           onClick={() => signIn('github', {
             callbackUrl: params.has('callbackUrl') ?
-              params.get('callbackUrl')! : '/dashboard',
+              params.get('callbackUrl')! : '/dashboard/panel',
             redirect: params.has('callbackUrl')
           })}
           type="button">
           <FaGithub />
           Registrarme con Github
         </Button>
-          <Button variant="outline"
-          onClick={() => signIn('twitch', {
-            callbackUrl: params.has('callbackUrl') ?
-              params.get('callbackUrl')! : '/dashboard',
-            redirect: params.has('callbackUrl')
-          })}
-          type="button">
-          <FaTwitch />
-          Registrarme con Twitch
-        </Button>
+
         <FieldDescription className="text-center pt-2 ">
           ¿Ya tienes una cuenta?{" "}
           <Link href="/registro" className="underline text-foreground font-semibold">

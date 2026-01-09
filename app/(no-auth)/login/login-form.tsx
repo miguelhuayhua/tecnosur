@@ -52,14 +52,14 @@ export function LoginForm({
       const result = await signIn("credentials", {
         usuario: data.usuario,
         password: data.password,
-        callbackUrl: params.has('callbackUrl') ? params.get('callbackUrl')! : '/dashboard',
+        callbackUrl: params.has('callbackUrl') ? params.get('callbackUrl')! : '/dashboard/panel',
         redirect: params.has('callbackUrl')
       })
 
       if (result?.error) {
         setError("Credenciales inválidas. Por favor, inténtalo de nuevo.")
       } else {
-        router.push("/dashboard")
+        router.push("/dashboard/panel")
         router.refresh()
       }
     } catch (error) {
@@ -165,7 +165,7 @@ export function LoginForm({
           <Button variant="outline"
             onClick={() => signIn('google', {
               callbackUrl: params.has('callbackUrl') ?
-                params.get('callbackUrl')! : '/dashboard',
+                params.get('callbackUrl')! : '/dashboard/panel',
               redirect: params.has('callbackUrl')
             })}
             type="button">
@@ -175,7 +175,7 @@ export function LoginForm({
           <Button variant="outline"
             onClick={() => signIn('github', {
               callbackUrl: params.has('callbackUrl') ?
-                params.get('callbackUrl')! : '/dashboard',
+                params.get('callbackUrl')! : '/dashboard/panel',
               redirect: params.has('callbackUrl')
             })}
             type="button">

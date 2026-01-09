@@ -10,6 +10,7 @@ const GET = async (req: NextRequest) => {
         const categoria = searchParams.get('categoria') || '';
         const precioMin = searchParams.get('precioMin');
         const precioMax = searchParams.get('precioMax');
+        const descuento = searchParams.get('descuento');
         const fechaInicio = searchParams.get('fechaInicio');
         const fechaFin = searchParams.get('fechaFin');
         const enVivo = searchParams.get('enVivo'); // Nuevo: 'true' o 'false'
@@ -54,6 +55,21 @@ const GET = async (req: NextRequest) => {
             const enVivoBoolean = enVivo === 'true';
             where.AND.push({
                 enVivo: enVivoBoolean
+            });
+        }
+
+        if (descuento) {
+            const descuentoBoolean = descuento === 'true';
+            where.AND.push({
+                ediciones: {
+                    some: {
+                        precios: {
+                            some: {
+                                esDescuento: descuentoBoolean
+                            }
+                        }
+                    }
+                }
             });
         }
 
@@ -126,6 +142,12 @@ const GET = async (req: NextRequest) => {
                             }
                         },
                         include: {
+                            clases: {
+                                where: {
+                                    orden: { equals: 1 }
+                                },
+                                take: 1
+                            },
                             precios: {
                                 where: {
                                     OR: [
@@ -147,6 +169,7 @@ const GET = async (req: NextRequest) => {
                             categoria: true
                         }
                     },
+
                     objetivos: true,
                     reviews: {
                         select: {
@@ -154,7 +177,14 @@ const GET = async (req: NextRequest) => {
                             rating: true,
                             comentario: true,
                             creadoEn: true,
-                            usuario: true
+                            usuario: {
+                                select: {
+                                    correo: true,
+                                    avatar: true,
+                                    id: true,
+
+                                }
+                            }
                         },
                         orderBy: {
                             creadoEn: 'desc'

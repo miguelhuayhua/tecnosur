@@ -4,6 +4,8 @@
 import { useCursos } from '@/hooks/use-cursos';
 import { CursoGeneral } from './curso-general';
 import { CursoGeneralSkeleton } from '../static/curso-general-skeleton';
+import { InteractiveButton } from '@/components/ui/interactive-button';
+import Link from 'next/link';
 
 export default function ListGrabados() {
     const { cursos, isLoading, error } = useCursos({
@@ -17,13 +19,14 @@ export default function ListGrabados() {
         <section className="py-10">
             <div className="container mx-auto px-4">
                 {/* Header con título y descripción */}
-                <div className="mb-8 flex flex-col items-center justify-center">
-                    <h2 className="font-bold text-center text-2xl">Cursos Grabados</h2>
-                    <p className="text-muted-foreground">
-                        Accede a nuestras clases grabadas y aprende a tu propio ritmo.
-                    </p>
+                <div className="mb-8 flex justify-between items-center">
+                    <h2 className="font-bold   text-2xl">Cursos Grabados</h2>
+                    <InteractiveButton >
+                        <Link href="/cursos?enVivo=false">
+                            Ver más
+                        </Link>
+                    </InteractiveButton>
                 </div>
-
                 {/* Cursos */}
                 {error && (
                     <div className="text-center py-4">

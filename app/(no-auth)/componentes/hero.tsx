@@ -2,139 +2,126 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
-import { ArrowUpRight, CirclePlay, CheckCircle } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { RainbowButton } from '@/components/ui/rainbow-button'
+import { AuroraText } from '@/components/ui/aurora-text'
+import { useState, useEffect } from 'react'
 
-interface HeroSectionProps {
-    heading?: string
-    description?: string
-    badgeText?: string
-    badgeLink?: string
-    buttonPrimaryText?: string
-    buttonPrimaryLink?: string
-    buttonSecondaryText?: string
-    buttonSecondaryLink?: string
-    features?: string[]
-    className?: string
-}
+const images = [
+    "/fondo1.jpg",
+    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop",
+]
 
-const HeroSection = ({
-    heading = "Transforma tu futuro con educación de calidad",
-    description = "La plataforma líder en Latinoamérica con miles de cursos en diferentes áreas. Aprende a tu ritmo con instructores expertos y certificaciones reconocidas.",
-    badgeText = "Plataforma educativa para Latinoamérica",
-    badgeLink = "#",
-    buttonPrimaryText = "Explorar Cursos",
-    buttonPrimaryLink = "/cursos",
-    buttonSecondaryText = "Cómo Funciona",
-    buttonSecondaryLink = "/demo",
-    features = [
-        "Cursos en diferentes categorías",
-        "Instructores expertos certificados",
-        "Aprende a tu propio ritmo",
-        "Certificados al completar cursos",
-        "Acceso desde cualquier dispositivo",
-        "Comunidad de aprendizaje activa"
-    ],
-    className,
-}: HeroSectionProps) => {
+const HeroSection = () => {
+    const [currentImageIndex, setCurrentImageIndex] = useState(0)
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentImageIndex((prev) => (prev + 1) % images.length)
+        }, 10000)
+        return () => clearInterval(timer)
+    }, [])
 
     return (
-        <section className={cn("relative min-h-screen flex items-center justify-center px-6", className)}>
-            {/* Fondo */}
-            <div className="absolute inset-0 z-0">
-                <Image
-                    alt="Fondo educativo general"
-                    src="/fondo2.jpg"
-                    fill
-                    className="object-cover brightness-50"
-                    priority
-                />
-            </div>
+        <section className={cn("grid grid-cols-1 md:grid-cols-2 gap-8 min-h-screen  md:pt-[84px]")}>
 
             {/* Contenido */}
-            <div className="relative z-10 text-center max-w-4xl">
-
-                {/* Badge */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <Badge
-                        variant="secondary"
-                        className="rounded-full py-1 border-border bg-white/10 text-white"
-                        asChild
+            <div className="flex items-center  justify-center p-5 lg:py-0">
+                <div className="max-w-xl flex mx-auto justify-center gap-8 flex-col ">
+                    <motion.h3
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.1 }}
+                        className="text-muted-foreground text-sm uppercase "
                     >
-                        <Link href={badgeLink}>
-                            {badgeText} <ArrowUpRight className="ml-1 size-4" />
-                        </Link>
-                    </Badge>
-                </motion.div>
+                        Educación Digital del Futuro
+                    </motion.h3>
 
-                {/* Título */}
-                <motion.h1
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.1 }}
-                    className="mt-6 text-4xl sm:text-5xl md:text-6xl md:leading-[1.2] text-white font-semibold tracking-tighter"
-                >
-                    {heading}
-                </motion.h1>
-
-                {/* Descripción */}
-                <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    className="mt-6 text-lg md:text-xl text-white/80"
-                >
-                    {description}
-                </motion.p>
-
-
-                {/* Botones */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.5 }}
-                    className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4"
-                >
-                    <Button size="lg" className="rounded-full text-base " asChild>
-                        <Link href={buttonPrimaryLink}>
-                            {buttonPrimaryText} <ArrowUpRight className="ml-1 size-5" />
-                        </Link>
-                    </Button>
-                    <Button
-                        variant="secondary"
-                        size="lg"
-                        className="rounded-full text-base shadow-none "
-                        asChild
+                    {/* Título */}
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                        className="text-5xl lg:text-7xl  font-bold  space-x-3"
                     >
-                        <Link href={buttonSecondaryLink}>
-                            <CirclePlay className="mr-2 size-5" /> {buttonSecondaryText}
-                        </Link>
-                    </Button>
-                </motion.div>
-
-                {/* Testimonio breve */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.6 }}
-                    className="mt-16"
-                >
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm">
-                        <div className="size-2 rounded-full bg-green-500 animate-pulse" />
-                        <span className="text-sm text-white">
-                            <span className="font-semibold">50,000+ estudiantes</span> en Latinoamérica ya están aprendiendo
+                        <AuroraText>Nexus</AuroraText>
+                        <span>
+                            Educa
                         </span>
-                    </div>
-                </motion.div>
+                    </motion.h1>
+
+                    {/* Descripción */}
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.3 }}
+                        className="md:text-md xl:text-lg leading-relaxed"
+                    >
+                        Transforma tu aprendizaje con tecnología de vanguardia. Accede a cursos interactivos,
+                        certificaciones profesionales y contenido creado por expertos de la industria.
+                    </motion.p>
+
+                    {/* Botones */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.5 }}
+                        className='flex gap-4 flex-wrap'
+                    >
+                        <RainbowButton size="lg" asChild className='rounded-full dark:text-black'>
+                            <Link href="/cursos">
+                                Explorar Cursos <ChevronRight className="ml-1" />
+                            </Link>
+                        </RainbowButton>
+                        <Button
+                            variant="outline"
+                            size="lg"
+                            asChild
+                            className='rounded-full h-11'
+                        >
+                            <Link href={"/nosotros"}>
+                                Sobre Nosotros
+                            </Link>
+                        </Button>
+                    </motion.div>
+                </div>
+
 
             </div>
+
+            {/* Media Luna - Círculo cortado que sale del borde derecho */}
+            <div className="hidden md:flex md:h-[calc(100vh-104px)] items-center ">
+                <motion.div
+                    initial={{ opacity: 0, x: 100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.8, delay: 0.3 }}
+                    className="w-full h-4/5 rounded-l-full overflow-hidden relative"
+                >
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={currentImageIndex}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 1 }}
+                            className="absolute inset-0"
+                        >
+                            <Image
+                                src={images[currentImageIndex]}
+                                alt={`Hero Image ${currentImageIndex + 1}`}
+                                fill
+                                className="object-cover"
+                                priority
+                            />
+                        </motion.div>
+                    </AnimatePresence>
+                </motion.div>
+            </div>
+
         </section>
     )
 }

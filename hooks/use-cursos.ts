@@ -1,12 +1,20 @@
 // hooks/use-cursos.ts
 import useSWR, { KeyedMutator } from 'swr';
-import { categorias, categoriasCursos, cursos, docente, edicionesCursos, objetivosCursos, preciosCursos, reviewsCursos, usuariosEstudiantes } from '@/prisma/generated';
+import { categorias, categoriasCursos, clases, cursos, docente, edicionesCursos, objetivosCursos, preciosCursos, reviewsCursos, usuariosEstudiantes } from '@/prisma/generated';
 
 // Definir la interfaz extendida para el curso con relaciones
 export interface Cursos extends cursos {
   categorias: Array<categoriasCursos & { categoria: categorias }>;
-  ediciones: Array<edicionesCursos & { precios: Array<preciosCursos>; docente: docente }>;
-  reviews: Array<reviewsCursos & { usuario: usuariosEstudiantes }>;
+  ediciones: Array<edicionesCursos & {
+    _count: { clases: number },
+    precios: Array<preciosCursos>; docente: docente,
+    clases: Array<clases>,
+  }>;
+  reviews: Array<{ id: string, rating: number, comentario: string, creadoEn: Date } & {
+    usuario: {
+      correo: string, avatar: string | null, id: string
+    }
+  }>;
   objetivos: Array<objetivosCursos>
 }
 
@@ -17,6 +25,7 @@ interface Filtros {
   precioMax?: string;
   fechaInicio?: string;
   enVivo?: string;
+  descuento?: boolean;
   fechaFin?: string;
   page?: number;
   limit?: number;
