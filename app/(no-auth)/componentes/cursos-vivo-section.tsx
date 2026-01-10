@@ -14,7 +14,8 @@ export default function List() {
   const { cursos, isLoading, error } = useCursos({
     limit: 3,
     sortBy: 'creadoEn',
-    sortOrder: 'desc'
+    sortOrder: 'desc',
+    enVivo: "true"
   });
   return (
     <section id="en-vivo" className="py-10">
@@ -50,7 +51,6 @@ export default function List() {
         {!isLoading && !error && (
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {cursos.map((curso) => {
-              console.log(curso)
               const edicion = curso.ediciones.at(0);
               const clase = edicion?.clases.at(0);
               return (
@@ -71,6 +71,7 @@ export default function List() {
                         {
                           !clase?.urlPresentacion && (
                             <Image
+                              className='rounded-md'
                               src={curso.urlMiniatura || "/placeholder.svg"}
                               alt={curso.titulo}
                               width={500}

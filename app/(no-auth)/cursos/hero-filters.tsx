@@ -42,13 +42,13 @@ function MobileFilters({
                         <div className="flex items-center gap-3">
                             <RadioGroupItem value="true" id="mob-r1" />
                             <Label htmlFor="mob-r1" className="flex items-center gap-2">
-                                <Video className="size-4" /> En Vivo
+                                En Vivo
                             </Label>
                         </div>
                         <div className="flex items-center gap-3">
                             <RadioGroupItem value="false" id="mob-r2" />
                             <Label htmlFor="mob-r2" className="flex items-center gap-2">
-                                <PlayCircle className="size-4" /> Grabados
+                                Grabados
                             </Label>
                         </div>
                     </div>
@@ -181,7 +181,7 @@ export function HeroFilters() {
                             <Select value={sortBy} onValueChange={(v) => updateFilters({ sortBy: v })}>
                                 <SelectTrigger className="flex-1 h-14 shadow-none bg-transparent border-none focus:ring-1 focus:ring-primary/10 hover:bg-muted/30 transition-colors py-8 flex-1 rounded-2xl w-full md:rounded-full">
                                     <div className="flex flex-col items-start justify-center text-left">
-                                        <span className="text-[10px] md:text-xs uppercase font-bold text-primary/60 shadow-none leading-none mb-4 ml-3">Ordenar por</span>
+                                        <span className="text-xs uppercase font-bold text-primary shadow-none leading-none mb-4 ml-3">Ordenar por</span>
                                         <div className="px-3 text-sm md:text-base font-medium leading-none">
                                             <SelectValue placeholder="Recientes" />
                                         </div>
@@ -197,7 +197,7 @@ export function HeroFilters() {
                             <Select value={sortOrder} onValueChange={(v) => updateFilters({ sortOrder: v })}>
                                 <SelectTrigger className=" h-14 shadow-none bg-transparent border-none focus:ring-1 focus:ring-primary/10 hover:bg-muted/30 transition-colors py-8  rounded-2xl flex-1 w-full md:rounded-full">
                                     <div className="flex flex-col items-start justify-center text-left">
-                                        <span className="text-[10px] md:text-[11px] uppercase font-bold text-primary/60 shadow-none leading-none mb-4 ml-3">Orden</span>
+                                        <span className="text-xs uppercase font-bold text-primary shadow-none leading-none mb-4 ml-3">Orden</span>
                                         <div className="px-3 text-sm md:text-base font-medium leading-none">
                                             <SelectValue placeholder="Desc" />
                                         </div>
@@ -223,7 +223,7 @@ export function HeroFilters() {
                             </SheetTrigger>
                             <SheetContent side="right" className="w-[300px] sm:w-[400px] rounded-l-3xl overflow-y-auto p-6">
                                 <SheetHeader className="mb-2">
-                                    <SheetTitle className="text-xl font-bold">Filtros Avanzados</SheetTitle>
+                                    <SheetTitle className="text-xl ">Filtros Avanzados</SheetTitle>
                                 </SheetHeader>
                                 <MobileFilters
                                     categorias={categoriasData || []}

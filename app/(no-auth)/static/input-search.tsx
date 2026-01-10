@@ -11,6 +11,8 @@ import { useCursosSearch } from '@/hooks/use-cursos-search';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Loader } from '@/components/ui/loader';
+import { useCurrency } from '@/hooks/use-currency';
+import { usePriceFormatter } from '@/hooks/use-price-formatter';
 
 export default function InputSearch() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -19,6 +21,7 @@ export default function InputSearch() {
     const inputRef = useRef<HTMLInputElement>(null);
     const resultsRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
+    const { convertAndFormatPrice } = useCurrency();
 
     const { cursos, isLoading, error } = useCursosSearch(searchQuery);
 
@@ -191,10 +194,13 @@ export default function InputSearch() {
                                                                     {curso.titulo}
                                                                 </h3>
                                                                 {curso.enVivo && (
-                                                                    <Badge variant="destructive" className="flex items-center gap-1 px-2 py-0 text-xs shrink-0">
-                                                                        <Video className="w-3 h-3" />
-                                                                        En vivo
-                                                                    </Badge>
+                                                                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 shrink-0">
+                                                                        <div className="relative flex size-1.5">
+                                                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                                                            <span className="relative inline-flex rounded-full size-1.5 bg-red-500"></span>
+                                                                        </div>
+                                                                        <span className="text-[9px] font-bold text-red-600 uppercase tracking-wider">En Vivo</span>
+                                                                    </div>
                                                                 )}
                                                             </div>
 
@@ -204,12 +210,15 @@ export default function InputSearch() {
 
                                                             {edicion && (
                                                                 <div className="flex items-center gap-3 pt-0.5">
-                                                                    {precio && (
-                                                                        <div className="flex items-center gap-1 text-xs font-semibold">
-                                                                            <DollarSign className="w-3 h-3" />
-                                                                            <span>{precio.precio} {precio.moneda}</span>
-                                                                        </div>
-                                                                    )}
+                                                                    {precio && (() => {
+                                                                        const price = convertAndFormatPrice(precio.precio);
+                                                                        return (
+                                                                            <div className="flex items-center gap-1 text-xs font-semibold">
+                                                                                <DollarSign className="w-3 h-3" />
+                                                                                <span>{price.value} {price.code}</span>
+                                                                            </div>
+                                                                        )
+                                                                    })()}
                                                                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
                                                                         <Calendar className="w-3 h-3" />
                                                                         <span>{formatDate(edicion.fechaInicio)}</span>

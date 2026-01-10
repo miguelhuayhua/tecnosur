@@ -63,8 +63,8 @@ function FiltersPanel({
     return (
         <div className="w-full space-y-8">
             <FieldSet>
-                <FieldLegend className="flex items-center justify-between border-b pb-2 mb-6">
-                    <span className="text-sm font-bold uppercase tracking-widest text-primary">Filtros Avanzados</span>
+                <FieldLegend className="flex items-center w-full justify-between border-b pb-2 mb-6">
+                    <span className="text-sm font-bold  text-primary">Filtros Avanzados</span>
                     {hasActiveFilters && (
                         <button onClick={onResetFilters} className="text-[10px] text-muted-foreground hover:text-primary transition-colors uppercase font-bold">
                             Limpiar

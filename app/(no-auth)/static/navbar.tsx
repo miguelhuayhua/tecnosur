@@ -12,6 +12,7 @@ import { CurrencySelector } from '@/components/ui/currency-selector';
 import { useSession } from 'next-auth/react';
 import { UserNav } from '@/components/dashboard/user-nav';
 import InputSearch from './input-search';
+import InputSearchMobile from './input-search-mobile';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 // Types
@@ -87,6 +88,7 @@ export const Navbar = React.forwardRef<HTMLElement, Navbar02Props>(
     const [scrolled, setScrolled] = useState(false);
     const containerRef = useRef<HTMLElement>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isSearchSheetOpen, setIsSearchSheetOpen] = useState(false);
     const { resolvedTheme, forcedTheme } = useTheme()
     const { status } = useSession();
 
@@ -329,9 +331,20 @@ export const Navbar = React.forwardRef<HTMLElement, Navbar02Props>(
                 ))}
               </div>
 
-              <Button variant='ghost' className='rounded-full lg:hidden' size='icon'>
-                <Search />
-              </Button>
+              <Sheet open={isSearchSheetOpen && isMobile} onOpenChange={setIsSearchSheetOpen}>
+                <SheetTrigger asChild>
+                  <Button variant='ghost' className='rounded-full lg:hidden' size='icon'>
+                    <Search />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="bottom" className="w-[calc(100%-1em)] z-[1000] shadow-none mx-auto rounded-lg backdrop-blur-sm bg-background overflow-hidden mb-[0.5em] h-[calc(100%-1em)] px-5 pt-10">
+
+                  {/* Reutilizamos logic de InputSearch o similar adaptado a mobile */}
+                  <div className="flex-1 overflow-hidden h-full">
+                    <InputSearchMobile onClose={() => setIsSearchSheetOpen(false)} />
+                  </div>
+                </SheetContent>
+              </Sheet>
 
               <CurrencySelector />
 

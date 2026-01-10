@@ -26,6 +26,15 @@ import { ButtonGroup } from '@/components/ui/button-group';
 import { Separator } from '@/components/ui/separator';
 import { cursos, edicionesCursos, preciosCursos } from '@/prisma/generated';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { cn } from '@/lib/utils';
+import { useTheme } from 'next-themes';
 
 
 // Tipos basados en el esquema de Prisma
@@ -78,7 +87,153 @@ interface Curso extends cursos {
   ediciones: Edicion[];
 };
 
+const COUNTRIES = [
+  { code: 'PE', name: 'Perú' },
+  { code: 'BO', name: 'Bolivia' },
+  { code: 'MX', name: 'México' },
+  { code: 'EC', name: 'Ecuador' },
+  { code: 'CO', name: 'Colombia' },
+  { code: 'US', name: 'EE.UU.' },
+];
+
+const METHODS_BY_COUNTRY: Record<string, string[]> = {
+  PE: ['INTERBANK', 'YAPE', 'PLIN', 'LIGO'],
+  BO: ['BANCO_UNION', 'YAPE', 'ALTOKE'],
+  MX: ['PAYPAL', 'WESTERN_UNION', 'BINANCE'],
+  EC: ['PAYPAL', 'WESTERN_UNION', 'BINANCE'],
+  CO: ['PAYPAL', 'WESTERN_UNION', 'BINANCE'],
+  US: ['ZELLE', 'PAYPAL'],
+};
+
+const PAYMENT_DETAILS: Record<string, { name: string; logo?: string; color: string; textColor: string; content: React.ReactNode }> = {
+  INTERBANK: {
+    name: 'Interbank',
+    logo: '/interbank.png',
+    color: 'bg-[#04be4f]',
+    textColor: 'text-white',
+    content: (
+      <div className="space-y-1">
+        <p className="font-semibold text-foreground">Transferencia Interbank</p>
+        <p className="text-xs text-muted-foreground">Número de cuenta: 200-3001234567</p>
+        <p className="text-xs text-muted-foreground">CCI: 003-200-003001234567-33</p>
+      </div>
+    ),
+  },
+  YAPE: {
+    name: 'Yape',
+    logo: '/logo-yape.png',
+    color: 'bg-[#9519a3]',
+    textColor: 'text-white',
+    content: (
+      <div className="space-y-2">
+        <p className="font-semibold text-foreground">Paga con Yape</p>
+        <p className="text-xs text-muted-foreground">Escanea el QR o yapea al número: 999 888 777</p>
+        <p className="text-xs text-muted-foreground font-medium">Titular: TECNOSUR</p>
+      </div>
+    ),
+  },
+  PLIN: {
+    name: 'Plin',
+    logo: '/plin.png',
+    color: 'bg-gradient-to-r from-[#2788f6] to-[#07e1ce]',
+    textColor: 'text-white',
+    content: (
+      <div className="space-y-2">
+        <p className="font-semibold text-foreground">Paga con Plin</p>
+        <p className="text-xs text-muted-foreground">Escanea el QR o plinea al número: 999 888 777</p>
+        <p className="text-xs text-muted-foreground font-medium">Titular: TECNOSUR</p>
+      </div>
+    ),
+  },
+  LIGO: {
+    name: 'Ligo',
+    logo: '/ligo.png',
+    color: 'bg-[#8613da]',
+    textColor: 'text-white',
+    content: (
+      <div className="space-y-1">
+        <p className="font-semibold text-foreground">Transferencia Ligo</p>
+        <p className="text-xs text-muted-foreground">Número de tarjeta: 4557 XXXX XXXX 1234</p>
+        <p className="text-xs text-muted-foreground">Titular: TECNOSUR</p>
+      </div>
+    ),
+  },
+  BANCO_UNION: {
+    name: 'Banco Unión',
+    logo: '/banco-union.jpg',
+    color: 'bg-[#0a285f]',
+    textColor: 'text-white',
+    content: (
+      <div className="space-y-1">
+        <p className="font-semibold text-foreground">Banco Unión Bolivia</p>
+        <p className="text-xs text-muted-foreground">Número de cuenta: 1-12345678</p>
+        <p className="text-xs text-muted-foreground">Titular: TECNOSUR</p>
+      </div>
+    ),
+  },
+  ALTOKE: {
+    name: 'Altoke',
+    logo: '/altoke.png',
+    color: 'bg-[#FF5A00]',
+    textColor: 'text-white',
+    content: (
+      <div className="space-y-2">
+        <p className="font-semibold text-foreground">Paga con Altoke</p>
+        <p className="text-xs text-muted-foreground">Escanea el código QR desde tu app Banco Unión o Yape Bolivia.</p>
+      </div>
+    ),
+  },
+  ZELLE: {
+    name: 'Zelle',
+    logo: '/zelle.png',
+    color: 'bg-[#7714dc]',
+    textColor: 'text-white',
+    content: (
+      <div className="space-y-1">
+        <p className="font-semibold text-foreground">Pago por Zelle</p>
+        <p className="text-sm font-medium text-foreground">pagos@tecnosur.com</p>
+        <p className="text-xs text-muted-foreground">Titular: TECNOSUR LLC</p>
+      </div>
+    ),
+  },
+  PAYPAL: {
+    name: 'PayPal',
+    logo: '/paypal.jpg',
+    color: 'bg-[#003087]',
+    textColor: 'text-white',
+    content: (
+      <p className="text-xs text-muted-foreground">Usa el botón azul de PayPal para completar tu compra de forma instantánea.</p>
+    ),
+  },
+  BINANCE: {
+    name: 'Binance (USDT)',
+    logo: '/binance.png',
+    color: 'bg-[#333333]',
+    textColor: 'text-white',
+    content: (
+      <div className="space-y-1">
+        <p className="font-semibold text-foreground">Binance Pay / USDT</p>
+        <p className="text-xs text-muted-foreground">Red: TRC20</p>
+        <p className="text-[10px] break-all opacity-80 p-2 bg-muted/50 rounded text-foreground">TXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</p>
+      </div>
+    ),
+  },
+  WESTERN_UNION: {
+    name: 'Western Union',
+    logo: '/wu.png',
+    color: 'bg-[#ffdd00]',
+    textColor: 'text-black',
+    content: (
+      <div className="space-y-1 text-black">
+        <p className="font-semibold">Western Union</p>
+        <p className="text-xs opacity-90">Solicita los datos del beneficiario actual a nuestro equipo de soporte.</p>
+      </div>
+    ),
+  },
+};
+
 export default function CheckoutClient({ curso }: { curso: Curso }) {
+  const { theme } = useTheme();
   const edicion = curso.ediciones.at(0);
   const { data: token, status } = useSession();
   if (!edicion) return notFound()
@@ -86,8 +241,9 @@ export default function CheckoutClient({ curso }: { curso: Curso }) {
   if (!precioDefault) return notFound()
   const { formatPrice, selectedCurrency } = usePriceFormatter();
   const router = useRouter();
-  const [loader, setLoader] = useState(false);
   const [paymentMethod, setPaymentMethod] = React.useState("");
+  const [selectedCountry, setSelectedCountry] = React.useState("PE");
+  const [isPaypalActive, setIsPaypalActive] = React.useState(false);
 
   // Formatear precios
   const precioConvertido = formatPrice(precioDefault.precio);
@@ -149,7 +305,7 @@ export default function CheckoutClient({ curso }: { curso: Curso }) {
     }
   };
   return (
-    <div className="min-h-screen px-2 sm:px-10 md:px-40 lg:px-0 bg-background py-8">
+    <div className="min-h-screen px-2 sm:px-10 pt-30 md:px-40 lg:px-0 bg-background py-8">
       <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 ">
           {/* Información del curso */}
@@ -358,7 +514,7 @@ export default function CheckoutClient({ curso }: { curso: Curso }) {
                           <div className="flex justify-between items-center text-sm">
                             <span className="text-muted-foreground">Descuento</span>
                             <span className="text-red-600 font-semibold">
-                              - 0 ${precioConvertido?.code}
+                              - 0 {precioConvertido?.code}
                             </span>
                           </div>
                         </>
@@ -401,100 +557,144 @@ export default function CheckoutClient({ curso }: { curso: Curso }) {
                     </div>
                   )}
 
-                  {/* PayPal */}
+                  {/* Selector de País */}
+                  <div className="space-y-2 mt-6">
+                    <label className="text-xs  font-bold text-muted-foreground/60 ml-1">
+                      Tu ubicación
+                    </label>
+                    <Select value={selectedCountry} onValueChange={(v) => {
+                      setSelectedCountry(v);
+                      setPaymentMethod(""); // Reset payment method when country changes
+                    }}>
+                      <SelectTrigger className="w-full  mt-1 rounded-xl border-muted-foreground/20 focus:ring-1 focus:ring-primary/20 bg-muted/30">
+                        <SelectValue>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium leading-none">{COUNTRIES.find(c => c.code === selectedCountry)?.name}</span>
+                          </div>
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl border-muted-foreground/20">
+                        {COUNTRIES.map((country) => (
+                          <SelectItem key={country.code} value={country.code} className="cursor-pointer">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium leading-none">{country.name}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   <Accordion
                     type="single"
                     value={paymentMethod}
-                    className='space-y-3 mb-3 mt-6'
+                    onValueChange={setPaymentMethod}
+                    className='space-y-3 mb-3 mt-4'
                   >
-                   
-                    <AccordionItem value="PLIN">
-                      <Button className="w-full rounded-[.3em] bg-gradient-to-r from-[#2788f6] to-[#07e1ce]" onClick={() => setPaymentMethod("PLIN")}>
-                        <Image src="/plin.png" width={48} height={48} alt="Plin" className='w-5' />
-                        Pagar con Plin
-                      </Button>
-                      <AccordionContent>
-                        QR de Plin
-                      </AccordionContent>
-                    </AccordionItem>
-                    {/* BINANCE */}
-                    <AccordionItem value="BINANCE">
-                      <Button
-                        className="
-    w-full rounded-[.3em]
-    bg-[#333333] text-[#f0b90b]
-    hover:bg-[#333333]
-    transition-colors duration-200
-    hover:text-[#c99400]
-  "
-                        onClick={() => setPaymentMethod('BINANCE')}
-                      >
-                        <Image src="/binance.png" width={48} height={48} alt="Binance" className="w-5" />
-                        Pagar con Binance
-                      </Button>
+                    {METHODS_BY_COUNTRY[selectedCountry]?.map((methodKey) => {
+                      const method = PAYMENT_DETAILS[methodKey];
+                      if (!method || methodKey === 'PAYPAL') return null; // PayPal handled separately via buttons
 
-
-                      <AccordionContent>
-                        USDT · Red TRC20<br />
-                        Wallet: TXxxxxxxx
-                      </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem value="YAPE">
-                      <Button
-                        className="
-    w-full rounded-[.3em]
-    bg-[#9519a3] text-white
-    hover:bg-[#9519a3]
-    transition-colors duration-200
-    hover:text-[#e0b3e6]
-  "
-                        onClick={() => setPaymentMethod('YAPE')}
-                      >
-                        <Image src="/logo-yape.png" width={100} height={100} className="w-6" alt="logo yape" />
-                        Pagar con Yape
-                      </Button>
-
-                      <AccordionContent className="flex flex-col gap-4 text-balance">
-                        QR
-                      </AccordionContent>
-                    </AccordionItem>
-                    {/* WESTERN UNION */}
-                    <AccordionItem value="WESTER_UNION">
-                      <Button
-                        className="
-    w-full rounded-[.3em]
-    bg-[#ffdd00] text-black
-    hover:bg-[#ffdd00]
-    transition-colors duration-200
-    hover:text-black/70
-  "
-                        onClick={() => setPaymentMethod('WESTER_UNION')}
-                      >
-                        <Image src="/wu.png" width={48} height={48} alt="Western Union" className="w-5" />
-                        Western Union
-                      </Button>
-
-                      <AccordionContent>
-                        Pago asistido · Datos del beneficiario
-                      </AccordionContent>
-                    </AccordionItem>
-
-                  
-                 
+                      return (
+                        <AccordionItem key={methodKey} value={methodKey} className="border-none">
+                          <AccordionTrigger
+                            className={cn(
+                              "w-full h-12 px-4 rounded-xl flex items-center gap-3 transition-colors duration-200 hover:no-underline cursor-pointer",
+                              method.color,
+                              method.textColor,
+                              paymentMethod === methodKey ? "ring-2 ring-offset-2 ring-primary/20" : ""
+                            )}
+                            hideArrow
+                          >
+                            <div className="flex items-center gap-3 w-full">
+                              {method.logo && (
+                                <div className="p-1 rounded-md">
+                                  <Image
+                                    src={method.logo}
+                                    width={48}
+                                    height={48}
+                                    alt={method.name}
+                                    className="size-8 object-contain"
+                                    onError={(e) => {
+                                      // @ts-ignore
+                                      e.target.style.display = 'none';
+                                      // @ts-ignore
+                                      e.target.parentElement.style.display = 'none';
+                                    }}
+                                  />
+                                </div>
+                              )}
+                              <span className="font-bold text-sm tracking-wide">{method.name}</span>
+                            </div>
+                          </AccordionTrigger>
+                          <AccordionContent className="mt-2 p-4 rounded-xl bg-muted/50 border border-muted-foreground/10 text-sm">
+                            {method.content}
+                          </AccordionContent>
+                        </AccordionItem>
+                      );
+                    })}
                   </Accordion>
-                  <PayPalButtons
-                    style={{
-                      layout: 'vertical',
-                      color: 'blue',
-                      label: 'paypal',
-                      height: 35
-                    }}
 
-                    createOrder={createOrder}
-                    onApprove={onApprove}
-                    disabled={!edicion}
-                  />
+                  {/* PayPal Buttons (Only if country supports it) */}
+                  {METHODS_BY_COUNTRY[selectedCountry]?.includes('PAYPAL') && (
+                    <div className="space-y-4 mt-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                      <div className="relative">
+
+                        <div className="relative flex justify-center text-xs">
+                          <span className=" px-2 text-muted-foreground font-semibold">O paga ahora con</span>
+                        </div>
+                      </div>
+
+                      {!isPaypalActive ? (
+                        <div className="group relative">
+                          <Button
+                            onClick={() => setIsPaypalActive(true)}
+                            className="w-full h-11 rounded-full bg-white hover:bg-white text-black font-bold flex items-center justify-center gap-2 transition-all duration-300 shadow-lg shadow-blue-500/10 cursor-pointer overflow-hidden border"
+                          >
+                            <Image src="/paypal.jpg" width={48} height={48} alt="PayPal" className="size-8 object-contain" />
+                            PayPal / Tarjetas
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="bg-white rounded-2xl p-4 duration-300 border relative animate-in zoom-in-95">
+                          <button
+                            onClick={() => setIsPaypalActive(false)}
+                            className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition-colors cursor-pointer p-1"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                          </button>
+
+                          <div className="flex items-center justify-between mb-4 pr-6">
+                            <div className="flex items-center gap-2">
+                              <div className="bg-white rounded-lg">
+                                <Image src="/paypal.jpg" width={48} height={48} alt="PayPal" className="size-8 object-contain" />
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="text-black font-bold text-[13px] leading-tight">Checkout Seguro</span>
+                                <span className="text-[10px] text-gray-500 leading-tight">Procesado por PayPal</span>
+                              </div>
+                            </div>
+                            <Lock className="size-4 text-gray-300" />
+                          </div>
+
+                          <div className="space-y-3">
+                            <PayPalButtons
+                              style={{
+                                layout: 'vertical',
+                                color: 'blue',
+                                label: 'paypal',
+                                height: 40,
+                                shape: 'rect'
+                              }}
+                              createOrder={createOrder}
+                              onApprove={onApprove}
+                              disabled={!edicion}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <p className="text-xs text-center text-muted-foreground">
                     Al completar la compra, aceptas nuestros{' '}
                     <Link href="/terminos" className="text-primary hover:underline">

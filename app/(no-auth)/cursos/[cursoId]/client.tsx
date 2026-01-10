@@ -110,7 +110,7 @@ export default function CursoDetailClient({ curso }: { curso: Curso }) {
     const precioConvertido = precioDefault ? formatPrice(precioDefault.precio) : null;
     const precioOriginalConvertido = precioDefault?.precioOriginal ? formatPrice(precioDefault.precioOriginal) : null;
     return (
-        <div className="space-y-6  pt-10  px-5">
+        <div className="space-y-6  pt-35  px-5">
             <div className="max-w-6xl mx-auto space-y-3">
                 <Breadcrumb>
                     <BreadcrumbList>
@@ -432,7 +432,7 @@ export default function CursoDetailClient({ curso }: { curso: Curso }) {
                     {cursosRecomendados && cursosRecomendados.length > 0 ? (
                         cursosRecomendados.map((cursoRec: any) => <CursoCard key={cursoRec.id} curso={cursoRec} />)
                     ) : (
-                        <p className="text-center w-full col-span-4">
+                        <p className="text-center text-muted-foreground w-full col-span-5">
                             No hay cursos relacionados
                         </p>
                     )}
